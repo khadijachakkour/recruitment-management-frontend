@@ -1,0 +1,187 @@
+/* Conteneur principal qui prend presque toute la hauteur */
+.container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 90vh; /* Légèrement réduit par rapport à 100vh */
+    background-color:white;
+  }
+  
+  /* Augmente légèrement la taille de la carte */
+  .card {
+    width: 450px; /* Augmenté de 400px à 450px */
+    padding: 3rem; /* Un peu plus d'espace intérieur */
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
+    text-align: center;
+  }
+  
+  /* Titre */
+  .title {
+    font-size: 24px;
+    font-weight: bold;
+    margin-bottom: 0.5rem;
+  }
+  
+  /* Sous-titre */
+  .subtitle {
+    color: #6c757d;
+    margin-bottom: 1.5rem;
+  }
+  
+  /* Boutons Google et Apple */
+  .socialButtons {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 1rem;
+  }
+  
+  .socialButton {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    background: white;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background 0.3s;
+  }
+  
+  .socialButton:hover {
+    background: #f1f1f1;
+  }
+  
+ /* Styles pour les icônes */
+.icon {
+    width: 24px; /* Ajustez la taille de l'icône */
+    height: 24px;
+    margin-right: 10px;
+  }
+  
+  
+  /* Séparateur OR */
+  .orSeparator {
+    display: flex;
+    align-items: center;
+    margin: 10px 0;
+  }
+  
+  .line {
+    flex-grow: 1;
+    height: 1px;
+    background: #ddd;
+  }
+  
+  .orText {
+    padding: 0 10px;
+    color: #6c757d;
+    font-weight: bold;
+  }
+  
+  /* Formulaire */
+  .form {
+    display: flex;
+    flex-direction: column;
+  }
+  
+  /* Champs de saisie */
+  .inputGroup {
+    position: relative;
+    display: flex;
+    align-items: center;
+    margin-bottom: 1rem;
+  }
+  
+  .input {
+    width: 100%;
+    padding: 10px 10px 10px 40px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    outline: none;
+    transition: border-color 0.3s;
+  }
+  
+  .input:focus {
+    border-color: #007bff;
+  }
+  
+  .inputIcon {
+    position: absolute;
+    left: 10px;
+    color: #6c757d;
+  }
+  
+  /* Bouton œil */
+  .eyeButton {
+    position: absolute;
+    right: 10px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: #6c757d;
+    font-size: 18px;
+  }
+  
+  /* Options Remember me / Forgot Password */
+  .options {
+    display: flex;
+    justify-content: space-between;
+    font-size: 14px;
+    margin-bottom: 1rem;
+  }
+  
+  .rememberMe {
+    display: flex;
+    align-items: center;
+  }
+  
+  .checkbox {
+    margin-right: 5px;
+  }
+  
+  .forgotPassword {
+    color: #007bff;
+    text-decoration: none;
+  }
+  
+  .forgotPassword:hover {
+    text-decoration: underline;
+  }
+  
+  /* Bouton Sign In */
+  .loginButton {
+    width: 100%;
+    background: #007bff;
+    color: white;
+    padding: 10px;
+    border: none;
+    border-radius: 5px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background 0.3s;
+  }
+  
+  .loginButton:hover {
+    background: #0056b3;
+  }
+  
+  /* Lien Sign Up */
+  .signUpText {
+    margin-top: 1rem;
+    font-size: 14px;
+  }
+  
+  .signUpLink {
+    color: #007bff;
+    text-decoration: none;
+    font-weight: bold;
+  }
+  
+  .signUpLink:hover {
+    text-decoration: underline;
+  }
+  
