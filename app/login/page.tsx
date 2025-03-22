@@ -3,11 +3,52 @@ import { useState } from "react";
 import Link from "next/link";
 import styles from "./login.module.css";
 import { FaLock, FaRegEye, FaRegEyeSlash, FaUser } from "react-icons/fa";
+import { useRouter } from "next/navigation";
 
 export default function LoginPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
+  const [errorMessage, setErrorMessage] = useState(""); // Pour gérer l'erreur d'authentification
+  const router = useRouter();
+
+  // Fonction pour gérer la soumission du formulaire
+  const handleLogin = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setErrorMessage(""); // Réinitialiser le message d'erreur à chaque tentative
+  
+    // Vérifie si les champs sont remplis
+    if (!email || !password) {
+      setErrorMessage("Please fill in both fields");
+      return;
+    }
+  
+    try {
+      const response = await fetch("http://localhost:4000/api/users/login", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ email, password }),
+      });
+  
+      const data = await response.json();
+  
+      if (response.ok) {
+        localStorage.setItem("accessToken", data.accessToken);
+        localStorage.setItem("refreshToken", data.refreshToken);
+      
+        // Redirige vers le tableau de bord ou la page d'accueil
+        router.push("/dashboard");
+      } else {
+        // Si l'authentification échoue, affiche un message d'erreur
+        setErrorMessage(data.message || "Authentication failed. Please try again.");
+      }
+    } catch (error) {
+      setErrorMessage("An error occurred. Please try again later.");
+    }
+  };
+  
 
   return (
     <div className={styles.container}>
@@ -21,7 +62,7 @@ export default function LoginPage() {
             <img src="/icons/icons8-google.svg" alt="Google" className={styles.icon} /> Google
           </button>
           <button className={styles.socialButton}>
-            <img src="icons/icons8-microsoft.svg" alt="Microsoft" className={styles.icon} />  Microsoft
+            <img src="icons/icons8-microsoft.svg" alt="Microsoft" className={styles.icon} /> Microsoft
           </button>
         </div>
 
@@ -32,7 +73,10 @@ export default function LoginPage() {
         </div>
 
         {/* Form */}
-        <form className={styles.form}>
+        <form className={styles.form} onSubmit={handleLogin}>
+          {/* Display error message if any */}
+          {errorMessage && <p className={styles.error}>{errorMessage}</p>}
+
           <div className={styles.inputGroup}>
             <FaUser className={styles.inputIcon} />
             <input
