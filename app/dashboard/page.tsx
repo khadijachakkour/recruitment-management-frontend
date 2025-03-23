@@ -1,18 +1,17 @@
 "use client";
-import { useEffect, useState } from "react";
+import {useState } from "react";
 import styles from "./dashboard.module.css"; // Style CSS
 import Link from "next/link";
 
 export default function Dashboard() {
-  const [userData, setUserData] = useState(null);
-  const [applications, setApplications] = useState([]);
+  const [applications] = useState([]);
   
   
 
   return (
     <div className={styles.container}>
       <div className={styles.card}>
-        <p className={styles.subtitle}>Here's an overview of your application status and opportunities</p>
+        <p className={styles.subtitle}>Here{" ' "}s an overview of your application status and opportunities</p>
 
         <div className={styles.jobApplications}>
           <h3>Your Applications</h3>

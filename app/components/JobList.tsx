@@ -37,7 +37,6 @@
 //   );
 // }
 "use client";
-import { useState } from "react";
 
 const jobs = [
   { company: "Ashford", title: "Lead QA", category: "Software", salary: "$800+" },

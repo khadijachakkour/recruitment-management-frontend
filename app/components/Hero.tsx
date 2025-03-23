@@ -1,6 +1,5 @@
 import "../styles/hero.css";
-import SearchBar from "./SearchBar"; // Importation du composant de la barre de recherche
-
+import SearchBar from "./SearchBar"; 
 export default function Hero() {
   return (
     <section className="hero-section">
