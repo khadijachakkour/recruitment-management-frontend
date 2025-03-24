@@ -41,6 +41,7 @@ export default function RegisterPage() {
         <h2 className={styles.title}>Sign Up</h2>
         <p className={styles.subtitle}>Create a new account</p>
 
+       
         <form className={styles.form} onSubmit={handleSubmit}>
           {/* First Name */}
           <div className={styles.inputGroup}>
