@@ -2,6 +2,7 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import {jwtDecode} from "jwt-decode";
+import { useAuth } from "@/context/authContext";
 
 interface UserProfile {
   phone_number: string;
@@ -12,15 +13,6 @@ interface UserProfile {
   cv_url: string;
 }
 
-const getUserRoles = (token: string): string[] => {
-  try {
-    const decodedToken: any = jwtDecode(token);
-    return decodedToken?.realm_access?.roles || [];
-  } catch (error) {
-    console.error("Erreur de décodage du token:", error);
-    return [];
-  }
-};
 
 const Profile = () => {
   const [profile, setProfile] = useState<UserProfile | null>(null);
@@ -34,21 +26,16 @@ const Profile = () => {
     cv_url: "",
   });
   const [cvFile, setCvFile] = useState<File | null>(null);
+  const { isLoggedIn, userRoles } = useAuth();
   const router = useRouter();
 
   useEffect(() => {
-    const token = sessionStorage.getItem("access_token");
-
-    if (!token) {
+    if (!isLoggedIn) {
       router.push("/login");
       return;
     }
-
-    const userRoles = getUserRoles(token);
-
     if (!userRoles.includes("Candidat")) {
       router.push("/unauthorized");
-      return;
     }
 
     const fetchProfile = async () => {
@@ -74,7 +61,7 @@ const Profile = () => {
   };
 
   fetchProfile();
-}, [router]);
+  }, [isLoggedIn, userRoles, router]);
 
 // Gérer les changements dans le formulaire
 const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
