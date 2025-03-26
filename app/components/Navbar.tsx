@@ -2,28 +2,43 @@
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import "../styles/navbar.css";
+import { FaUserCircle } from "react-icons/fa";
+import {jwtDecode} from "jwt-decode";
 
 export default function Navbar() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [userRoles, setUserRoles] = useState<string[]>([]);
+
 
   // Vérifie si l'utilisateur est connecté
   const checkLoginStatus = () => {
     const token = sessionStorage.getItem("access_token");
-    setIsLoggedIn(!!token); // Si un token est présent, on met l'état à true
+    if (token) {
+      setIsLoggedIn(true);
+      setUserRoles(getUserRoles(token));
+    } else {
+      setIsLoggedIn(false);
+      setUserRoles([]);
+    }  };
+
+    // Fonction pour récupérer les rôles depuis le token
+  const getUserRoles = (token: string): string[] => {
+    try {
+      const decodedToken: any = jwtDecode(token);
+      return decodedToken?.realm_access?.roles || [];
+    } catch (error) {
+      console.error("Erreur de décodage du token:", error);
+      return [];
+    }
   };
 
   useEffect(() => {
     // Vérifie l'état de la connexion à chaque changement du sessionStorage
     checkLoginStatus();
-
-    // Vérifie régulièrement (toutes les 500ms) si le token est présent dans sessionStorage
-    const intervalId = setInterval(() => {
-      checkLoginStatus();
-    }, 500);
-
-    // Nettoie l'intervalle quand le composant est démonté
+const intervalId = setInterval(checkLoginStatus, 500);
     return () => clearInterval(intervalId);
   }, []);
+    
 
   const handleLogout = async () => {
     try {
@@ -59,6 +74,9 @@ export default function Navbar() {
           <li><Link href="/" className="navbar__nav-item">Employers</Link></li>
           <li><Link href="/" className="navbar__nav-item">Candidates</Link></li>
           <li><Link href="/" className="navbar__nav-item">Blog</Link></li>
+          {isLoggedIn && userRoles.includes("Candidat") && (
+            <li><Link href="#" className="navbar__nav-item">Teste Candidat role</Link></li>
+          )}
         </ul>
 
         {/* Buttons Container (Sign In and Post a Job for Employers) */}
@@ -73,9 +91,15 @@ export default function Navbar() {
               </Link>
             </>
           ) : (
+            <>
+             {/* Icône de Profil */}
+          <Link href="/profile" className="navbar__icon-link">
+            <FaUserCircle className="navbar__profile-icon" size={35} />
+          </Link>
             <button onClick={handleLogout} className="navbar__connexion">
               Logout
             </button>
+            </>
           )}
         </div>
       </div>

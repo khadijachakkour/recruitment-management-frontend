@@ -81,3 +81,19 @@
   color: #003d7a;  /* Darker blue on hover */
   border-bottom: 2px solid #0056b3;  /* Blue underline */
 }
+.navbar__icon-link {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 8px;
+}
+
+.navbar__profile-icon {
+  color: #333; /* Couleur de l'icône */
+  cursor: pointer;
+  transition: color 0.3s ease;
+}
+
+.navbar__profile-icon:hover {
+  color: #007bff; /* Couleur de survol */
+}
