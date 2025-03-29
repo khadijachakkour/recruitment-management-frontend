@@ -1,11 +1,11 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { getProfile, updateProfileAndCv } from "../../src/services/profileService"; 
+import { getProfile, updateProfileAndCv } from "../../../src/services/profileService"; 
 import { toast } from "react-hot-toast";
 import { useRouter } from "next/navigation";
-import { useAuth } from "@/context/authContext";
-import NavbarCandidat from "../components/NavbarCandidat";
+import { useAuth } from "@/src/context/authContext";
+import NavbarCandidat from "../../components/NavbarCandidat";
 
 const Profile = () => {
   const [profile, setProfile] = useState({

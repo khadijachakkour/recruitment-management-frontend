@@ -1,10 +1,7 @@
 "use client";
 import Footer from "./components/Footer";
-import NavbarAdmin from "./Navbar/Admin/page";  // Import du Navbar Admin
-import NavbarCandidat from "./Navbar/Candidat/page";  // Import du Navbar Candidat
 import "./styles/globals.css";
-import { AuthProvider, useAuth } from "../context/authContext"; // 🔥 Import du Provider
-import Navbar from "./Navbar/Navbar";
+import { AuthProvider} from "../src/context/authContext"; 
 
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {

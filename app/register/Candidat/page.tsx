@@ -128,7 +128,7 @@ export default function RegisterPage() {
         {/* Link to Sign In page */}
         <p className={styles.signInText}>
           Already have an account?{" "}
-          <Link href="/login" className={styles.signInLink}>
+          <Link href="/login/Candidat" className={styles.signInLink}>
             Sign In
           </Link>
         </p>

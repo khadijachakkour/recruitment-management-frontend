@@ -1,8 +1,8 @@
 "use client"; 
 
 import Link from "next/link";
-import "../styles/navbar.css";
-import { useAuth } from "@/context/authContext";
+import "../styles/navbarCandidat.css";
+import { useAuth } from "@/src/context/authContext";
 import { FaUserCircle } from "react-icons/fa";
 
 export default function NavbarCandidat() {
@@ -23,7 +23,7 @@ export default function NavbarCandidat() {
         <div className="navbar__button-container">
           {isLoggedIn && userRoles.includes("Candidat")? (
             <>
-              <Link href="/profile" className="navbar__icon-link">
+              <Link href="/Candidat/Profile" className="navbar__icon-link">
                 <FaUserCircle className="navbar__profile-icon" size={35} />
               </Link>
               <button onClick={logoutCandidat} className="navbar__connexion">Logout</button>
