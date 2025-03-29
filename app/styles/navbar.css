@@ -8,7 +8,7 @@
   position: sticky;
   top: 0;
   z-index: 50;
- 
+  width: 100%;
 }
 
 /* Logo styling */
@@ -18,6 +18,7 @@
   color: #007bff;
   cursor: pointer;
   transition: transform 0.3s;
+  text-decoration: none;
 }
 
 .navbar__logo:hover {
@@ -34,6 +35,8 @@
 }
 
 .navbar__nav-item {
+  text-decoration: none;
+  color: inherit;
   transition: color 0.3s ease;
 }
 
@@ -50,7 +53,7 @@
 
 /* Sign In button styling */
 .navbar__connexion {
-  background-color: #0056b3;  /* Blue background */
+  background-color: #0056b3;
   color: white;
   padding: 8px 24px;
   font-weight: 600;
@@ -58,19 +61,20 @@
   border-radius: 4px;
   cursor: pointer;
   transition: background-color 0.3s, color 0.3s;
+  text-decoration: none;
 }
 
 .navbar__connexion:hover {
-  background-color: #003d7a;  /* Darker blue on hover */
+  background-color: #003d7a;
 }
 
 /* Employers / Post a Job button styling */
 .navbar__entreprises {
-  color: #0056b3;  /* Blue text color */
+  color: #0056b3;
   padding: 8px 24px;
   font-weight: 600;
   border: none;
-  background-color: transparent;  /* No background */
+  background-color: transparent;
   cursor: pointer;
   transition: border-bottom 0.3s, color 0.3s;
   text-decoration: none;
@@ -78,9 +82,22 @@
 
 /* Hover effect for Employers button */
 .navbar__entreprises:hover {
-  color: #003d7a;  /* Darker blue on hover */
-  border-bottom: 2px solid #0056b3;  /* Blue underline */
+  color: #003d7a;
+  border-bottom: 2px solid #0056b3;
 }
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .navbar__nav {
+    display: none;
+  }
+
+  .navbar__button-container {
+    display: none;
+  }
+}
+
+/* Profile Icon */
 .navbar__icon-link {
   display: flex;
   align-items: center;
@@ -89,11 +106,11 @@
 }
 
 .navbar__profile-icon {
-  color: #333; /* Couleur de l'icône */
+  color: #333;
   cursor: pointer;
   transition: color 0.3s ease;
 }
 
 .navbar__profile-icon:hover {
-  color: #007bff; /* Couleur de survol */
+  color: #007bff;
 }

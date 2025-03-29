@@ -3,6 +3,7 @@ import { useState } from "react";
 import Link from "next/link";
 import { FaUser, FaEnvelope, FaLock, FaRegEye, FaRegEyeSlash } from "react-icons/fa";
 import styles from "./register.module.css";
+import NavbarAdmin from "@/app/components/NavbarAdmin";
 
 export default function RegisterPage() {
   const [firstname, setFirstname] = useState("");
@@ -16,7 +17,7 @@ export default function RegisterPage() {
     e.preventDefault();
     
     try {
-      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/register/candidat`, {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/register/admin`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ firstname, lastname, username, email, password }),
@@ -25,17 +26,20 @@ export default function RegisterPage() {
       const data = await response.json();
   
       if (response.ok) {
-        window.location.href = "/login";
+        window.location.href = "/login/Admin";
       } else {
         alert(`Erreur : ${data.message}`);
       }
     } catch (error) {
+      console.error(error);
       alert("Une erreur s'est produite lors de l'inscription.");
     }
   };
   
 
   return (
+    <>
+    <NavbarAdmin/>
     <div className={styles.container}>
       <div className={styles.card}>
         <h2 className={styles.title}>Sign Up</h2>
@@ -124,11 +128,11 @@ export default function RegisterPage() {
         {/* Link to Sign In page */}
         <p className={styles.signInText}>
           Already have an account?{" "}
-          <Link href="/login" className={styles.signInLink}>
+          <Link href="/login/Admin" className={styles.signInLink}>
             Sign In
           </Link>
         </p>
       </div>
     </div>
-  );
+    </>);
 }

@@ -1,17 +1,21 @@
-"use client";
+"use client";   //ce fichier doit être exécuté côté client 
 import { createContext, useContext, useEffect, useState } from "react";
 import { jwtDecode } from "jwt-decode";
 import { useRouter } from "next/navigation";
 
+//Définition du Contexte d'Authentification qui va stocker l'état d'authentification globalement dans l'application.
 interface AuthContextType {
   isLoggedIn: boolean;
   userRoles: string[];
   login: (token: string) => void;
-  logout: () => Promise<void>; // ✅ logout est maintenant une fonction asynchrone
+  logoutAdmin: () => Promise<void>; 
+  logoutCandidat: () => Promise<void>; 
+
 }
 
 const AuthContext = createContext<AuthContextType | null>(null);
 
+//Le provider qui va envelopper toute l'application et fournir les données d'authentification.
 export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [userRoles, setUserRoles] = useState<string[]>([]);
@@ -38,6 +42,7 @@ const checkLoginStatus = () => {
     }
   };
 
+  //Exécution au chargement de la page
   useEffect(() => {
     // Vérifie l'état de la connexion à chaque changement du sessionStorage
     checkLoginStatus();
@@ -49,40 +54,82 @@ const intervalId = setInterval(checkLoginStatus, 500);
 
   const login = (token: string) => {
     sessionStorage.setItem("access_token", token);
-    setIsLoggedIn(true); // ✅ Force la mise à jour immédiate
+    setIsLoggedIn(true);
     setUserRoles(getUserRoles(token));
     console.log("Utilisateur connecté :", {
         isLoggedIn: true,
         userRoles: getUserRoles(token),
     });
 
-    window.dispatchEvent(new Event("authChange"));
 };
 
-  const logout = async () => {
-    try {
-      const response = await fetch("http://localhost:4000/logout", {
-        method: "POST",
-        credentials: "include", // ✅ Important pour envoyer le cookie
-      });
+//Logout Admin
+const logoutAdmin = async () => {
+  try {
+    console.log("Début de la fonction logout");
 
-      if (response.ok) {
-        sessionStorage.removeItem("access_token"); // ✅ Supprime le token du sessionStorage
-        setIsLoggedIn(false);
-        setUserRoles([]);
-        window.dispatchEvent(new Event("authChange"));
+    // ✅ Stocker le rôle AVANT de réinitialiser `userRoles`
+    const role = userRoles.length > 0 ? userRoles[0] : null;
+    console.log("Rôle actuel avant logout :", role);
 
-        router.push("/login"); // ✅ Redirection propre avec Next.js
-      } else {
-        console.error("Erreur de déconnexion");
-      }
-    } catch (error) {
-      console.error("Erreur lors de la déconnexion", error);
+    // Appel à l'API de déconnexion
+    const response = await fetch("http://localhost:4000/logout", {
+      method: "POST",
+      credentials: "include",
+    });
+
+    if (response.ok) {
+      sessionStorage.removeItem("access_token");
+
+      // ✅ Réinitialisation après l'utilisation du rôle
+      setIsLoggedIn(false);
+      setUserRoles([]);
+
+
+        router.push("/login/Admin");
+      
     }
-  };
+  } catch (error) {
+    console.error("Erreur lors de la déconnexion", error);
+  }
+};
 
+//Logout Candidat
+const logoutCandidat = async () => {
+  try {
+    console.log("Début de la fonction logout");
+
+    // ✅ Stocker le rôle AVANT de réinitialiser `userRoles`
+    const role = userRoles.length > 0 ? userRoles[0] : null;
+    console.log("Rôle actuel avant logout :", role);
+
+    // Appel à l'API de déconnexion
+    const response = await fetch("http://localhost:4000/logout", {
+      method: "POST",
+      credentials: "include",
+    });
+
+    if (response.ok) {
+      sessionStorage.removeItem("access_token");
+
+      // ✅ Réinitialisation après l'utilisation du rôle
+      setIsLoggedIn(false);
+      setUserRoles([]);
+
+
+        router.push("/login/Candidat");
+      
+    }
+  } catch (error) {
+    console.error("Erreur lors de la déconnexion", error);
+  }
+};
+
+
+
+  // Fournir le contexte aux composants enfants(AuthContext.Provider partage les données d'authentification avec l'application)
  return (
-    <AuthContext.Provider value={{ isLoggedIn, userRoles, login, logout }}>
+    <AuthContext.Provider value={{ isLoggedIn, userRoles, login, logoutAdmin, logoutCandidat }}>
       {children}
     </AuthContext.Provider>
   );

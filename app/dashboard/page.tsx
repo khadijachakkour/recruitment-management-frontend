@@ -2,13 +2,15 @@
 import {useState } from "react";
 import styles from "./dashboard.module.css"; // Style CSS
 import Link from "next/link";
+import NavbarCandidat from "../components/NavbarCandidat";
 
 export default function Dashboard() {
   const [applications] = useState([]);
   
   
-
   return (
+    <>
+    <NavbarCandidat/>
     <div className={styles.container}>
       <div className={styles.card}>
         <p className={styles.subtitle}>Here{" ' "}s an overview of your application status and opportunities</p>
@@ -50,5 +52,6 @@ export default function Dashboard() {
         </div>
       </div>
     </div>
-  );
+    </>
+    );
 }

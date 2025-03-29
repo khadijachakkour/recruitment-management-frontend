@@ -1,0 +1,116 @@
+/* Conteneur principal */
+.container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 90vh;
+    background-color: white;
+  }
+  
+  /* Carte contenant le formulaire */
+  .card {
+    width: 450px;
+    padding: 3rem;
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
+    text-align: center;
+  }
+  
+  /* Titre et sous-titre */
+  .title {
+    font-size: 24px;
+    font-weight: bold;
+    margin-bottom: 0.5rem;
+  }
+  
+  .subtitle {
+    color: #6c757d;
+    margin-bottom: 1.5rem;
+  }
+  
+  /* Formulaire */
+  .form {
+    display: flex;
+    flex-direction: column;
+  }
+  
+  /* Champs de saisie */
+  .inputGroup {
+    position: relative;
+    display: flex;
+    align-items: center;
+    margin-bottom: 1rem;
+  }
+  
+  .input {
+    width: 100%;
+    padding: 10px 10px 10px 40px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    outline: none;
+    transition: border-color 0.3s;
+  }
+  
+  .input:focus {
+    border-color: #007bff;
+  }
+  
+  .inputIcon {
+    position: absolute;
+    left: 10px;
+    color: #6c757d;
+  }
+  
+  /* Bouton œil pour mot de passe */
+  .eyeButton {
+    position: absolute;
+    right: 10px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: #6c757d;
+    font-size: 18px;
+  }
+  
+  /* Bouton Sign Up */
+  .signUpButton {
+    width: 100%;
+    background: #007bff;
+    color: white;
+    padding: 10px;
+    border: none;
+    border-radius: 5px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background 0.3s;
+  }
+  
+  .signUpButton:hover {
+    background: #0056b3;
+  }
+  
+  /* Lien Sign In */
+  .signInText {
+    margin-top: 1rem;
+    font-size: 14px;
+  }
+  
+  .signInLink {
+    color: #007bff;
+    text-decoration: none;
+    font-weight: bold;
+  }
+  
+  .signInLink:hover {
+    text-decoration: underline;
+  }
+  
+  .welcomeMessage {
+    font-size: 18px;
+    font-weight: 500;
+    color: #007bff;
+    margin-bottom: 2rem;
+    line-height: 1.5;
+  }
+  

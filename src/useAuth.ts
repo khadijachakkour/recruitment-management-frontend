@@ -34,7 +34,7 @@ api.interceptors.response.use(
       } catch (refreshError) {
         console.error("Échec du rafraîchissement du token:", refreshError);
         sessionStorage.removeItem("access_token"); // ✅ Supprime le token
-        window.location.replace("/login"); // ✅ Redirige vers la page de connexion
+        //window.location.replace("/login"); // ✅ Redirige vers la page de connexion
         return Promise.reject(refreshError);
       }
     }

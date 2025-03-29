@@ -1,0 +1,101 @@
+/* styles/navbar.css */
+
+/* Navbar container */
+.navbar {
+    background-color: white;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    padding: 16px 24px;
+    position: sticky;
+    top: 0;
+    z-index: 50;
+}
+
+/* Logo styling */
+.navbar__logo {
+    font-size: 2rem;
+    font-weight: 600;
+    color: #007bff;
+    cursor: pointer;
+    transition: transform 0.3s;
+}
+
+.navbar__logo:hover {
+    transform: scale(1.1);
+}
+
+/* Main nav links */
+.navbar__nav {
+    display: flex;
+    gap: 24px;
+    font-weight: 500;
+    color: #4a4a4a;
+    list-style: none;
+}
+
+.navbar__nav-item {
+    transition: color 0.3s ease;
+}
+
+.navbar__nav-item:hover {
+    color: #007bff;
+}
+
+/* Container for the buttons */
+.navbar__button-container {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
+
+/* Sign In button styling */
+.navbar__connexion {
+    background-color: #0056b3;  /* Blue background */
+    color: white;
+    padding: 8px 24px;
+    font-weight: 600;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.3s, color 0.3s;
+}
+
+.navbar__connexion:hover {
+    background-color: #003d7a;  /* Darker blue on hover */
+}
+
+/* Employers / Post a Job button styling */
+.navbar__entreprises {
+    color: #0056b3;  /* Blue text color */
+    padding: 8px 24px;
+    font-weight: 600;
+    border: none;
+    background-color: transparent;  /* No background */
+    cursor: pointer;
+    transition: border-bottom 0.3s, color 0.3s;
+    text-decoration: none;
+}
+
+/* Hover effect for Employers button */
+.navbar__entreprises:hover {
+    color: #003d7a;  /* Darker blue on hover */
+    border-bottom: 2px solid #0056b3;  /* Blue underline */
+}
+
+/* Profile icon link */
+.navbar__icon-link {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 8px;
+}
+
+/* Profile icon styling */
+.navbar__profile-icon {
+    color: #333; /* Icon color */
+    cursor: pointer;
+    transition: color 0.3s ease;
+}
+
+.navbar__profile-icon:hover {
+    color: #007bff; /* Hover color */
+}
