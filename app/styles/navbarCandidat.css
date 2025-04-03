@@ -1,13 +1,14 @@
 /* styles/navbar.css */
 
-/* Navbar container */
 .navbar {
-  background-color: white;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
   padding: 16px 24px;
-  position: sticky;
+  position: fixed; /* Pour fixer la navbar en haut */
   top: 0;
-  z-index: 50;
+  left: 0;
+  width: 100%;
+  z-index: 1000; /* Pour s'assurer qu'elle reste au-dessus des autres éléments */
+  background-color: white; /* Ajoutez un fond si nécessaire */
 }
 
 /* Logo styling */

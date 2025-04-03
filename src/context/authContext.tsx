@@ -31,7 +31,6 @@ const checkLoginStatus = () => {
       setUserRoles([]);
     }  };
 
-    // Fonction pour récupérer les rôles depuis le token
   const getUserRoles = (token: string): string[] => {
     try {
       const decodedToken: any = jwtDecode(token);
@@ -42,16 +41,12 @@ const checkLoginStatus = () => {
     }
   };
 
-  //Exécution au chargement de la page
   useEffect(() => {
-    // Vérifie l'état de la connexion à chaque changement du sessionStorage
     checkLoginStatus();
 const intervalId = setInterval(checkLoginStatus, 500);
     return () => clearInterval(intervalId);
   }, []);
     
-
-
   const login = (token: string) => {
     sessionStorage.setItem("access_token", token);
     setIsLoggedIn(true);
@@ -81,10 +76,8 @@ const logoutAdmin = async () => {
     if (response.ok) {
       sessionStorage.removeItem("access_token");
 
-      // ✅ Réinitialisation après l'utilisation du rôle
       setIsLoggedIn(false);
       setUserRoles([]);
-
 
         router.push("/login/Admin");
       
@@ -124,19 +117,12 @@ const logoutCandidat = async () => {
     console.error("Erreur lors de la déconnexion", error);
   }
 };
-
-
-
-  // Fournir le contexte aux composants enfants(AuthContext.Provider partage les données d'authentification avec l'application)
  return (
     <AuthContext.Provider value={{ isLoggedIn, userRoles, login, logoutAdmin, logoutCandidat }}>
       {children}
     </AuthContext.Provider>
   );
 };
-
-
-
 export const useAuth = () => {
   const context = useContext(AuthContext);
   if (!context) {

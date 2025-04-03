@@ -1,14 +1,19 @@
 /* styles/navbar.css */
 
-/* Navbar container */
 .navbar {
-    background-color: white;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-    padding: 16px 24px;
-    position: sticky;
+    position: fixed;
     top: 0;
-    z-index: 50;
+    left: 0;
+    width: 100%;
+    background-color: white;
+    z-index: 1000;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
 }
+
+.navbar + * {
+    margin-top: 100px; /* Ajuste cet espace selon la hauteur de la navbar */
+}
+
 
 /* Logo styling */
 .navbar__logo {
