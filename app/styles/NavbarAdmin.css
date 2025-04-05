@@ -1,25 +1,24 @@
-/* styles/navbar.css */
-
+/* Global Navbar Styles */
 .navbar {
     position: fixed;
     top: 0;
     left: 0;
     width: 100%;
-    background-color: white;
+    background-color: white; /* Fond blanc */
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1); /* Ombre subtile */
     z-index: 1000;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    padding: 10px 20px;
 }
 
 .navbar + * {
-    margin-top: 100px; /* Ajuste cet espace selon la hauteur de la navbar */
+    margin-top: 70px; 
 }
-
 
 /* Logo styling */
 .navbar__logo {
     font-size: 2rem;
     font-weight: 600;
-    color: #007bff;
+    color: #007bff; /* Bleu clair pour le logo */
     cursor: pointer;
     transition: transform 0.3s;
 }
@@ -28,62 +27,74 @@
     transform: scale(1.1);
 }
 
-/* Main nav links */
 .navbar__nav {
     display: flex;
     gap: 24px;
     font-weight: 500;
-    color: #4a4a4a;
     list-style: none;
 }
 
 .navbar__nav-item {
+    color: #4a4a4a; /* Gris foncé pour le texte */
+    text-decoration: none;
     transition: color 0.3s ease;
 }
 
 .navbar__nav-item:hover {
-    color: #007bff;
+    color: #007bff; /* Bleu clair au survol */
 }
 
-/* Container for the buttons */
+/* Button container */
 .navbar__button-container {
     display: flex;
     align-items: center;
+    justify-content: space-between;
+}
+
+/* Special navbar for buttons */
+.navbar__nav-container {
+    display: flex;
+    justify-content: space-between;
+    flex-grow: 1; /* Utilise tout l'espace disponible */
+}
+
+/* Buttons */
+.navbar__buttons {
+    display: flex;
     gap: 16px;
 }
 
-/* Sign In button styling */
-.navbar__connexion {
-    background-color: #0056b3;  /* Blue background */
-    color: white;
+.navbar__connexion,
+.navbar__entreprises {
     padding: 8px 24px;
     font-weight: 600;
-    border: none;
     border-radius: 4px;
     cursor: pointer;
     transition: background-color 0.3s, color 0.3s;
 }
 
-.navbar__connexion:hover {
-    background-color: #003d7a;  /* Darker blue on hover */
-}
-
-/* Employers / Post a Job button styling */
-.navbar__entreprises {
-    color: #0056b3;  /* Blue text color */
-    padding: 8px 24px;
-    font-weight: 600;
+/* Sign In button */
+.navbar__connexion {
+    background-color: #007bff;  /* Bleu clair */
+    color: white;
     border: none;
-    background-color: transparent;  /* No background */
-    cursor: pointer;
-    transition: border-bottom 0.3s, color 0.3s;
-    text-decoration: none;
 }
 
-/* Hover effect for Employers button */
+.navbar__connexion:hover {
+    background-color: #0056b3; /* Bleu foncé au survol */
+}
+
+/* Employers / Post a Job button */
+.navbar__entreprises {
+    color: #007bff;  /* Bleu clair pour le texte */
+    background-color: transparent;  /* Pas de fond */
+    border: 2px solid #007bff;  /* Bordure bleue */
+}
+
 .navbar__entreprises:hover {
-    color: #003d7a;  /* Darker blue on hover */
-    border-bottom: 2px solid #0056b3;  /* Blue underline */
+    color: white;  /* Changer la couleur du texte */
+    background-color: #007bff;  /* Fond bleu */
+    border: 2px solid #0056b3; /* Bordure bleue foncée */
 }
 
 /* Profile icon link */
@@ -104,3 +115,48 @@
 .navbar__profile-icon:hover {
     color: #007bff; /* Hover color */
 }
+.navbar__logout-btn {
+    display: flex;
+    align-items: center;
+    background-color: transparent;
+    border: none;
+    cursor: pointer;
+    font-size: 16px;
+    font-weight: 600;
+    color: #4a4a4a;
+    transition: color 0.3s ease;
+    padding: 10px;
+    border-radius: 4px;
+}
+
+.navbar__logout-btn:hover {
+    color: #007bff;  /* Changement de couleur au survol */
+}
+
+.navbar__logout-icon {
+    margin-right: 8px;
+    font-size: 18px; /* Taille de l'icône */
+}
+/* Mobile responsiveness */
+@media (max-width: 768px) {
+    .navbar__nav {
+        display: none;  /* Masquer les liens principaux sur mobile */
+    }
+
+    .navbar__nav-container {
+        flex-direction: column;
+        gap: 16px;
+    }
+
+    .navbar__buttons {
+        flex-direction: column;
+        margin-top: 16px;
+    }
+
+    .navbar__connexion,
+    .navbar__entreprises {
+        width: 100%; /* Prendre toute la largeur sur mobile */
+        padding: 10px;
+    }
+}
+ 

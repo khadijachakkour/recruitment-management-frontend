@@ -1,17 +1,16 @@
-/* styles/navbar.css */
+/* navbarCandidat.css */
 
 .navbar {
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
   padding: 16px 24px;
-  position: fixed; /* Pour fixer la navbar en haut */
+  position: fixed;
   top: 0;
   left: 0;
   width: 100%;
-  z-index: 1000; /* Pour s'assurer qu'elle reste au-dessus des autres éléments */
-  background-color: white; /* Ajoutez un fond si nécessaire */
+  z-index: 1000;
+  background-color: white;
 }
 
-/* Logo styling */
 .navbar__logo {
   font-size: 2rem;
   font-weight: 600;
@@ -24,7 +23,6 @@
   transform: scale(1.1);
 }
 
-/* Main nav links */
 .navbar__nav {
   display: flex;
   gap: 24px;
@@ -34,6 +32,8 @@
 }
 
 .navbar__nav-item {
+  text-decoration: none;
+  color: inherit;
   transition: color 0.3s ease;
 }
 
@@ -41,16 +41,14 @@
   color: #007bff;
 }
 
-/* Container for the buttons */
 .navbar__button-container {
   display: flex;
   align-items: center;
   gap: 16px;
 }
 
-/* Sign In button styling */
 .navbar__connexion {
-  background-color: #0056b3;  /* Blue background */
+  background-color: #0056b3;
   color: white;
   padding: 8px 24px;
   font-weight: 600;
@@ -58,31 +56,29 @@
   border-radius: 4px;
   cursor: pointer;
   transition: background-color 0.3s, color 0.3s;
+  text-decoration: none;
 }
 
 .navbar__connexion:hover {
-  background-color: #003d7a;  /* Darker blue on hover */
+  background-color: #003d7a;
 }
 
-/* Employers / Post a Job button styling */
 .navbar__entreprises {
-  color: #0056b3;  /* Blue text color */
+  color: #0056b3;
   padding: 8px 24px;
   font-weight: 600;
   border: none;
-  background-color: transparent;  /* No background */
+  background-color: transparent;
   cursor: pointer;
   transition: border-bottom 0.3s, color 0.3s;
   text-decoration: none;
 }
 
-/* Hover effect for Employers button */
 .navbar__entreprises:hover {
-  color: #003d7a;  /* Darker blue on hover */
-  border-bottom: 2px solid #0056b3;  /* Blue underline */
+  color: #003d7a;
+  border-bottom: 2px solid #0056b3;
 }
 
-/* Profile icon link */
 .navbar__icon-link {
   display: flex;
   align-items: center;
@@ -90,13 +86,23 @@
   padding: 8px;
 }
 
-/* Profile icon styling */
 .navbar__profile-icon {
-  color: #333; /* Icon color */
+  color: #333;
   cursor: pointer;
   transition: color 0.3s ease;
 }
 
 .navbar__profile-icon:hover {
-  color: #007bff; /* Hover color */
+  color: #007bff;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .navbar__nav {
+    display: none;
+  }
+
+  .navbar__button-container {
+    display: none;
+  }
 }

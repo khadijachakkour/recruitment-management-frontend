@@ -1,5 +1,7 @@
 "use client";
 import NavbarAdmin from "@/app/components/NavbarAdmin";
+import axios from "axios";
+import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { FaBuilding, FaMapMarkerAlt, FaHistory, FaUsersCog, FaEnvelope, FaCheckCircle, FaIndustry, FaHome, FaCalendar, FaUsers, FaPhone, FaGlobe, FaLink, FaFileAlt, FaFile } from "react-icons/fa";
 
@@ -13,6 +15,7 @@ const steps = [
 
 export default function CreateCompanyProfile() {
   const [currentStep, setCurrentStep] = useState(1);
+  const router = useRouter();
   const [formData, setFormData] = useState({
     companyName: "",
     companyLogo: null as File | null, // Définition explicite du type
@@ -33,6 +36,9 @@ export default function CreateCompanyProfile() {
     website: "",
     socialLinks: "",
   });
+
+  const [error, setError] = useState('');
+  const [success, setSuccess] = useState('');
 
   const nextStep = () => {
     if (currentStep < steps.length) setCurrentStep(currentStep + 1);
@@ -55,11 +61,28 @@ export default function CreateCompanyProfile() {
     if (files && files.length > 0) {
       setFormData((prev) => ({
         ...prev,
-        companyLogo: files[0], // Ici, files[0] est un objet File
+        companyLogo: files[0], 
       }));
     }
   };
+const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    try {
+      setError('');
+      setSuccess('');
 
+      const response = await axios.post('http://localhost:5000/api/companies/createCompany', formData, {
+        headers: {
+          Authorization: `Bearer ${sessionStorage.getItem('access_token')}`,
+        },
+      });
+
+      setSuccess('Entreprise créée avec succès !');
+      router.push('/Admin/Dashboard'); 
+    } catch (err: any) {
+      setError(err.response?.data?.message || 'Erreur lors de la création');
+    }
+  };
   return (
     <>
       <NavbarAdmin />
@@ -106,7 +129,10 @@ export default function CreateCompanyProfile() {
         </div>
 
         {/* Contenu du formulaire */}
-        <div className="w-full max-w-2xl bg-white p-8 rounded-lg shadow-lg">
+        <form
+  onSubmit={handleSubmit}
+  className="w-full max-w-2xl bg-white p-8 rounded-lg shadow-lg"
+>
           {currentStep === 1 && (
             <div>
               <h1 className="text-3xl font-bold text-center mb-4 relative">Tell us about your company</h1>
@@ -380,15 +406,14 @@ export default function CreateCompanyProfile() {
               </button>
             ) : (
               <button
-                type="submit"
-                className="px-6 py-2 bg-green-500 text-white rounded"
-                onClick={() => alert("Form Submitted!")}
-              >
-                Submit
-              </button>
+  type="submit"
+  className="px-6 py-2 bg-green-500 text-white rounded"
+>
+  Submit
+</button>
             )}
           </div>
-        </div>
+        </form>
       </div>
     </>
   );

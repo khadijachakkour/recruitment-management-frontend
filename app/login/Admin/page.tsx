@@ -24,8 +24,22 @@ export default function LoginPage() {
         const decodedToken: any = jwtDecode(accessToken);
         const roles = decodedToken?.realm_access?.roles || [];
 
+        // Vérification du rôle Admin
         if (roles.includes("Admin")) {
-          router.push("/Admin/Create-profile");
+          // Vérification de l'existence du profil d'entreprise
+          const response = await fetch("http://localhost:5000/api/companies/profile", {
+            headers: {
+              Authorization: `Bearer ${accessToken}`,
+            },
+          });
+
+          if (response.status === 404) {
+            // Si aucun profil n'est trouvé, redirection vers la page de création
+            router.push("/Admin/Create-profile");
+          } else {
+            // Si un profil existe, redirection vers le dashboard
+            router.push("/Admin/Dashboard");
+          }
         } else {
           setErrorMessage("Vous n'êtes pas autorisé à accéder à cette page.");
         }
