@@ -16,10 +16,10 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
 
           {/* Contenu principal qui s'étend pour remplir l'espace disponible */}
           <main className="flex-grow pt-16">{children}</main>
-
+          </AuthProvider>
           {/* Footer fixé en bas de la page */}
           <Footer />
-        </AuthProvider>
+        
       </body>
     </html>
   );

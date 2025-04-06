@@ -160,3 +160,18 @@
     }
 }
  
+/* Ajouter à ton fichier CSS (par exemple NavbarAdmin.css) */
+
+button {
+    transition: all 0.3s ease;
+  }
+  
+  button:hover {
+    transform: scale(1.1);
+  }
+  
+  button:focus {
+    outline: none;
+    box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.5); /* Bleu LinkedIn */
+  }
+  

@@ -15,52 +15,54 @@ const Profile = () => {
     education_level: "",
     skills: "",
     cv_url: "",
+    avatar_url: "",
   });
 
   const [cvFile, setCvFile] = useState<File | null>(null);
   const [cvPreviewUrl, setCvPreviewUrl] = useState<string | null>(null);
+  const [avatarFile, setAvatarFile] = useState<File | null>(null);
+  const [avatarPreview, setAvatarPreview] = useState<string | null>(null);
+
   const { isLoggedIn, userRoles } = useAuth();
   const router = useRouter();
-
   const [dataLoaded, setDataLoaded] = useState(false);
 
-useEffect(() => {
-  if (!isLoggedIn) {
-    router.push("/login/Candidat");
-    return;
-  }
-
-  if (!userRoles.includes("Candidat")) {
-    router.push("/unauthorized");
-    return;
-  }
-
-  const fetchProfile = async () => {
-    try {
-      const data = await getProfile();
-      setProfile({
-        phone_number: data.phone_number || "",
-        address: data.address || "",
-        experience: data.experience || "",
-        education_level: data.education_level || "",
-        skills: data.skills || "",
-        cv_url: data.cv_url || "",
-      });
-      setDataLoaded(true);
-    } catch (error) {
-      console.error("Error while loading profile:", error);
-      toast.error("Failed to load profile.");
+  useEffect(() => {
+    if (!isLoggedIn) {
+      router.push("/login/Candidat");
+      return;
     }
-  };
 
-  if (!dataLoaded && isLoggedIn && userRoles.includes("Candidat")) {
-    fetchProfile();
-  }
+    if (!userRoles.includes("Candidat")) {
+      router.push("/unauthorized");
+      return;
+    }
 
-  console.log("CV URL:", profile.cv_url); 
+    const fetchProfile = async () => {
+      try {
+        const data = await getProfile();
+        setProfile({
+          phone_number: data.phone_number || "",
+          address: data.address || "",
+          experience: data.experience || "",
+          education_level: data.education_level || "",
+          skills: data.skills || "",
+          cv_url: data.cv_url || "",
+          avatar_url: data.avatar_url || "",
+        });
 
-}, [isLoggedIn, userRoles, dataLoaded]);
+        setAvatarPreview(data.avatar_url || null);
+        setDataLoaded(true);
+      } catch (error) {
+        console.error("Error while loading profile:", error);
+        toast.error("Échec du chargement du profil.");
+      }
+    };
 
+    if (!dataLoaded && isLoggedIn && userRoles.includes("Candidat")) {
+      fetchProfile();
+    }
+  }, [isLoggedIn, userRoles, dataLoaded]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     setProfile({ ...profile, [e.target.name]: e.target.value });
@@ -68,172 +70,152 @@ useEffect(() => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-  
+
     const formData = new FormData();
     formData.append("phone_number", profile.phone_number);
     formData.append("address", profile.address);
     formData.append("experience", profile.experience);
     formData.append("education_level", profile.education_level);
     formData.append("skills", profile.skills);
-  
-    if (cvFile) {
-      formData.append("cv", cvFile);
-    }
-  
+
+    if (cvFile) formData.append("cv", cvFile);
+    if (avatarFile) formData.append("avatar", avatarFile);
+
     // Rediriger immédiatement vers le dashboard
     router.push("/dashboard");
-  
     try {
-      // Télécharger et mettre à jour le profil en arrière-plan
       await updateProfileAndCv(formData);
     } catch (error) {
-      console.error("Error updating profile and CV:", error);
-      toast.error("Failed to update profile and CV.");
+      console.error("Erreur mise à jour:", error);
+      toast.error("Échec de la mise à jour.");
     }
   };
-  
 
   return (
     <>
       <NavbarCandidat />
-      <div className="max-w-2xl mx-auto p-6 bg-white shadow-md rounded-lg">
-        <h2 className="text-2xl font-bold mb-4">My Profile</h2>
-        <form onSubmit={handleSubmit}>
-          <div className="mb-4">
-            <label className="block font-medium">Phone Number</label>
-            <input
-              type="tel"
-              name="phone_number"
-              value={profile.phone_number}
-              onChange={handleChange}
-              className="w-full border p-2 rounded"
-            />
-          </div>
+      <div className="max-w-4xl mx-auto mt-6 p-8 bg-white rounded-2xl shadow-lg">
+        <h2 className="text-3xl font-bold text-center text-gray-800 mb-8">Modifier mon profil</h2>
+        <form onSubmit={handleSubmit} className="space-y-8">
 
-          <div className="mb-4">
-            <label className="block font-medium">Address</label>
+          {/* Avatar */}
+          <section className="flex flex-col items-center space-y-4">
+            <div className="w-32 h-32 rounded-full overflow-hidden border-2 border-gray-300">
+              <img
+                src={avatarPreview || "/images/default-avatar.png"}
+                alt="Avatar"
+                className="object-cover w-full h-full"
+              />
+            </div>
             <input
-              type="text"
-              name="address"
-              value={profile.address}
-              onChange={handleChange}
-              className="w-full border p-2 rounded"
+              type="file"
+              accept="image/*"
+              onChange={(e) => {
+                const file = e.target.files?.[0] || null;
+                setAvatarFile(file);
+                if (file) {
+                  setAvatarPreview(URL.createObjectURL(file));
+                }
+              }}
+              className="text-sm"
             />
-          </div>
+          </section>
 
-          <div className="mb-4">
-            <label className="block font-medium">Experience</label>
+          {/* Infos personnelles */}
+          <section>
+            <h3 className="text-xl font-semibold mb-3">Informations personnelles</h3>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <input
+                type="tel"
+                name="phone_number"
+                value={profile.phone_number}
+                onChange={handleChange}
+                className="w-full border p-3 rounded-md"
+                placeholder="Téléphone"
+              />
+              <input
+                type="text"
+                name="address"
+                value={profile.address}
+                onChange={handleChange}
+                className="w-full border p-3 rounded-md"
+                placeholder="Adresse"
+              />
+            </div>
+          </section>
+
+          {/* Parcours */}
+          <section>
+            <h3 className="text-xl font-semibold mb-3">Parcours</h3>
             <textarea
               name="experience"
               value={profile.experience}
               onChange={handleChange}
-              className="w-full border p-2 rounded"
-              rows={3}
+              rows={4}
+              className="w-full border p-3 rounded-md mb-4"
+              placeholder="Décrivez vos expériences professionnelles..."
             />
-          </div>
-
-          <div className="mb-4">
-            <label className="block font-medium">Education Level</label>
             <input
               type="text"
               name="education_level"
               value={profile.education_level}
               onChange={handleChange}
-              className="w-full border p-2 rounded"
+              className="w-full border p-3 rounded-md"
+              placeholder="Niveau d'éducation (ex : Bac+5)"
             />
-          </div>
+          </section>
 
-          <div className="mb-4">
-            <label className="block font-medium">Skills</label>
+          {/* Compétences */}
+          <section>
+            <h3 className="text-xl font-semibold mb-3">Compétences</h3>
             <textarea
               name="skills"
               value={profile.skills}
               onChange={handleChange}
-              className="w-full border p-2 rounded"
               rows={2}
-              placeholder="E.g., JavaScript, React, SQL..."
+              className="w-full border p-3 rounded-md"
+              placeholder="React, Node.js, SQL, etc."
             />
+          </section>
+
+          {/* CV */}
+          <section>
+            <h3 className="text-xl font-semibold mb-3">Curriculum Vitae</h3>
+            <input
+              type="file"
+              accept=".pdf,.doc,.docx"
+              onChange={(e) => {
+                const file = e.target.files?.[0] || null;
+                setCvFile(file);
+                setCvPreviewUrl(file ? URL.createObjectURL(file) : null);
+              }}
+              className="w-full border p-2 rounded-md"
+            />
+
+            {cvPreviewUrl && (
+              <iframe
+                src={cvPreviewUrl}
+                className="mt-4 w-full h-96 border rounded-md"
+              />
+            )}
+
+            {!cvPreviewUrl && profile.cv_url && (
+              <iframe
+                src={profile.cv_url}
+                className="mt-4 w-full h-96 border rounded-md"
+              />
+            )}
+          </section>
+
+          {/* Bouton */}
+          <div className="text-center">
+            <button
+              type="submit"
+              className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg transition"
+            >
+              Enregistrer les modifications
+            </button>
           </div>
-
-          <div className="mb-4">
-  <label className="block font-medium">Upload CV</label>
-  <input
-    type="file"
-    accept=".pdf,.doc,.docx"
-    onChange={(e) => {
-      const file = e.target.files?.[0] || null;
-      setCvFile(file);
-
-      if (file) {
-        const url = URL.createObjectURL(file);
-        setCvPreviewUrl(url);
-      } else {
-        setCvPreviewUrl(null);
-      }
-    }}
-    className="w-full border p-2 rounded"
-  />
-</div>
-
-{/* Aperçu du nouveau fichier sélectionné */}
-{cvPreviewUrl && (
-  <div className="mt-4">
-    <label className="block font-medium mb-2">CV sélectionné :</label>
-
-    {cvFile?.type === "application/pdf" ? (
-      <iframe
-        src={cvPreviewUrl}
-        title="CV Preview"
-        className="w-full h-96 border rounded"
-      ></iframe>
-    ) : (
-      <div className="bg-gray-100 p-4 rounded">
-        <p className="text-gray-700 font-semibold mb-2">Nom du fichier : {cvFile?.name}</p>
-        <p className="text-sm text-gray-600 mb-2">Aperçu indisponible (format non PDF)</p>
-        <a
-          href={cvPreviewUrl}
-          download={cvFile?.name}
-          className="text-blue-500 hover:underline"
-        >
-          Télécharger le fichier
-        </a>
-      </div>
-    )}
-
-    <button
-      type="button"
-      className="mt-2 text-red-500 hover:underline"
-      onClick={() => {
-        setCvFile(null);
-        setCvPreviewUrl(null);
-      }}
-    >
-      Supprimer le CV sélectionné
-    </button>
-  </div>
-)}
-
-{/* CV existant affiché si aucun fichier nouveau sélectionné */}
-{!cvPreviewUrl && profile.cv_url && (
-  <div className="mt-4">
-    <label className="block font-medium mb-2">CV actuel :</label>
-    <iframe
-      src={profile.cv_url}
-      title="CV actuel"
-      className="w-full h-96 border rounded"
-    ></iframe>
-    <p className="text-sm text-gray-600 mt-2">
-      Le CV actuel sera remplacé si vous en sélectionnez un nouveau.
-    </p>
-  </div>
-)}
-
-          <button
-            type="submit"
-            className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
-          >
-            Save
-          </button>
         </form>
       </div>
     </>

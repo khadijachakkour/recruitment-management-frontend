@@ -15,7 +15,6 @@ export const getProfile = async () => {
 
 
 export const updateProfileAndCv = async (formData: FormData) => {
-  // Séparer la partie profil
   const profilePart = {
     phone_number: formData.get("phone_number"),
     address: formData.get("address"),
@@ -24,7 +23,6 @@ export const updateProfileAndCv = async (formData: FormData) => {
     skills: formData.get("skills"),
   };
 
-  // Mettre à jour les infos du profil
   await axios.put(`${API_URL}/profile`, profilePart, {
     headers: {
       "Content-Type": "application/json",
@@ -32,20 +30,38 @@ export const updateProfileAndCv = async (formData: FormData) => {
     },
   });
 
-  // Si un fichier CV est inclus, on l’upload
+  const results: any = {};
+
+  // Upload CV si présent
   const cv = formData.get("cv") as File;
   if (cv) {
     const cvFormData = new FormData();
     cvFormData.append("cv", cv);
 
-    const uploadRes = await axios.post(`${API_URL}/upload-cv`, cvFormData, {
+    const res = await axios.post(`${API_URL}/upload-cv`, cvFormData, {
       headers: {
         "Content-Type": "multipart/form-data",
         ...getAuthHeaders(),
       },
     });
-    return uploadRes.data; 
+    results.cv_url = res.data.cv_url;
   }
 
-  return {};
+  // Upload avatar si présent
+  const avatar = formData.get("avatar") as File;
+  if (avatar) {
+    const avatarFormData = new FormData();
+    avatarFormData.append("avatar", avatar);
+
+    const res = await axios.post(`${API_URL}/upload-avatar`, avatarFormData, {
+      headers: {
+        "Content-Type": "multipart/form-data",
+        ...getAuthHeaders(),
+      },
+    });
+    results.avatar_url = res.data.avatar_url;
+  }
+
+  return results;
 };
+
