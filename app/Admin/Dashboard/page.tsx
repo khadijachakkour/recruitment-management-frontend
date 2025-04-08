@@ -1,11 +1,10 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 import Link from "next/link";
 import { Home, Users, Settings, Bell, Building, PlusCircle, Menu } from "lucide-react";
 import NavbarAdmin from '@/app/components/NavbarAdmin';
-import axios from "axios";
 
 const data = [
   { name: "1", value: 2 },
@@ -18,10 +17,10 @@ const data = [
 
 export default function AdminDashboard() {
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
-  const [companyProfile, setCompanyProfile] = useState(null);  // State pour stocker le profil de l'entreprise
-  const [error, setError] = useState('');
+  //const [companyProfile, setCompanyProfile] = useState(null);  // State pour stocker le profil de l'entreprise
+  //const [error, setError] = useState('');
 
-  useEffect(() => {
+  /*useEffect(() => {
     const fetchCompanyProfile = async () => {
       try {
         const response = await axios.get('/api/companies/profile', {
@@ -32,11 +31,12 @@ export default function AdminDashboard() {
         setCompanyProfile(response.data);  // On met à jour le profil de l'entreprise
       } catch (err) {
         setError("Erreur lors de la récupération du profil d'entreprise");
+        console.error(err);
       }
     };
 
     fetchCompanyProfile();
-  }, []);
+  }, []);*/
 
   // Fonction pour basculer l'état du menu
   const toggleSidebar = () => {

@@ -2,7 +2,6 @@
 import Link from "next/link";
 import "../styles/NavbarAdmin.css";
 import { useAuth } from "@/src/context/authContext";
-import { useEffect, useState } from "react";
 
 export default function NavbarAdmin() {
   const { isLoggedIn, userRoles, logoutAdmin } = useAuth();

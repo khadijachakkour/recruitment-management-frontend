@@ -2,6 +2,8 @@
 import { createContext, useContext, useEffect, useState } from "react";
 import { jwtDecode } from "jwt-decode";
 import { useRouter } from "next/navigation";
+import { DecodedToken } from "@/app/types/DecodedToken";
+
 
 //Définition du Contexte d'Authentification qui va stocker l'état d'authentification globalement dans l'application.
 interface AuthContextType {
@@ -21,19 +23,11 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const [userRoles, setUserRoles] = useState<string[]>([]);
   const router = useRouter(); // ✅ Gestion des redirections
 
-const checkLoginStatus = () => {
-    const token = sessionStorage.getItem("access_token");
-    if (token) {
-      setIsLoggedIn(true);
-      setUserRoles(getUserRoles(token));
-    } else {
-      setIsLoggedIn(false);
-      setUserRoles([]);
-    }  };
+
 
   const getUserRoles = (token: string): string[] => {
     try {
-      const decodedToken: any = jwtDecode(token);
+      const decodedToken: DecodedToken = jwtDecode(token);
       return decodedToken?.realm_access?.roles || [];
     } catch (error) {
       console.error("Erreur de décodage du token:", error);
@@ -42,6 +36,15 @@ const checkLoginStatus = () => {
   };
 
   useEffect(() => {
+    const checkLoginStatus = () => {
+      const token = sessionStorage.getItem("access_token");
+      if (token) {
+        setIsLoggedIn(true);
+        setUserRoles(getUserRoles(token));
+      } else {
+        setIsLoggedIn(false);
+        setUserRoles([]);
+      }  };
     checkLoginStatus();
 const intervalId = setInterval(checkLoginStatus, 500);
     return () => clearInterval(intervalId);

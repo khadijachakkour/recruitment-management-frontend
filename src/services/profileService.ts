@@ -1,3 +1,8 @@
+interface ProfileUpdateResults {
+  cv_url?: string;
+  avatar_url?: string;
+}
+
 import axios from "axios";
 
 const API_URL = "http://localhost:4000/api/users";
@@ -30,7 +35,7 @@ export const updateProfileAndCv = async (formData: FormData) => {
     },
   });
 
-  const results: any = {};
+  const results: ProfileUpdateResults = {};
 
   // Upload CV si présent
   const cv = formData.get("cv") as File;
@@ -65,3 +70,10 @@ export const updateProfileAndCv = async (formData: FormData) => {
   return results;
 };
 
+export const deleteAvatar = async () => {
+  return axios.delete(`${API_URL}/delete-avatar`, { headers: getAuthHeaders() });
+};
+
+export const deleteCv = async () => {
+  return axios.delete(`${API_URL}/delete-cv`, { headers: getAuthHeaders() });
+};

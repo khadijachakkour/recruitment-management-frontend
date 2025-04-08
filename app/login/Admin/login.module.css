@@ -1,108 +1,191 @@
-/* Fond dégradé moderne */
 .container {
   display: flex;
   justify-content: center;
   align-items: center;
   min-height: 100vh;
-  background: white;
+  background-color: white;
 }
 
-/* Formulaire centré avec un fond blanc */
 .card {
-  width: 450px;
-  padding: 3rem;
-  background: white;
+  background-color: #fff;
+  padding: 2.5rem;
+  width: 100%;
+  max-width: 400px;
   border-radius: 12px;
-  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.05);
   text-align: center;
 }
 
-/* Titre */
 .title {
   font-size: 24px;
-  font-weight: bold;
-  margin-bottom: 0.5rem;
+  font-weight: 600;
+  color: #111827;
 }
 
-/* Sous-titre */
 .subtitle {
-  color: #6c757d;
+  font-size: 14px;
+  color: #6b7280;
   margin-bottom: 1.5rem;
 }
 
-/* Champs de saisie */
-.inputGroup {
-  position: relative;
+.socialLoginContainer {
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.socialButton {
+  flex: 1;
   display: flex;
   align-items: center;
-  margin-bottom: 1rem;
+  justify-content: center;
+  padding: 0.5rem;
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+  background-color: #f9fafb;
+  font-size: 14px;
+  cursor: pointer;
+  transition: background-color 0.2s ease-in-out;
 }
 
-.input {
-  width: 100%;
-  padding: 10px 10px 10px 40px;
-  border: 1px solid #ddd;
-  border-radius: 5px;
-  outline: none;
-  transition: border-color 0.3s;
+.socialButton:hover {
+  background-color: #f3f4f6;
 }
 
-.input:focus {
-  border-color: #007bff;
+.socialIcon {
+  margin-right: 0.5rem;
+}
+
+.divider {
+  text-align: center;
+  font-size: 12px;
+  color: #9ca3af;
+  margin: 1.5rem 0;
+  position: relative;
+}
+
+.divider::before,
+.divider::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  width: 40%;
+  height: 1px;
+  background-color: #e5e7eb;
+}
+
+.divider::before {
+  left: 0;
+}
+
+.divider::after {
+  right: 0;
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.inputGroup {
+  position: relative;
 }
 
 .inputIcon {
   position: absolute;
-  left: 10px;
-  color: #6c757d;
+  top: 50%;
+  left: 0.75rem;
+  transform: translateY(-50%);
+  color: #9ca3af;
 }
 
-/* Bouton œil pour afficher/masquer le mot de passe */
-.eyeButton {
-  position: absolute;
-  right: 10px;
-  background: none;
-  border: none;
-  cursor: pointer;
-  color: #6c757d;
-  font-size: 18px;
-}
-
-/* Bouton de connexion */
-.signInButton {
+.input {
   width: 100%;
-  background: linear-gradient(135deg, #007bff, #0056b3); /* Dégradé */
-  color: white;
-  padding: 12px;
-  border: none;
+  padding: 0.75rem 0.75rem 0.75rem 2.5rem;
+  border: 1px solid #d1d5db;
   border-radius: 8px;
-  font-weight: bold;
-  font-size: 16px;
-  letter-spacing: 1px;
-  cursor: pointer;
-  transition: all 0.3s ease-in-out;
-  box-shadow: 0 4px 6px rgba(0, 123, 255, 0.3);
-}
-
-/* Effet au survol */
-.signInButton:hover {
-  background: linear-gradient(135deg, #0056b3, #003d80);
-  transform: translateY(-2px);
-  box-shadow: 0 6px 12px rgba(0, 85, 179, 0.4);
-}
-
-/* Lien d'inscription */
-.signUpText {
-  margin-top: 1rem;
   font-size: 14px;
 }
 
-.signUpLink {
-  color: #007bff;
-  text-decoration: none;
-  font-weight: bold;
+.eyeButton {
+  position: absolute;
+  right: 0.75rem;
+  top: 50%;
+  transform: translateY(-50%);
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  color: #6b7280;
 }
 
-.signUpLink:hover {
-  text-decoration: underline;
+.checkboxContainer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 12px;
+  color: #6b7280;
+}
+
+.signInButton {
+  background-color: #2563eb;
+  color: #fff;
+  border: none;
+  padding: 0.75rem;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  margin-top: 0.5rem;
+  transition: background-color 0.2s ease-in-out;
+}
+
+.signInButton:hover {
+  background-color: #1e40af;
+}
+
+.errorMessage {
+  color: red;
+  font-size: 12px;
+  margin-bottom: 1rem;
+}
+
+.signUpText {
+  margin-top: 1rem;
+  font-size: 12px;
+}
+
+.signUpLink {
+  color: #2563eb;
+  text-decoration: none;
+  margin-left: 0.25rem;
+}
+.google {
+  background-color: #ffffff;
+  border: 1px solid #e5e7eb;
+}
+
+.microsoft {
+  background-color: #f3f4f6;
+  border: 1px solid #d1d5db;
+}
+
+.google:hover,
+.microsoft:hover {
+  background-color: #e5e7eb;
+}
+
+.socialButton span {
+  font-weight: 500;
+  font-size: 14px;
+  color: #374151;
+}
+
+.socialButton img {
+  filter: grayscale(100%);
+  transition: filter 0.3s ease;
+}
+
+.socialButton:hover img {
+  filter: none;
 }

@@ -1,6 +1,6 @@
 "use client";
 import NavbarAdmin from "@/app/components/NavbarAdmin";
-import axios from "axios";
+import axios, { AxiosError } from "axios";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { FaBuilding, FaMapMarkerAlt, FaHistory, FaUsersCog, FaEnvelope, FaCheckCircle, FaIndustry, FaHome, FaCalendar, FaUsers, FaPhone, FaGlobe, FaLink, FaFileAlt, FaFile } from "react-icons/fa";
@@ -37,8 +37,6 @@ export default function CreateCompanyProfile() {
     socialLinks: "",
   });
 
-  const [error, setError] = useState('');
-  const [success, setSuccess] = useState('');
 
   const nextStep = () => {
     if (currentStep < steps.length) setCurrentStep(currentStep + 1);
@@ -68,19 +66,22 @@ export default function CreateCompanyProfile() {
 const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      setError('');
-      setSuccess('');
 
-      const response = await axios.post('http://localhost:5000/api/companies/createCompany', formData, {
+      await axios.post('http://localhost:5000/api/companies/createCompany', formData, {
         headers: {
           Authorization: `Bearer ${sessionStorage.getItem('access_token')}`,
         },
       });
 
-      setSuccess('Entreprise créée avec succès !');
+      console.log('Entreprise créée avec succès !');
       router.push('/Admin/Dashboard'); 
-    } catch (err: any) {
-      setError(err.response?.data?.message || 'Erreur lors de la création');
+    } catch (err) {
+      const error = err as AxiosError;
+      if (error.response) {
+        console.log('Erreur lors de la création');
+      } else {
+        console.log('Erreur inconnue');
+      }
     }
   };
   return (

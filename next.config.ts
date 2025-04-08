@@ -1,8 +1,15 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  /* config options here */
-  
+  images: {
+    remotePatterns: [
+      {
+        protocol: 'https',
+        hostname: 'res.cloudinary.com', // Le domaine autorisé
+        pathname: '/**', // Autoriser toutes les images sous ce domaine
+      },
+    ],
+  },
 };
 
 export default nextConfig;
