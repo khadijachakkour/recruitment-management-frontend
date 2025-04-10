@@ -10,7 +10,12 @@ export default function NavbarAdmin() {
   return (
     <nav className="navbar">
       <div className="container mx-auto flex justify-between items-center p-4">
+      {isLoggedIn && userRoles.includes("Admin") ? (
         <Link href="/Admin/Dashboard" className="navbar__logo">JobBox</Link>
+      ):(
+        <Link href="/" className="navbar__logo">JobBox</Link>
+
+      )}
 
         {!isLoggedIn && (
           <ul className="hidden md:flex space-x-6 navbar__nav">

@@ -18,7 +18,7 @@ export default function CreateCompanyProfile() {
   const router = useRouter();
   const [formData, setFormData] = useState({
     companyName: "",
-    companyLogo: null as File | null, // Définition explicite du type
+    companyLogo: null as File | null, 
     industry: "",
     otherIndustry: "",
     companyDescription: "",
@@ -63,27 +63,50 @@ export default function CreateCompanyProfile() {
       }));
     }
   };
-const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+  
     try {
-
-      await axios.post('http://localhost:5000/api/companies/createCompany', formData, {
+      let logoUrl = "";
+  
+      if (formData.companyLogo) {
+        const imageData = new FormData();
+        imageData.append("file", formData.companyLogo);
+        imageData.append("upload_preset", "recruitment_upload"); // Remplace par ton preset
+        imageData.append("cloud_name", "di2xqx7ny"); // Remplace par ton nom cloud
+  
+        const uploadRes = await fetch(`https://api.cloudinary.com/v1_1/di2xqx7ny/image/upload`, {
+          method: "POST",
+          body: imageData,
+        });
+  
+        const uploadData = await uploadRes.json();
+        logoUrl = uploadData.secure_url;
+      }
+  
+      const payload = {
+        ...formData,
+        companyLogo: logoUrl, // on envoie l'URL, pas le fichier
+      };
+  
+      await axios.post('http://localhost:5000/api/companies/createCompany', payload, {
         headers: {
           Authorization: `Bearer ${sessionStorage.getItem('access_token')}`,
         },
       });
-
-      console.log('Entreprise créée avec succès !');
-      router.push('/Admin/Dashboard'); 
+  
+      console.log("Entreprise créée avec succès !");
+      router.push("/Admin/Dashboard");
     } catch (err) {
       const error = err as AxiosError;
       if (error.response) {
-        console.log('Erreur lors de la création');
+        console.error("Erreur lors de la création :", error.response.data);
       } else {
-        console.log('Erreur inconnue');
+        console.error("Erreur inconnue :", error);
       }
     }
   };
+  
   return (
     <>
       <NavbarAdmin />
