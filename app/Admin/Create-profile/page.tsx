@@ -3,7 +3,7 @@ import NavbarAdmin from "@/app/components/NavbarAdmin";
 import axios, { AxiosError } from "axios";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
-import { FaBuilding, FaMapMarkerAlt, FaHistory, FaUsersCog, FaEnvelope, FaCheckCircle, FaIndustry, FaHome, FaCalendar, FaUsers, FaPhone, FaGlobe, FaLink, FaFileAlt, FaFile } from "react-icons/fa";
+import { FaBuilding, FaMapMarkerAlt, FaHistory, FaUsersCog, FaEnvelope, FaCheckCircle, FaIndustry, FaHome, FaCalendar, FaUsers, FaPhone, FaGlobe, FaLink, FaFileAlt, FaFile, FaTrashAlt, FaPlus } from "react-icons/fa";
 
 const steps = [
   { id: 1, title: "Tell us about your company", icon: <FaBuilding /> },
@@ -28,13 +28,16 @@ export default function CreateCompanyProfile() {
     yearFounded: "",
     companySize: "",
     numberOfEmployees: "",
-    departments: "",
+    departments: [] as string[],
+    newDepartment: "",
     contractTypes: "",
     requiredDocuments: "",
     contactEmail: "",
     phoneNumber: "",
     website: "",
     socialLinks: "",
+    ceo: "", // PDG
+    revenue: "", //Chiffre d'affaires
   });
 
 
@@ -45,7 +48,7 @@ export default function CreateCompanyProfile() {
   const prevStep = () => {
     if (currentStep > 1) setCurrentStep(currentStep - 1);
   };
-
+  
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
     setFormData((prev) => ({
@@ -182,24 +185,45 @@ export default function CreateCompanyProfile() {
                 />
               </div>
               <div className="relative mb-4">
-                  <FaIndustry className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500" />
-                  <select
-                    name="industry"
-                    value={formData.industry}
-                    onChange={handleChange}
-                    className="w-full pl-10 pr-3 py-2 border rounded-md"
-                    required>
-                  
-                    <option value="">Select Industry</option>
-                    <option value="Technology">Technology</option>
-                    <option value="Healthcare">Healthcare</option>
-                    <option value="Finance">Finance</option>
-                    <option value="Retail">Retail</option>
-                    <option value="Manufacturing">Manufacturing</option>
-                    <option value="Education">Education</option>
-                    <option value="Other">Other</option>
-                  </select>
-                </div>
+        <FaIndustry className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500" />
+        <select
+          name="industry"
+          value={formData.industry}
+          onChange={handleChange}
+          className="w-full pl-10 pr-3 py-2 border rounded-md"
+          required >
+      
+          <option value="">Select Industry</option>
+          <option value="Aerospace & Defense">Aerospace & Defense</option>
+          <option value="Agriculture">Agriculture</option>
+          <option value="Arts, Entertainment & Recreation">Arts, Entertainment & Recreation</option>
+          <option value="Construction, Repair & Maintenance Services">Construction, Repair & Maintenance Services</option>
+          <option value="Education">Education</option>
+          <option value="Energy, Mining & Utilities">Energy, Mining & Utilities</option>
+          <option value="Financial Services">Financial Services</option>
+          <option value="Hotels & Travel Accommodation">Hotels & Travel Accommodation</option>
+          <option value="Insurance">Insurance</option>
+          <option value="Manufacturing">Manufacturing</option>
+          <option value="Personal Consumer Services">Personal Consumer Services</option>
+          <option value="Restaurants & Food Service">Restaurants & Food Service</option>
+          <option value="Transportation & Logistics">Transportation & Logistics</option>
+          <option value="Government & Public Administration">Government & Public Administration</option>
+          <option value="Human Resources & Staffing">Human Resources & Staffing</option>
+          <option value="Legal">Legal</option>
+          <option value="Media & Communication">Media & Communication</option>
+          <option value="Pharmaceutical & Biotechnology">Pharmaceutical & Biotechnology</option>
+          <option value="Retail & Wholesale">Retail & Wholesale</option>
+          <option value="Healthcare">Healthcare</option>
+          <option value="Information Technology">Information Technology</option>
+          <option value="Electronics">Electronics</option>
+          <option value="Management & Consulting">Management & Consulting</option>
+          <option value="Nonprofit & NGO">Nonprofit & NGO</option>
+          <option value="Real Estate">Real Estate</option>
+          <option value="Telecommunications">Telecommunications</option>
+          <option value="Other">Other</option>
+        </select>
+      </div>
+
                 {/* Affichage du champ "Other Industry" si l'option "Other" est sélectionnée */}
       {formData.industry === "Other" && (
         <div className="relative mb-4">
@@ -225,6 +249,32 @@ export default function CreateCompanyProfile() {
                   required
                 />
               </div>
+
+              <div className="relative mb-4">
+              <FaUsers className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500" />
+              <input
+                type="text"
+                name="ceo"
+                value={formData.ceo}
+                placeholder="CEO / Founder"
+                className="w-full pl-10 pr-3 py-2 border rounded-md"
+                onChange={handleChange}
+                required
+              />
+            </div>
+
+            <div className="relative mb-4">
+              <FaFileAlt className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500" />
+              <input
+                type="text"
+                name="revenue"
+                value={formData.revenue}
+                placeholder="Annual Revenue"
+                className="w-full pl-10 pr-3 py-2 border rounded-md"
+                onChange={handleChange}
+                required
+              />
+            </div>
             </div>
           )}
 
@@ -267,6 +317,8 @@ export default function CreateCompanyProfile() {
                   required
                 />
               </div>
+              
+
             </div>
           )}
 
@@ -313,47 +365,91 @@ export default function CreateCompanyProfile() {
               </div>
             </div>
           )}
+ {currentStep === 4 && (
+  <div>
+    <h1 className="text-3xl font-bold text-center mb-6 relative">Tell us about your organization</h1>
 
-          {currentStep === 4 && (
-            <div>
-              <h1 className="text-3xl font-bold text-center mb-4 relative">Tell us about your organization</h1>
-              <div className="relative mb-4">
-                <FaUsersCog className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500" />
-                <input
-                  type="text"
-                  name="departments"
-                  value={formData.departments}
-                  placeholder="Departments"
-                  className="w-full pl-10 pr-3 py-2 border rounded-md"
-                  onChange={handleChange}
-                  required
-                />
-              </div>
-              <div className="relative mb-4">
-                <input
-                  type="text"
-                  name="contractTypes"
-                  value={formData.contractTypes}
-                  placeholder="Contract Types"
-                  className="w-full pl-10 pr-3 py-2 border rounded-md"
-                  onChange={handleChange}
-                  required
-                />
-              </div>
-              <div className="relative mb-4">
-              <FaFile className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500" />
-                <input
-                  type="text"
-                  name="requiredDocuments"
-                  value={formData.requiredDocuments}
-                  placeholder="Required Documents"
-                  className="w-full pl-10 pr-3 py-2 border rounded-md"
-                  onChange={handleChange}
-                  required
-                />
-              </div>
-            </div>
-          )}
+    {/* Champ de saisie pour le département avec ajout dynamique et suppression moderne */}
+    <div className="relative mb-4">
+      <input
+        type="text"
+        name="newDepartment"
+        value={formData.newDepartment}
+        onChange={(e) => setFormData({ ...formData, newDepartment: e.target.value })}
+        placeholder="Enter department name"
+        className="w-full pr-12 pl-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all duration-300"
+      />
+      <button
+        type="button"
+        className="absolute right-3 top-1/2 transform -translate-y-1/2 bg-blue-500 hover:bg-blue-600 text-white p-1 rounded-full transition-all duration-300 transform hover:scale-105"
+        onClick={() => {
+          if (formData.newDepartment && !formData.departments.includes(formData.newDepartment)) {
+            setFormData({
+              ...formData,
+              departments: [...formData.departments, formData.newDepartment],
+              newDepartment: "", // Réinitialise le champ après l'ajout
+            });
+          }
+        }}
+      >
+        <FaPlus className="text-white" />
+      </button>
+    </div>
+
+    {/* Affichage des départements ajoutés avec un bouton "X" pour supprimer */}
+    <div className="mb-6">
+      {formData.departments.length > 0 && (
+        <ul className="list-disc pl-6 space-y-3">
+          {formData.departments.map((department, index) => (
+            <li
+              key={index}
+              className="flex justify-between items-center text-gray-700 bg-gray-100 px-4 py-2 rounded-lg shadow-sm hover:shadow-md transition-all duration-300"
+            >
+              <span>{department}</span>
+              <button
+                type="button"
+                className="text-red-500 hover:text-red-700 transition-all duration-200"
+                onClick={() => {
+                  setFormData({
+                    ...formData,
+                    departments: formData.departments.filter((_, i) => i !== index),
+                  });
+                }}
+              >
+                <FaTrashAlt className="text-lg" />
+              </button>
+            </li>
+          ))}
+        </ul>
+      )}
+    </div>
+
+    {/* Champs supplémentaires */}
+    <div className="relative mb-6">
+      <input
+        type="text"
+        name="contractTypes"
+        value={formData.contractTypes}
+        placeholder="Contract Types"
+        className="w-full pl-10 pr-3 py-3 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+        onChange={handleChange}
+        required
+      />
+    </div>
+    <div className="relative mb-6">
+      <FaFile className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500" />
+      <input
+        type="text"
+        name="requiredDocuments"
+        value={formData.requiredDocuments}
+        placeholder="Required Documents"
+        className="w-full pl-10 pr-3 py-3 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+        onChange={handleChange}
+        required
+      />
+    </div>
+  </div>
+)}
 
           {currentStep === 5 && (
             <div>
