@@ -1,17 +1,26 @@
 "use client";
+
 import { useEffect, useState } from "react";
 import axios from "axios";
 import NavbarAdmin from "@/app/components/NavbarAdmin";
 import { Company } from "@/app/types/company";
 import Image from "next/image";
-
+import { motion } from "framer-motion";
+import { useAuth } from "@/src/context/authContext";
+import { useRouter } from "next/navigation";
 
 export default function CompanyProfile() {
   const [company, setCompany] = useState<Company | null>(null);
   const [error, setError] = useState<string>("");
-    const [loading, setLoading] = useState<boolean>(true);
+  const [loading, setLoading] = useState<boolean>(true);
+  const { isLoggedIn, userRoles } = useAuth();
+  const router = useRouter();
 
-  useEffect(() => {
+      useEffect(() => {
+        if (!isLoggedIn) {
+          router.push("/login/Admin");
+          return;
+        }
     const fetchCompanyProfile = async () => {
       try {
         const response = await axios.get("http://localhost:5000/api/companies/profile", {
@@ -29,100 +38,161 @@ export default function CompanyProfile() {
         }
         setLoading(false);
       }
-      
     };
 
     fetchCompanyProfile();
   }, []);
 
+  const handleEditProfile = () => {
+    router.push("/Admin/Edite-CompanyProfile");  // Redirige vers la page de modification
+  };
+
+
   if (loading) {
     return (
-      <div className="text-center py-10">
-        <div className="spinner-border text-primary" role="status">
-          <span className="sr-only">Loading...</span>
-        </div>
+      <div className="flex items-center justify-center min-h-screen">
+        <div className="animate-spin rounded-full h-12 w-12 border-t-4 border-blue-600 border-solid"></div>
       </div>
     );
   }
 
   if (error) {
-    return (
-      <div className="text-center py-10 text-red-500">{error}</div>
-    );
+    return <div className="text-center py-10 text-red-500">{error}</div>;
   }
 
   return (
     <>
       <NavbarAdmin />
-      <div className="min-h-screen flex flex-col items-center bg-gray-100 px-6 py-10">
-        <div className="bg-white p-8 rounded-xl shadow-xl w-full max-w-4xl">
-          <div className="flex items-center space-x-6 mb-6">
-          <Image 
-  src={company!.companyLogo || "/default-logo.png"} 
-  alt="Company Logo" 
-  width={96}
-  height={96}
-  className="w-24 h-24 rounded-full object-cover" 
-/>
+      <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-200 py-10 px-6">
+        <motion.div
+          className="max-w-5xl mx-auto bg-white rounded-2xl shadow-2xl p-8"
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.4 }}
+        >
+          {/* Header */}
+          <div className="flex flex-col md:flex-row items-center md:items-start gap-6 mb-10">
+            <Image
+              src={company!.companyLogo || "/images/default-companylogo.png"}
+              alt="Company Logo"
+              width={120}
+              height={120}
+              className="w-28 h-28 rounded-xl object-cover shadow-md"
+              unoptimized={true}
+            />
             <div>
               <h2 className="text-3xl font-bold text-gray-900">{company!.companyName}</h2>
               <p className="text-lg text-gray-600">{company!.industry}</p>
+              {company!.departments!.length > 0 && (
+                <p className="text-sm text-gray-500 mt-1">
+                  Departments: {company!.departments!.map((d) => d.name).join(", ")}
+                </p>
+              )}
             </div>
           </div>
 
-          {/* Description de l'entreprise */}
-          <div className="mb-6">
-            <h3 className="text-xl font-semibold text-gray-800 mb-2">Company Description</h3>
+          {/* Sections */}
+          <div className="grid md:grid-cols-2 gap-6 mb-10">
+            <InfoCard title="Headquarters" value={company!.companyAddress} />
+            <InfoCard title="Region" value={`${company!.region}, ${company!.country}`} />
+            <InfoCard title="Founded" value={company!.yearFounded} />
+            <InfoCard title="Company Size" value={company!.companySize} />
+            <InfoCard title="Employees" value={company!.numberOfEmployees} />
+            <InfoCard title="Contract Types" value={company!.contractTypes} />
+            <InfoCard title="Required Documents" value={company!.requiredDocuments} />
+            {company!.revenue && <InfoCard title="Revenue" value={`$${company!.revenue.toLocaleString()}`} />}
+          </div>
+
+          {/* Description */}
+          <Section title="About the Company">
             <p className="text-gray-700">{company!.companyDescription}</p>
-          </div>
+          </Section>
 
-          {/* Informations sur l'entreprise */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
-            <div>
-              <h4 className="font-semibold text-gray-800">Address</h4>
-              <p className="text-gray-700">{company!.companyAddress}</p>
-            </div>
-            <div>
-              <h4 className="font-semibold text-gray-800">Country/Region</h4>
-              <p className="text-gray-700">{company!.country} / {company!.region}</p>
-            </div>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
-            <div>
-              <h4 className="font-semibold text-gray-800">Year Founded</h4>
-              <p className="text-gray-700">{company!.yearFounded}</p>
-            </div>
-            <div>
-              <h4 className="font-semibold text-gray-800">Company Size</h4>
-              <p className="text-gray-700">{company!.companySize}</p>
-            </div>
-          </div>
-
-          {/* Informations de contact */}
-          <div className="mb-6">
-            <h4 className="font-semibold text-gray-800">Contact Information</h4>
-            <p className="text-gray-700">Email: {company!.contactEmail}</p>
-            <p className="text-gray-700">Phone: {company!.phoneNumber}</p>
-            <p className="text-gray-700">Website: <a href={company!.website} target="_blank" className="text-blue-500 hover:underline">{company!.website}</a></p>
-          </div>
-
-          {/* Liens sociaux */}
-          {company!.socialLinks && (
-            <div className="mb-6">
-              <h4 className="font-semibold text-gray-800">Social Links</h4>
-              <p className="text-gray-700">{company!.socialLinks}</p>
-            </div>
+          {/* CEO */}
+          {(company!.ceo || company!.ceoImage) && (
+            <Section title="CEO">
+              <div className="flex items-center gap-4">
+                {company!.ceoImage && (
+                  <Image
+                    src={company!.ceoImage}
+                    alt="CEO"
+                    width={96}
+                    height={96}
+                    className="w-24 h-24 rounded-full object-cover shadow-md"
+                    unoptimized={true}
+                  />
+                )}
+                <p className="text-lg text-gray-800 font-medium">{company!.ceo}</p>
+              </div>
+            </Section>
           )}
 
-          {/* Bouton de modification */}
+          {/* Contact */}
+          <Section title="Contact">
+            <p className="text-gray-700">📧 {company!.contactEmail}</p>
+            <p className="text-gray-700">📞 {company!.phoneNumber}</p>
+            {company!.website && (
+              <p className="text-gray-700">
+                🌐{" "}
+                <a href={company!.website} target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline">
+                  {company!.website}
+                </a>
+              </p>
+            )}
+          </Section>
+
+          {/* Social Links */}
+          {company!.socialLinks && (
+            <Section title="Social Media">
+              {company!.socialLinks.split(",").map((link, index) => (
+                <p key={index}>
+                  <a href={link.trim()} target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline">
+                    {link.trim()}
+                  </a>
+                </p>
+              ))}
+            </Section>
+          )}
+
+          {/* Departments */}
+          {company!.departments && company!.departments.length > 0 && (
+            <Section title="Departments">
+              <ul className="list-disc list-inside text-gray-700 space-y-1">
+                {company!.departments.map((dept) => (
+                  <li key={dept.id}>{dept.name}</li>
+                ))}
+              </ul>
+            </Section>
+          )}
+
+        
+          {/* Bouton modification */}
           <div className="flex justify-end">
-            <button className="bg-blue-600 text-white px-6 py-3 rounded-lg shadow-md hover:bg-blue-700 transition duration-200 ease-in-out">
+            <button
+              onClick={handleEditProfile}  // Ajout du gestionnaire de clic
+              className="bg-blue-600 text-white px-6 py-3 rounded-lg shadow-md hover:bg-blue-700 transition duration-200 ease-in-out"
+            >
               Edit Profile
             </button>
           </div>
-        </div>
+
+        </motion.div>
       </div>
     </>
   );
 }
+
+// Composants réutilisables
+const InfoCard = ({ title, value }: { title: string; value: string }) => (
+  <div className="bg-gray-50 rounded-xl p-4 shadow-sm border">
+    <h4 className="text-sm font-semibold text-gray-600">{title}</h4>
+    <p className="text-gray-800 mt-1">{value}</p>
+  </div>
+);
+
+const Section = ({ title, children }: { title: string; children: React.ReactNode }) => (
+  <div className="mb-8">
+    <h3 className="text-xl font-semibold text-gray-800 mb-3">{title}</h3>
+    {children}
+  </div>
+);

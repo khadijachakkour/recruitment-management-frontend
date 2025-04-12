@@ -36,7 +36,7 @@ export default function LoginPage() {
             },
           });
 
-          if (response.status === 404) {
+          if (response.status === 204) {
             router.push("/Admin/Create-profile");
           } else {
             router.push("/Admin/Dashboard");

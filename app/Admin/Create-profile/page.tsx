@@ -15,6 +15,9 @@ const steps = [
 
 export default function CreateCompanyProfile() {
   const [currentStep, setCurrentStep] = useState(1);
+  const [companyLogoPreview, setCompanyLogoPreview] = useState<string | null>(null);
+  const [ceoImagePreview, setCeoImagePreview] = useState<string | null>(null);
+
   const router = useRouter();
   const [formData, setFormData] = useState({
     companyName: "",
@@ -37,6 +40,7 @@ export default function CreateCompanyProfile() {
     website: "",
     socialLinks: "",
     ceo: "", // PDG
+    ceoImage: null as File | null, 
     revenue: "", //Chiffre d'affaires
   });
 
@@ -49,6 +53,8 @@ export default function CreateCompanyProfile() {
     if (currentStep > 1) setCurrentStep(currentStep - 1);
   };
   
+  
+  
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
     setFormData((prev) => ({
@@ -58,25 +64,58 @@ export default function CreateCompanyProfile() {
   };
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { files } = e.target;
+    const { name, files } = e.target;
     if (files && files.length > 0) {
-      setFormData((prev) => ({
-        ...prev,
-        companyLogo: files[0], 
-      }));
+      const file = files[0];
+      const previewUrl = URL.createObjectURL(file);
+  
+      if (name === "companyLogo") {
+        setFormData((prev) => ({ ...prev, companyLogo: file }));
+        setCompanyLogoPreview(previewUrl);
+      } else if (name === "ceoImage") {
+        setFormData((prev) => ({ ...prev, ceoImage: file }));
+        setCeoImagePreview(previewUrl);
+      }
     }
   };
+
+  const removeCompanyLogo = () => {
+    setCompanyLogoPreview(null);
+    setFormData((prev) => ({ ...prev, companyLogo: null }));
+  };
+  
+  const removeCeoImage = () => {
+    setCeoImagePreview(null);
+    setFormData((prev) => ({ ...prev, ceoImage: null }));
+  };
+  
+  
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
   
     try {
       let logoUrl = "";
-  
+      let ceoImageUrl="";
+      if (formData.ceoImage) {
+        const ceoData = new FormData();
+        ceoData.append("file", formData.ceoImage);
+        ceoData.append("upload_preset", "recruitment_upload");
+        ceoData.append("cloud_name", "di2xqx7ny");
+      
+        const ceoUploadRes = await fetch(`https://api.cloudinary.com/v1_1/di2xqx7ny/image/upload`, {
+          method: "POST",
+          body: ceoData,
+        });
+      
+        const ceoUploadData = await ceoUploadRes.json();
+        ceoImageUrl = ceoUploadData.secure_url;
+      }
+      
       if (formData.companyLogo) {
         const imageData = new FormData();
         imageData.append("file", formData.companyLogo);
-        imageData.append("upload_preset", "recruitment_upload"); // Remplace par ton preset
-        imageData.append("cloud_name", "di2xqx7ny"); // Remplace par ton nom cloud
+        imageData.append("upload_preset", "recruitment_upload"); 
+        imageData.append("cloud_name", "di2xqx7ny");
   
         const uploadRes = await fetch(`https://api.cloudinary.com/v1_1/di2xqx7ny/image/upload`, {
           method: "POST",
@@ -89,8 +128,10 @@ export default function CreateCompanyProfile() {
   
       const payload = {
         ...formData,
-        companyLogo: logoUrl, // on envoie l'URL, pas le fichier
+        companyLogo: logoUrl,
+        ceoImage: ceoImageUrl,
       };
+      
   
       await axios.post('http://localhost:5000/api/companies/createCompany', payload, {
         headers: {
@@ -175,15 +216,40 @@ export default function CreateCompanyProfile() {
                   required
                 />
               </div>
-              <div className="relative mb-4">
-              <FaBuilding className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500" />
-                <input
-                  type="file"
-                  name="companyLogo"
-                  onChange={handleFileChange}
-                  className="w-full pl-10 pr-3 py-2 border rounded-md"
-                />
-              </div>
+              <div className="mb-4">
+  <label htmlFor="companyLogo" className="block text-sm font-medium text-gray-700 mb-1">
+    Upload company logo
+  </label>
+  <div className="relative">
+    <FaBuilding className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500" />
+    <input
+      id="companyLogo"
+      type="file"
+      name="companyLogo"
+      accept="image/*"
+      onChange={handleFileChange}
+      className="w-full pl-10 pr-3 py-2 border rounded-md text-gray-700 file:text-blue-700"
+    />
+  </div>
+</div>
+
+              {companyLogoPreview && (
+  <div className="mb-4 text-center">
+    <img
+      src={companyLogoPreview}
+      alt="Company Logo Preview"
+      className="w-32 h-32 object-cover mx-auto rounded-full border shadow"
+    />
+    <button
+      type="button"
+      onClick={removeCompanyLogo}
+      className="mt-2 text-red-600 hover:text-red-800 text-sm flex items-center justify-center gap-1 mx-auto"
+    >
+      <FaTrashAlt className="text-sm" />
+    </button>
+  </div>
+)}
+
               <div className="relative mb-4">
         <FaIndustry className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500" />
         <select
@@ -262,6 +328,42 @@ export default function CreateCompanyProfile() {
                 required
               />
             </div>
+           
+            <div className="mb-4">
+  <label htmlFor="ceoImage" className="block text-sm font-medium text-gray-700 mb-1">
+    Upload ceo Image 
+  </label>
+  <div className="relative">
+    <FaBuilding className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500" />
+    <input
+      id="ceoImage"
+      type="file"
+      name="ceoImage"
+      accept="image/*"
+      onChange={handleFileChange}
+      className="w-full pl-10 pr-3 py-2 border rounded-md text-gray-700 file:text-blue-700" />
+  </div>
+  <p className="text-xs text-gray-500 mt-1">
+    You can skip this step, but uploading a logo helps your company look more professional.
+  </p>
+</div>
+
+{ceoImagePreview && (
+  <div className="mb-4 text-center">
+    <img
+      src={ceoImagePreview}
+      alt="Ceo Image Preview"
+      className="w-32 h-32 object-cover mx-auto rounded-full border shadow" />
+    <button
+      type="button"
+      onClick={removeCeoImage}
+      className="mt-2 text-red-600 hover:text-red-800 text-sm flex items-center justify-center gap-1 mx-auto">
+      <FaTrashAlt className="text-sm" />
+    </button>
+  </div>
+)}
+
+
 
             <div className="relative mb-4">
               <FaFileAlt className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500" />
