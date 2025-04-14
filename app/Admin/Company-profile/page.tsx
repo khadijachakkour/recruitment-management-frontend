@@ -59,7 +59,6 @@ export default function CompanyProfile() {
   if (error) {
     return <div className="text-center py-10 text-red-500">{error}</div>;
   }
-
   return (
     <>
       <NavbarAdmin />

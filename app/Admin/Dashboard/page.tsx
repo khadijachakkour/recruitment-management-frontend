@@ -69,7 +69,7 @@ export default function AdminDashboard() {
             <Link href="/Admin/Company-profile" className="flex items-center gap-2 hover:text-blue-300">
               <Building size={20} /> Company Profile
             </Link>
-            <Link href="#" className="flex items-center gap-2 hover:text-blue-300">
+            <Link href="/Admin/Manage-users" className="flex items-center gap-2 hover:text-blue-300">
               <Users size={20} /> Manage Users
             </Link>
             <Link href="#" className="flex items-center gap-2 hover:text-blue-300">
@@ -81,7 +81,6 @@ export default function AdminDashboard() {
         {/* Main Content */}
         <main className="flex-1 p-6 mt-20"> {/* Added margin-top to avoid navbar overlap */}
           <header className="flex justify-between items-center">
-            <h2 className="text-2xl font-bold">Acme Corporation</h2>
             <div className="flex items-center gap-4">
               <Bell size={24} className="text-gray-500 cursor-pointer" />
               <span className="font-semibold">Admin</span>
@@ -91,10 +90,6 @@ export default function AdminDashboard() {
           {/* Company Overview */}
           <section className="mt-6 bg-white shadow-lg rounded-lg p-6">
             <div className="flex justify-between">
-              <div>
-                <h3 className="text-xl font-semibold">Acme Corporation</h3>
-                <p className="text-gray-500">Software</p>
-              </div>
               <button className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700">
                 Edit Profile
               </button>

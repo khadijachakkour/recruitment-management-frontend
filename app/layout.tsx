@@ -3,6 +3,7 @@
 import Footer from "./components/Footer";
 import "./styles/globals.css";
 import { AuthProvider } from "../src/context/authContext";
+import 'react-toastify/dist/ReactToastify.css';
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
