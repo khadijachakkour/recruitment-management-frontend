@@ -100,7 +100,7 @@ export default function CompanyProfile() {
             <InfoCard title="Employees" value={company!.numberOfEmployees} />
             <InfoCard title="Contract Types" value={company!.contractTypes} />
             <InfoCard title="Required Documents" value={company!.requiredDocuments} />
-            {company!.revenue && <InfoCard title="Revenue" value={`$${company!.revenue.toLocaleString()}`} />}
+            {company!.revenue && <InfoCard title="Revenue" value={`${company!.revenue.toLocaleString()}`} />}
           </div>
 
           {/* Description */}

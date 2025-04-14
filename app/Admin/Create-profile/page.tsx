@@ -237,7 +237,7 @@ export default function CreateCompanyProfile() {
   <div className="mb-4 text-center">
     <img
       src={companyLogoPreview}
-      alt="Company Logo Preview"
+      alt="Company Logo"
       className="w-32 h-32 object-cover mx-auto rounded-full border shadow"
     />
     <button
@@ -309,7 +309,7 @@ export default function CreateCompanyProfile() {
                 <textarea
                   name="companyDescription"
                   value={formData.companyDescription}
-                  placeholder="Company Description"
+                  placeholder="Write a brief description of the company"
                   className="w-full pl-10 pr-3 py-2 border rounded-md"
                   onChange={handleChange}
                   required
@@ -352,7 +352,7 @@ export default function CreateCompanyProfile() {
   <div className="mb-4 text-center">
     <img
       src={ceoImagePreview}
-      alt="Ceo Image Preview"
+      alt="Ceo Image"
       className="w-32 h-32 object-cover mx-auto rounded-full border shadow" />
     <button
       type="button"
@@ -363,8 +363,6 @@ export default function CreateCompanyProfile() {
   </div>
 )}
 
-
-
             <div className="relative mb-4">
               <FaFileAlt className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500" />
               <input
@@ -374,7 +372,6 @@ export default function CreateCompanyProfile() {
                 placeholder="Annual Revenue"
                 className="w-full pl-10 pr-3 py-2 border rounded-md"
                 onChange={handleChange}
-                required
               />
             </div>
             </div>
@@ -392,7 +389,6 @@ export default function CreateCompanyProfile() {
                   placeholder="Company Address"
                   className="w-full pl-10 pr-3 py-2 border rounded-md"
                   onChange={handleChange}
-                  required
                 />
               </div>
               <div className="relative mb-4">
@@ -404,7 +400,6 @@ export default function CreateCompanyProfile() {
                   placeholder="Country"
                   className="w-full pl-10 pr-3 py-2 border rounded-md"
                   onChange={handleChange}
-                  required
                 />
               </div>
               <div className="relative mb-4">
@@ -416,7 +411,6 @@ export default function CreateCompanyProfile() {
                   placeholder="Region"
                   className="w-full pl-10 pr-3 py-2 border rounded-md"
                   onChange={handleChange}
-                  required
                 />
               </div>
               
@@ -436,7 +430,6 @@ export default function CreateCompanyProfile() {
                   placeholder="Year Founded"
                   className="w-full pl-10 pr-3 py-2 border rounded-md"
                   onChange={handleChange}
-                  required
                 />
               </div>
               <div className="relative mb-4">
@@ -445,7 +438,6 @@ export default function CreateCompanyProfile() {
                   value={formData.companySize}
                   onChange={handleChange}
                   className="w-full pl-10 pr-3 py-2 border rounded-md"
-                  required
                 >
                   <option value="">Company Size</option>
                   <option value="Startup">Startup</option>
@@ -462,7 +454,6 @@ export default function CreateCompanyProfile() {
                   placeholder="Number of Employees"
                   className="w-full pl-10 pr-3 py-2 border rounded-md"
                   onChange={handleChange}
-                  required
                 />
               </div>
             </div>
@@ -535,7 +526,6 @@ export default function CreateCompanyProfile() {
         placeholder="Contract Types"
         className="w-full pl-10 pr-3 py-3 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
         onChange={handleChange}
-        required
       />
     </div>
     <div className="relative mb-6">
@@ -547,7 +537,6 @@ export default function CreateCompanyProfile() {
         placeholder="Required Documents"
         className="w-full pl-10 pr-3 py-3 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
         onChange={handleChange}
-        required
       />
     </div>
   </div>
@@ -565,7 +554,6 @@ export default function CreateCompanyProfile() {
                   placeholder="Contact Email"
                   className="w-full pl-10 pr-3 py-2 border rounded-md"
                   onChange={handleChange}
-                  required
                 />
               </div>
               <div className="relative mb-4">
@@ -577,7 +565,6 @@ export default function CreateCompanyProfile() {
                   placeholder="Phone Number"
                   className="w-full pl-10 pr-3 py-2 border rounded-md"
                   onChange={handleChange}
-                  required
                 />
               </div>
               <div className="relative mb-4">
@@ -589,7 +576,6 @@ export default function CreateCompanyProfile() {
                   placeholder="Website"
                   className="w-full pl-10 pr-3 py-2 border rounded-md"
                   onChange={handleChange}
-                  required
                 />
               </div>
               <div className="relative mb-4">
@@ -601,7 +587,6 @@ export default function CreateCompanyProfile() {
                   placeholder="Social Links"
                   className="w-full pl-10 pr-3 py-2 border rounded-md"
                   onChange={handleChange}
-                  required
                 />
               </div>
             </div>
