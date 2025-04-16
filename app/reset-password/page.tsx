@@ -5,6 +5,7 @@ import axios from 'axios';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { Eye, EyeOff } from 'lucide-react';
 import { motion } from 'framer-motion';
+import { useAuth } from '@/src/context/authContext';
 
 const ResetPasswordPage = () => {
   const [newPassword, setNewPassword] = useState('');
@@ -14,6 +15,7 @@ const ResetPasswordPage = () => {
   const [loading, setLoading] = useState(false);
   const [strength, setStrength] = useState(0);
   const [validationErrors, setValidationErrors] = useState<string[]>([]);
+  
 
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -54,8 +56,8 @@ const ResetPasswordPage = () => {
         token,
         password: newPassword,
       });
-      alert("Password successfully reset!");
-      router.push("/login/Admin");
+      
+      router.push("/login");
     } catch (error: any) {
       setError(error.response?.data?.message || "An error occurred.");
     } finally {
