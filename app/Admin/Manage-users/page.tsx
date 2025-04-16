@@ -34,7 +34,11 @@ export default function ManageUsersPage() {
 
   const fetchUsers = async () => {
     try {
-      const res = await axios.get("http://localhost:4000/api/admin/users");
+      const res = await axios.get("http://localhost:4000/api/admin/users", {
+        headers: {
+          Authorization: `Bearer ${sessionStorage.getItem('access_token')}`,
+        },
+      });      
       setUsers(res.data);
       setFilteredUsers(res.data); 
     } catch (err) {
@@ -45,7 +49,11 @@ export default function ManageUsersPage() {
   const handleDelete = async () => {
     if (deleteUserId) {
       try {
-        await axios.delete(`http://localhost:4000/api/admin/users/${deleteUserId}`);
+        await axios.delete(`http://localhost:4000/api/admin/users/${deleteUserId}`, {
+          headers: {
+            Authorization: `Bearer ${sessionStorage.getItem('access_token')}`,
+          },
+        });      
         fetchUsers();
         setShowModal(false);
         toast.success("User successfully deleted!");
@@ -61,8 +69,13 @@ export default function ManageUsersPage() {
 
   const handleCreate = async (e: React.FormEvent) => {
     e.preventDefault();
+    setShowForm(false);
     try {
-      await axios.post("http://localhost:4000/api/admin/users", formData);
+      await axios.post("http://localhost:4000/api/admin/users", formData, {
+        headers: {
+          Authorization: `Bearer ${sessionStorage.getItem('access_token')}`,
+        },
+      });      
       setFormData({
         firstname: "",
         lastname: "",
@@ -71,7 +84,6 @@ export default function ManageUsersPage() {
         role: "",
       });
       fetchUsers();
-      setShowForm(false);
       toast.success("User successfully created!");
     } catch (err) {
       console.error("Error creating user", err);
