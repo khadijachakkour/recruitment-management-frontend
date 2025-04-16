@@ -24,20 +24,19 @@ export default function ManageUsersPage() {
     lastname: "",
     username: "",
     email: "",
-    password: "",
     role: "",
   });
-  const [searchTerm, setSearchTerm] = useState<string>(""); // Added search term state
+  const [searchTerm, setSearchTerm] = useState<string>(""); 
   const [showModal, setShowModal] = useState(false);
   const [deleteUserId, setDeleteUserId] = useState<string | null>(null);
   const [showForm, setShowForm] = useState(false);
-  const [filterBy, setFilterBy] = useState<string>("name"); // State for filter option
+  const [filterBy, setFilterBy] = useState<string>("name"); 
 
   const fetchUsers = async () => {
     try {
       const res = await axios.get("http://localhost:4000/api/admin/users");
       setUsers(res.data);
-      setFilteredUsers(res.data); // Initially, show all users
+      setFilteredUsers(res.data); 
     } catch (err) {
       console.error("Error loading users", err);
     }
@@ -69,7 +68,6 @@ export default function ManageUsersPage() {
         lastname: "",
         username: "",
         email: "",
-        password: "",
         role: "",
       });
       fetchUsers();
@@ -167,11 +165,11 @@ export default function ManageUsersPage() {
             >
               <h2 className="text-2xl font-semibold text-gray-800">Create User</h2>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                {["firstname", "lastname", "username", "email", "password"].map((field) => (
+                {["firstname", "lastname", "username", "email"].map((field) => (
                   <input
                     key={field}
                     name={field}
-                    type={field === "email" ? "email" : field === "password" ? "password" : "text"}
+                    type={field === "email" ? "email" : field }
                     placeholder={field.charAt(0).toUpperCase() + field.slice(1)}
                     value={(formData as any)[field]}
                     onChange={handleChange}
@@ -221,8 +219,23 @@ export default function ManageUsersPage() {
                     <td className="p-4">{user.firstName} {user.lastName}</td>
                     <td className="p-4">{user.email}</td>
                     <td className="p-4">{user.username}</td>
-                    <td className="p-4">{user.role}</td>
-                    <td className="p-4 text-center">
+                    <td className="p-4">
+                <span
+                  className={`inline-block px-3 py-1 text-sm font-medium rounded-full
+                    ${
+                      user.role === "manager"
+                        ? "bg-purple-100 text-purple-700"
+                        : user.role === "recruteur"
+                        ? "bg-blue-100 text-blue-700"
+                        : user.role === "rh"
+                        ? "bg-green-100 text-green-700"
+                        : "bg-gray-100 text-gray-700"
+                    }`}
+                >
+                  {user.role}
+                </span>
+              </td>
+                <td className="p-4 text-center">
                       <button
                         onClick={() => {
                           setDeleteUserId(user.id);
