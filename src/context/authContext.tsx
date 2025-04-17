@@ -82,7 +82,7 @@ const logoutAdmin = async () => {
       setIsLoggedIn(false);
       setUserRoles([]);
 
-        router.push("/login/Admin");
+        router.push("/login");
       
     }
   } catch (error) {

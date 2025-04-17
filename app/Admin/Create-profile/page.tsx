@@ -17,6 +17,8 @@ export default function CreateCompanyProfile() {
   const [currentStep, setCurrentStep] = useState(1);
   const [companyLogoPreview, setCompanyLogoPreview] = useState<string | null>(null);
   const [ceoImagePreview, setCeoImagePreview] = useState<string | null>(null);
+  const [errors, setErrors] = useState<{ [key: string]: string }>({});
+
 
   const router = useRouter();
   const [formData, setFormData] = useState({
@@ -45,8 +47,26 @@ export default function CreateCompanyProfile() {
   });
 
 
+  const validateStep = () => {
+    const newErrors: { [key: string]: string } = {};
+  
+    if (currentStep === 1) {
+      if (!formData.companyName.trim()) newErrors.companyName = "Company name is required.";
+      if (!formData.industry) newErrors.industry = "Industry is required.";
+      if (formData.industry === "Other" && !formData.otherIndustry.trim()) {
+        newErrors.otherIndustry = "Please specify your industry.";
+      }
+      if (!formData.companyDescription.trim()) newErrors.companyDescription = "Company description is required.";
+    }
+  
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+  
   const nextStep = () => {
-    if (currentStep < steps.length) setCurrentStep(currentStep + 1);
+    if (validateStep()) {
+      setCurrentStep(currentStep + 1);
+    }
   };
 
   const prevStep = () => {
@@ -207,14 +227,15 @@ export default function CreateCompanyProfile() {
               <div className="relative mb-4">
                 <FaBuilding className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500" />
                 <input
-                  type="text"
-                  name="companyName"
-                  value={formData.companyName}
-                  placeholder="Company Name"
-                  className="w-full pl-10 pr-3 py-2 border rounded-md"
-                  onChange={handleChange}
-                  required
-                />
+                type="text"
+                name="companyName"
+                value={formData.companyName}
+                placeholder="Company Name"
+                className="w-full pl-10 pr-3 py-2 border rounded-md"
+                onChange={handleChange}
+              />
+{errors.companyName && <p className="text-red-600 text-sm mt-1">{errors.companyName}</p>}
+
               </div>
               <div className="mb-4">
   <label htmlFor="companyLogo" className="block text-sm font-medium text-gray-700 mb-1">
@@ -256,8 +277,7 @@ export default function CreateCompanyProfile() {
           name="industry"
           value={formData.industry}
           onChange={handleChange}
-          className="w-full pl-10 pr-3 py-2 border rounded-md"
-          required >
+          className="w-full pl-10 pr-3 py-2 border rounded-md" >
       
           <option value="">Select Industry</option>
           <option value="Aerospace & Defense">Aerospace & Defense</option>
@@ -288,6 +308,7 @@ export default function CreateCompanyProfile() {
           <option value="Telecommunications">Telecommunications</option>
           <option value="Other">Other</option>
         </select>
+        {errors.industry && <p className="text-red-600 text-sm mt-1">{errors.industry}</p>}
       </div>
 
                 {/* Affichage du champ "Other Industry" si l'option "Other" est sélectionnée */}
@@ -301,6 +322,8 @@ export default function CreateCompanyProfile() {
             onChange={handleChange}
             className="w-full pl-10 pr-3 py-2 border rounded-md"
           />
+          {errors.otherIndustry && <p className="text-red-600 text-sm mt-1">{errors.otherIndustry}</p>}
+
         </div>
       )}
 
@@ -311,9 +334,8 @@ export default function CreateCompanyProfile() {
                   value={formData.companyDescription}
                   placeholder="Write a brief description of the company"
                   className="w-full pl-10 pr-3 py-2 border rounded-md"
-                  onChange={handleChange}
-                  required
-                />
+                  onChange={handleChange}/>
+                {errors.companyDescription && <p className="text-red-600 text-sm mt-1">{errors.companyDescription}</p>}
               </div>
 
               <div className="relative mb-4">
@@ -324,9 +346,7 @@ export default function CreateCompanyProfile() {
                 value={formData.ceo}
                 placeholder="CEO / Founder"
                 className="w-full pl-10 pr-3 py-2 border rounded-md"
-                onChange={handleChange}
-                required
-              />
+                onChange={handleChange}/>
             </div>
            
             <div className="mb-4">
