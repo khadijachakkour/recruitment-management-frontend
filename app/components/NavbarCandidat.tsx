@@ -36,7 +36,7 @@ export default function NavbarCandidat() {
             /* Display sign-in and post job buttons if the user is not logged in */
             <div className="hidden md:flex space-x-4">
               <Link href="/login/Candidat" className="navbar__connexion">Sign In</Link>
-              <Link href="/login/Admin" className="navbar__entreprises">Employers / Post Job</Link>
+              <Link href="/login" className="navbar__entreprises">Employers / Post Job</Link>
             </div>
           )}
         </div>

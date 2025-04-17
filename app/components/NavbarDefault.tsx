@@ -50,7 +50,7 @@ export default function NavbarDefault() {
           ) : (
             <div className="hidden md:flex space-x-4">
               <Link href="/login/Candidat" className="navbar__connexion">Sign In</Link>
-              <Link href="/login/Admin" className="navbar__entreprises">Employers / Post Job</Link>
+              <Link href="/login" className="navbar__entreprises">Employers / Post Job</Link>
             </div>
           )}
         </div>

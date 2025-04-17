@@ -105,8 +105,9 @@ export default function ManageUsersPage() {
           return user.username.toLowerCase().includes(value.toLowerCase());
         case "email":
           return user.email.toLowerCase().includes(value.toLowerCase());
-        case "role":
-          return user.role.toLowerCase().includes(value.toLowerCase());
+          case "role":
+            return typeof user.role === "string" && user.role.toLowerCase().includes(value.toLowerCase());
+          
         default:
           return Object.values(user)
             .join(" ")
@@ -235,11 +236,11 @@ export default function ManageUsersPage() {
                 <span
                   className={`inline-block px-3 py-1 text-sm font-medium rounded-full
                     ${
-                      user.role === "manager"
+                      user.role === "Manager"
                         ? "bg-purple-100 text-purple-700"
-                        : user.role === "recruteur"
+                        : user.role === "Recruteur"
                         ? "bg-blue-100 text-blue-700"
-                        : user.role === "rh"
+                        : user.role === "RH"
                         ? "bg-green-100 text-green-700"
                         : "bg-gray-100 text-gray-700"
                     }`}
