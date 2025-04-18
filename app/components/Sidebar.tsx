@@ -11,6 +11,8 @@ export default function Sidebar() {
       className={`fixed z-[1100] top-0 left-0 h-full bg-white border-r shadow-md transition-all duration-300 ease-in-out
       ${isSidebarOpen ? "w-64" : "w-16"}`}
     >
+
+      
       {/* Header avec hamburger */}
       <div className="flex items-center justify-between p-4 border-b">
         <div className="flex items-center gap-2">
