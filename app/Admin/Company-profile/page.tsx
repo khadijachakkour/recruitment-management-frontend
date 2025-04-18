@@ -8,6 +8,7 @@ import Image from "next/image";
 import { motion } from "framer-motion";
 import { useAuth } from "@/src/context/authContext";
 import { useRouter } from "next/navigation";
+import AdminLayout from "@/AdminLayout";
 
 export default function CompanyProfile() {
   const [company, setCompany] = useState<Company | null>(null);
@@ -18,7 +19,7 @@ export default function CompanyProfile() {
 
       useEffect(() => {
         if (!isLoggedIn) {
-          router.push("/login/Admin");
+          router.push("/login");
           return;
         }
     const fetchCompanyProfile = async () => {
@@ -61,8 +62,10 @@ export default function CompanyProfile() {
   }
   return (
     <>
-      <NavbarAdmin />
-      <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-200 py-10 px-6">
+     <AdminLayout>
+     
+             {/* Main Content */}
+             <main className="p-6 pt-24">
         <motion.div
           className="max-w-5xl mx-auto bg-white rounded-2xl shadow-2xl p-8"
           initial={{ opacity: 0, y: 20 }}
@@ -176,7 +179,8 @@ export default function CompanyProfile() {
           </div>
 
         </motion.div>
-      </div>
+        </main>
+    </AdminLayout>
     </>
   );
 }

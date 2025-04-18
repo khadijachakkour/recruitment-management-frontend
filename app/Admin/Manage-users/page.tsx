@@ -1,11 +1,11 @@
 "use client";
 import { useEffect, useState } from "react";
 import axios from "axios";
-import { Trash2, PlusCircle, Search } from "lucide-react"; // Added search icon
-import NavbarAdmin from "@/app/components/NavbarAdmin";
+import { Trash2, PlusCircle, Search } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { ToastContainer, toast } from "react-toastify";
 import { Zoom } from "react-toastify";
+import AdminLayout from "@/AdminLayout";
 
 interface User {
   id: string;
@@ -125,7 +125,10 @@ export default function ManageUsersPage() {
 
   return (
     <>
-      <NavbarAdmin />
+     <AdminLayout>
+          
+                  {/* Main Content */}
+                  <main className="p-6 pt-24">
       <div className="p-6 max-w-6xl mx-auto space-y-10">
 
         {/* Filter Options */}
@@ -310,6 +313,8 @@ export default function ManageUsersPage() {
         theme="colored"
         transition={Zoom}
       />
+      </main>
+      </AdminLayout>
     </>
   );
 }
