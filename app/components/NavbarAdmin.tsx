@@ -28,7 +28,7 @@ export default function NavbarAdmin() {
           {isAdmin && (
             <ul className="navbar__nav">
               <li><Link href="/Admin/Dashboard" className="navbar__nav-item">Dashboard</Link></li>
-              <li><Link href="/Admin/User-management" className="navbar__nav-item">User Management</Link></li>
+              <li><Link href="/Admin/Manage" className="navbar__nav-item">User Management</Link></li>
               <li><Link href="/Admin/Recruitment-management" className="navbar__nav-item">Recruitment Management</Link></li>
               <li><Link href="/Admin/Notifications" className="navbar__nav-item">Notifications</Link></li>
               <li><Link href="/Admin/Account-settings" className="navbar__nav-item">Account Settings</Link></li>

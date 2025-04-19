@@ -52,19 +52,27 @@ export default function AdminDashboard() {
         setUserId(data.userId);
   
         // 👇 Appel pour les statistiques de rôles
-        const roleRes = await axios.get(`http://localhost:4000/api/users/count-by-role/${data.userId}`);
+        const roleRes = await axios.get(`http://localhost:4000/api/users/count-by-role/${data.userId}`, {
+          headers: {
+            Authorization: `Bearer ${sessionStorage.getItem("access_token")}`,
+          },
+        });
         setRoleCounts(roleRes.data);
   
         // 👇 Appel pour les infos d'entreprise
-        const companyRes = await axios.get(`http://localhost:5000/api/companies/by-admin/${data.userId}`);
+        const companyRes = await axios.get(`http://localhost:5000/api/companies/by-admin/${data.userId}`, {
+          headers: {
+            Authorization: `Bearer ${sessionStorage.getItem("access_token")}`,
+          },
+        });
         setCompany(companyRes.data);
+        
       } catch (error) {
         console.error("Error fetching admin or company data:", error);
       } finally {
         setLoading(false);
       }
     };
-  
     fetchAdminData();
   }, []);
   

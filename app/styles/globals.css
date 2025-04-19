@@ -6,9 +6,12 @@
 @tailwind utilities;
 
 /* Style du background global */
-body {
+html, body {
   background:white;
   position: relative;
+  margin: 0;
+  padding: 0;
+  height: 100%;
 }
 
 /* Formes abstraites */

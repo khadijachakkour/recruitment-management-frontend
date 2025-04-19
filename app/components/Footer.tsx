@@ -1,8 +1,23 @@
+"use client";
+import { useAuth } from "@/src/context/authContext";
+
 export default function Footer() {
+  const { isLoggedIn, userRoles } = useAuth();
+  const isAdmin = isLoggedIn && userRoles.includes("Admin");
+
+  if (isAdmin) {
+    // Footer minimaliste pour les admins
+    return (
+      <footer className="bg-gray-900 text-white py-4 text-center mt-auto">
+        <p className="text-sm text-gray-400">© {new Date().getFullYear()} JobBox Admin Panel</p>
+      </footer>
+    );
+  }
+
+  // Footer complet pour les autres utilisateurs
   return (
     <footer className="bg-gray-900 text-white py-10 mt-auto">
       <div className="container mx-auto grid grid-cols-1 md:grid-cols-4 gap-8 px-6">
-        
         {/* Colonne 1 - Logo & Description */}
         <div>
           <h2 className="text-2xl font-bold">JobBox</h2>

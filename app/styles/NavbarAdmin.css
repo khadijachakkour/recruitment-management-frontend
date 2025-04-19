@@ -3,7 +3,7 @@
     position: fixed;
     top: 0;
     left: 0;
-    width: calc(100% - 64px);
+    width: 100%;
     background-color: white; /* Fond blanc */
     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1); /* Ombre subtile */
     z-index: 1000;

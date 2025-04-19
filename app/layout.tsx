@@ -15,12 +15,12 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           <div className="bg-shape bg-shape-2"></div>
           <div className="bg-shape bg-shape-3"></div>
 
-          {/* Contenu principal qui s'étend pour remplir l'espace disponible */}
+          {/* Contenu principal */}
           <main className="flex-grow pt-16">{children}</main>
-          </AuthProvider>
-          {/* Footer fixé en bas de la page */}
+
+          {/* Footer */}
           <Footer />
-        
+        </AuthProvider>
       </body>
     </html>
   );

@@ -6,6 +6,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { ToastContainer, toast } from "react-toastify";
 import { Zoom } from "react-toastify";
 import AdminLayout from "@/AdminLayout";
+import { Company } from "@/app/types/company";
 
 interface User {
   id: string;
@@ -20,30 +21,28 @@ interface User {
 export default function ManageUsersPage() {
 
   const [selectedUser, setSelectedUser] = useState<User | null>(null);
-const [selectedDepartment, setSelectedDepartment] = useState<string>("");
-const [showDepartmentModal, setShowDepartmentModal] = useState(false);
-
-const departments = ["Marketing", "Finance", "Tech", "RH", "Autre"]; 
-const handleAssignDepartment = async () => {
-  if (!selectedUser || !selectedDepartment) return;
-  try {
-    await axios.put(
-      `http://localhost:4000/api/admin/users/${selectedUser.id}/department`,
-      { department: selectedDepartment },
-      {
-        headers: {
-          Authorization: `Bearer ${sessionStorage.getItem("access_token")}`,
-        },
-      }
-    );
-    toast.success("Département affecté avec succès !");
-    setShowDepartmentModal(false);
-    fetchUsers(); // refresh
-  } catch (err) {
-    console.error("Erreur lors de l'affectation du département", err);
-    toast.error("Erreur lors de l'affectation.");
-  }
-};
+  const [selectedDepartments, setSelectedDepartments] = useState<string[]>([]);
+  const [showDepartmentModal, setShowDepartmentModal] = useState(false);  
+  const handleAssignDepartment = async () => {
+    if (!selectedUser || selectedDepartments.length === 0) return;
+    try {
+      await axios.put(
+        `http://localhost:4000/api/admin/users/${selectedUser.id}/departments`,
+        { departments: selectedDepartments }, // Envoyer un tableau
+        {
+          headers: {
+            Authorization: `Bearer ${sessionStorage.getItem("access_token")}`,
+          },
+        }
+      );
+      toast.success("Départements affectés avec succès !");
+      setShowDepartmentModal(false);
+      fetchUsers(); // Rafraîchir la liste des utilisateurs
+    } catch (err) {
+      console.error("Erreur lors de l'affectation des départements", err);
+      toast.error("Erreur lors de l'affectation.");
+    }
+  };
 
   const [users, setUsers] = useState<User[]>([]);
   const [filteredUsers, setFilteredUsers] = useState<User[]>([]);
@@ -59,6 +58,11 @@ const handleAssignDepartment = async () => {
   const [deleteUserId, setDeleteUserId] = useState<string | null>(null);
   const [showForm, setShowForm] = useState(false);
   const [filterBy, setFilterBy] = useState<string>("name"); 
+  const [departments, setDepartments] = useState<string[]>([]);
+  const [userId, setUserId] = useState<string | null>(null);
+  const [company, setCompany] = useState<Company | null>(null);
+  
+  
 
   const fetchUsers = async () => {
     try {
@@ -147,10 +151,37 @@ const handleAssignDepartment = async () => {
     setFilteredUsers(filtered);
   };
 
+  const fetchCompanyDepartments = async () => {
+    try {
+      const response = await axios.get("http://localhost:5000/api/companies/profile", {
+        headers: {
+          Authorization: `Bearer ${sessionStorage.getItem("access_token")}`,
+        },
+      });
+      setCompany(response.data);
+    } catch (err) {
+      console.error("Error fetching company departments:", err);
+      return [];
+    }
+  };
   useEffect(() => {
+    const fetchCompanyDepartments = async () => {
+      try {
+        const response = await axios.get("http://localhost:5000/api/companies/profile", {
+          headers: {
+            Authorization: `Bearer ${sessionStorage.getItem("access_token")}`,
+          },
+        });
+        setCompany(response.data);
+      } catch (err) {
+        console.error("Error fetching company departments:", err);
+        return [];
+      }
+    };
     fetchUsers();
+    fetchCompanyDepartments();
   }, []);
-
+  
   return (
     <>
      <AdminLayout>
@@ -354,14 +385,10 @@ const handleAssignDepartment = async () => {
         draggable
         pauseOnHover
         theme="colored"
-        transition={Zoom}
-      />
-
-      
+        transition={Zoom}/>
       </main>
       </AdminLayout>
-      {/* Modal d'affectation de département */}
-{showDepartmentModal && selectedUser && (
+      {showDepartmentModal && selectedUser && (
   <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
     <motion.div
       initial={{ opacity: 0, y: -20 }}
@@ -370,23 +397,33 @@ const handleAssignDepartment = async () => {
       transition={{ duration: 0.3 }}
       className="bg-white p-8 rounded-lg w-full max-w-md"
     >
-      <h2 className="text-xl font-semibold mb-4">Assign a Department</h2>
+      <h2 className="text-xl font-semibold mb-4">Assign Departments</h2>
       <p className="mb-4">
         User : <strong>{selectedUser.firstName} {selectedUser.lastName}</strong>
       </p>
-      <select
-        value={selectedDepartment}
-        onChange={(e) => setSelectedDepartment(e.target.value)}
-        className="w-full border border-gray-300 p-2 rounded-lg mb-6 focus:outline-none focus:ring-2 focus:ring-blue-500"
-      >
-        <option value="">-- Choose a department --</option>
-        {departments.map((dept) => (
-          <option key={dept} value={dept}>
-            {dept}
-          </option>
+      <div className="space-y-2">
+        {company?.departments?.map((dept) => (
+          <label key={dept.id} className="flex items-center gap-2">
+            <input
+              type="checkbox"
+              value={dept.name}
+              checked={selectedDepartments.includes(dept.name)}
+              onChange={(e) => {
+                if (e.target.checked) {
+                  setSelectedDepartments([...selectedDepartments, dept.name]);
+                } else {
+                  setSelectedDepartments(
+                    selectedDepartments.filter((d) => d !== dept.name)
+                  );
+                }
+              }}
+              className="form-checkbox"
+            />
+            {dept.name}
+          </label>
         ))}
-      </select>
-      <div className="flex justify-end gap-2">
+      </div>
+      <div className="flex justify-end gap-2 mt-6">
         <button
           onClick={() => setShowDepartmentModal(false)}
           className="px-4 py-2 rounded-lg bg-gray-300 hover:bg-gray-400"
@@ -401,7 +438,7 @@ const handleAssignDepartment = async () => {
         </button>
       </div>
     </motion.div>
-  </div>
+    </div>
 )}
 
 <ToastContainer transition={Zoom} />
