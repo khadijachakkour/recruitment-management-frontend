@@ -14,11 +14,11 @@ export default function CompanyProfile() {
   const [company, setCompany] = useState<Company | null>(null);
   const [error, setError] = useState<string>("");
   const [loading, setLoading] = useState<boolean>(true);
-  const { isLoggedIn, userRoles } = useAuth();
+  const { isLoggedIn, isAuthLoaded  } = useAuth();
   const router = useRouter();
 
       useEffect(() => {
-        if (!isLoggedIn) {
+        if (isAuthLoaded && !isLoggedIn) {
           router.push("/login");
           return;
         }

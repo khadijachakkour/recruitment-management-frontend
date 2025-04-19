@@ -29,7 +29,7 @@ export default function LoginPage() {
         const roles = decodedToken?.realm_access?.roles || [];
 
         if (roles.includes("Candidat")) {
-          router.push("/dashboard");
+          router.push("/Candidat/dashboard");
         } else {
           setErrorMessage("You are not authorized to access this page.");
         }

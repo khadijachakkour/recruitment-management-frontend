@@ -8,6 +8,7 @@ import { DecodedToken } from "@/app/types/DecodedToken";
 //Définition du Contexte d'Authentification qui va stocker l'état d'authentification globalement dans l'application.
 interface AuthContextType {
   isLoggedIn: boolean;
+  isAuthLoaded: boolean;
   userRoles: string[];
   login: (token: string) => void;
   logoutAdmin: () => Promise<void>; 
@@ -21,6 +22,8 @@ const AuthContext = createContext<AuthContextType | null>(null);
 export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [userRoles, setUserRoles] = useState<string[]>([]);
+  const [isAuthLoaded, setIsAuthLoaded] = useState(false);
+
   const router = useRouter(); // ✅ Gestion des redirections
 
 
@@ -41,6 +44,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       if (token) {
         setIsLoggedIn(true);
         setUserRoles(getUserRoles(token));
+        setIsAuthLoaded(true);
       } else {
         setIsLoggedIn(false);
         setUserRoles([]);
@@ -93,11 +97,9 @@ const logoutAdmin = async () => {
 //Logout Candidat
 const logoutCandidat = async () => {
   try {
-    console.log("Début de la fonction logout");
 
     // ✅ Stocker le rôle AVANT de réinitialiser `userRoles`
     const role = userRoles.length > 0 ? userRoles[0] : null;
-    console.log("Rôle actuel avant logout :", role);
 
     // Appel à l'API de déconnexion
     const response = await fetch("http://localhost:4000/logout", {
@@ -112,7 +114,6 @@ const logoutCandidat = async () => {
       setIsLoggedIn(false);
       setUserRoles([]);
 
-
         router.push("/login/Candidat");
       
     }
@@ -121,7 +122,7 @@ const logoutCandidat = async () => {
   }
 };
  return (
-    <AuthContext.Provider value={{ isLoggedIn, userRoles, login, logoutAdmin, logoutCandidat }}>
+    <AuthContext.Provider value={{ isAuthLoaded, isLoggedIn, userRoles, login, logoutAdmin, logoutCandidat ,}}>
       {children}
     </AuthContext.Provider>
   );

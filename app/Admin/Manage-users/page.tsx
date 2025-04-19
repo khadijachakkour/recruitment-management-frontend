@@ -14,9 +14,37 @@ interface User {
   firstName?: string;
   lastName?: string;
   role: string;
+  department?: string;
 }
 
 export default function ManageUsersPage() {
+
+  const [selectedUser, setSelectedUser] = useState<User | null>(null);
+const [selectedDepartment, setSelectedDepartment] = useState<string>("");
+const [showDepartmentModal, setShowDepartmentModal] = useState(false);
+
+const departments = ["Marketing", "Finance", "Tech", "RH", "Autre"]; 
+const handleAssignDepartment = async () => {
+  if (!selectedUser || !selectedDepartment) return;
+  try {
+    await axios.put(
+      `http://localhost:4000/api/admin/users/${selectedUser.id}/department`,
+      { department: selectedDepartment },
+      {
+        headers: {
+          Authorization: `Bearer ${sessionStorage.getItem("access_token")}`,
+        },
+      }
+    );
+    toast.success("Département affecté avec succès !");
+    setShowDepartmentModal(false);
+    fetchUsers(); // refresh
+  } catch (err) {
+    console.error("Erreur lors de l'affectation du département", err);
+    toast.error("Erreur lors de l'affectation.");
+  }
+};
+
   const [users, setUsers] = useState<User[]>([]);
   const [filteredUsers, setFilteredUsers] = useState<User[]>([]);
   const [formData, setFormData] = useState({
@@ -106,7 +134,7 @@ export default function ManageUsersPage() {
         case "email":
           return user.email.toLowerCase().includes(value.toLowerCase());
           case "role":
-            return typeof user.role === "string" && user.role.toLowerCase().includes(value.toLowerCase());
+      return String(user.role).toLowerCase().includes(value.toLowerCase());
           
         default:
           return Object.values(user)
@@ -236,35 +264,50 @@ export default function ManageUsersPage() {
                     <td className="p-4">{user.email}</td>
                     <td className="p-4">{user.username}</td>
                     <td className="p-4">
-                <span
-                  className={`inline-block px-3 py-1 text-sm font-medium rounded-full
-                    ${
-                      user.role === "Manager"
-                        ? "bg-purple-100 text-purple-700"
-                        : user.role === "Recruteur"
-                        ? "bg-blue-100 text-blue-700"
-                        : user.role === "RH"
-                        ? "bg-green-100 text-green-700"
-                        : "bg-gray-100 text-gray-700"
-                    }`}
-                >
-                  {user.role}
-                </span>
+                    <span
+  className={`inline-block px-3 py-1 text-sm font-medium rounded-full
+    ${
+      String(user.role).toLowerCase() === "manager"
+        ? "bg-purple-100 text-purple-700"
+        : String(user.role).toLowerCase() === "recruteur"
+        ? "bg-blue-100 text-blue-700"
+        : String(user.role).toLowerCase() === "rh"
+        ? "bg-green-100 text-green-700"
+        : "bg-gray-100 text-gray-700"
+    }`}
+>
+  {user.role}
+</span>
               </td>
-                <td className="p-4 text-center">
-                      <button
-                        onClick={() => {
-                          setDeleteUserId(user.id);
-                          setShowModal(true);
-                        }}
-                        className="text-red-600 hover:text-red-800 flex items-center gap-1 justify-center"
-                      >
-                        <Trash2 size={16} />
-                        Delete
-                      </button>
-                    </td>
-                  </tr>
-                ))
+              <td className="p-4 text-center">
+              {/* Actions */}
+              <div className="flex justify-center gap-4">
+                {/* Delete Action */}
+                <button
+                  onClick={() => {
+                    setDeleteUserId(user.id);
+                    setShowModal(true);
+                  }}
+                  className="text-red-600 hover:text-red-800 flex items-center gap-1"
+                >
+                  <Trash2 size={16} />
+                  Delete
+                </button>
+                {/* Assign Department Action */}
+                <button
+                  onClick={() => {
+                    setSelectedUser(user);
+                    setShowDepartmentModal(true);
+                  }}
+                  className="text-blue-600 hover:text-blue-800 flex items-center gap-1"
+                >
+                  <PlusCircle size={16} />
+                  Assign Department
+                </button>
+              </div>
+            </td>
+          </tr>
+        ))
               ) : (
                 <tr>
                   <td colSpan={5} className="text-center p-6 text-gray-500">
@@ -313,8 +356,56 @@ export default function ManageUsersPage() {
         theme="colored"
         transition={Zoom}
       />
+
+      
       </main>
       </AdminLayout>
-    </>
-  );
+      {/* Modal d'affectation de département */}
+{showDepartmentModal && selectedUser && (
+  <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
+    <motion.div
+      initial={{ opacity: 0, y: -20 }}
+      animate={{ opacity: 1, y: 0 }}
+      exit={{ opacity: 0, y: 20 }}
+      transition={{ duration: 0.3 }}
+      className="bg-white p-8 rounded-lg w-full max-w-md"
+    >
+      <h2 className="text-xl font-semibold mb-4">Assign a Department</h2>
+      <p className="mb-4">
+        User : <strong>{selectedUser.firstName} {selectedUser.lastName}</strong>
+      </p>
+      <select
+        value={selectedDepartment}
+        onChange={(e) => setSelectedDepartment(e.target.value)}
+        className="w-full border border-gray-300 p-2 rounded-lg mb-6 focus:outline-none focus:ring-2 focus:ring-blue-500"
+      >
+        <option value="">-- Choose a department --</option>
+        {departments.map((dept) => (
+          <option key={dept} value={dept}>
+            {dept}
+          </option>
+        ))}
+      </select>
+      <div className="flex justify-end gap-2">
+        <button
+          onClick={() => setShowDepartmentModal(false)}
+          className="px-4 py-2 rounded-lg bg-gray-300 hover:bg-gray-400"
+        >
+          Cancel
+        </button>
+        <button
+          onClick={handleAssignDepartment}
+          className="px-4 py-2 rounded-lg bg-blue-600 text-white hover:bg-blue-700"
+        >
+          Confirm
+        </button>
+      </div>
+    </motion.div>
+  </div>
+)}
+
+<ToastContainer transition={Zoom} />
+      </>
+  
+);
 }

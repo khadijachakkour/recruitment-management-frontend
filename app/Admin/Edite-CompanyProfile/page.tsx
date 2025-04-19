@@ -192,8 +192,7 @@ export default function UpdateCompanyProfile() {
               <img
                 src={companyLogoPreview}
                 alt="Company Logo"
-                className="w-32 h-32 object-cover rounded-lg shadow-xl transform hover:scale-105 transition-all"
-              />
+                className="w-32 h-32 object-cover rounded-lg shadow-xl transform hover:scale-105 transition-all" />
               <button
                 type="button"
                 onClick={() => removeImage("companyLogo")}

@@ -2,17 +2,21 @@ import { useState } from "react";
 import { Home, Users, Settings, Bell, Building, Menu, X } from "lucide-react";
 import Link from "next/link";
 
-export default function Sidebar() {
+export default function Sidebar({ onToggle }: { onToggle: (isOpen: boolean) => void }) {
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
-  const toggleSidebar = () => setIsSidebarOpen(!isSidebarOpen);
+
+  const toggleSidebar = () => {
+    const newState = !isSidebarOpen;
+    setIsSidebarOpen(newState);
+    onToggle(newState); // Notify parent about the state change
+  };
 
   return (
     <aside
-      className={`fixed z-[1100] top-0 left-0 h-full bg-white border-r shadow-md transition-all duration-300 ease-in-out
-      ${isSidebarOpen ? "w-64" : "w-16"}`}
-    >
-
-      
+  className={`fixed z-[1100] top-0 left-0 h-full bg-white border-r shadow-md transition-all duration-300 ease-in-out ${
+    isSidebarOpen ? "w-64" : "w-16"
+  }`}
+>
       {/* Header avec hamburger */}
       <div className="flex items-center justify-between p-4 border-b">
         <div className="flex items-center gap-2">
@@ -31,7 +35,7 @@ export default function Sidebar() {
       {/* Navigation */}
       <nav className="mt-4 px-2 space-y-1 text-sm font-medium">
         <Link
-          href="#"
+          href="/Admin/Dashboard"
           className="flex items-center gap-3 px-3 py-2 rounded-lg text-gray-700 hover:bg-blue-100 hover:text-blue-700 transition-colors"
         >
           <Home size={18} /> {isSidebarOpen && <span>Dashboard</span>}

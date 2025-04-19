@@ -1,17 +1,29 @@
-// AdminLayout.tsx
 "use client";
-
+import { useState } from "react";
 import NavbarAdmin from "./app/components/NavbarAdmin";
 import Sidebar from "./app/components/Sidebar";
 
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
+  const [isSidebarOpen, setIsSidebarOpen] = useState(true);
+
   return (
-    <>
-      <Sidebar />
-      <div className="ml-64 flex flex-col min-h-screen bg-gray-100">
+    <div className="flex">
+      {/* Sidebar */}
+      <Sidebar onToggle={(isOpen) => setIsSidebarOpen(isOpen)} />
+
+      {/* Main Content */}
+      <div
+        className={`flex-1 min-h-screen transition-all duration-300`}
+        style={{
+          marginLeft: isSidebarOpen ? "16rem" : "4rem", // Ajuste dynamiquement la marge gauche
+        }}
+      >
+        {/* Navbar */}
         <NavbarAdmin />
-        <main className="p-6">{children}</main>
+
+        {/* Page Content */}
+        <div className="pt-16">{children}</div>
       </div>
-    </>
+    </div>
   );
 }
