@@ -33,6 +33,7 @@ export default function UpdateCompanyProfile() {
     ceo: "",
     ceoImage: null as File | null,
     revenue: "",
+    newDepartment: "",
   });
 
   useEffect(() => {
@@ -462,7 +463,7 @@ export default function UpdateCompanyProfile() {
           />
         </motion.div>
 
-        {/* Departments */}
+        {/* Departments 
 <motion.div className="space-y-4">
   <label htmlFor="departments" className="block text-lg font-medium text-white">
     Departments
@@ -476,8 +477,65 @@ export default function UpdateCompanyProfile() {
     placeholder="Enter departments separated by commas"
     className="w-full p-4 rounded-lg border-2 border-transparent focus:outline-none focus:ring-2 focus:ring-teal-400 bg-white text-gray-900 placeholder-gray-400 shadow-lg hover:shadow-2xl transition-all duration-300"
   />
-</motion.div>
+</motion.div>*/}
+{/* Departments */}
+<motion.div className="space-y-4">
+  <label htmlFor="departments" className="block text-lg font-medium text-white">
+    Departments
+  </label>
+  <div className="space-y-2">
+    {/* Liste des départements existants */}
+    {formData.departments.map((department, index) => (
+      <div key={index} className="flex items-center gap-4">
+        <span className="text-gray-900 bg-gray-200 px-3 py-1 rounded-lg shadow">
+          {department}
+        </span>
+        <button
+          type="button"
+          onClick={() =>
+            setFormData((prev) => ({
+              ...prev,
+              departments: prev.departments.filter((_, i) => i !== index),
+            }))
+          }
+          className="text-red-500 hover:text-red-700 transform hover:scale-110 transition-all"
+        >
+          <FaTrashAlt />
+        </button>
+      </div>
+    ))}
+  </div>
 
+  {/* Champ pour ajouter un nouveau département */}
+  <div className="flex items-center gap-4">
+    <input
+      type="text"
+      id="newDepartment"
+      name="newDepartment"
+      placeholder="Add a new department"
+      value={formData.newDepartment || ""}
+      onChange={(e) =>
+        setFormData((prev) => ({ ...prev, newDepartment: e.target.value }))
+      }
+      className="w-full p-4 rounded-lg border-2 border-transparent focus:outline-none focus:ring-2 focus:ring-teal-400 bg-white text-gray-900 placeholder-gray-400 shadow-lg hover:shadow-2xl transition-all duration-300"
+    />
+    <button
+      type="button"
+      onClick={() => {
+        if (formData.newDepartment?.trim()) {
+          setFormData((prev) => ({
+            ...prev,
+            departments: [...prev.departments, formData.newDepartment.trim()],
+            newDepartment: "",
+          }));
+        }
+      }}
+      className="bg-teal-500 text-white py-2 px-4 rounded-lg shadow-lg hover:bg-teal-600 transform hover:scale-105 transition-all"
+    >
+      Add
+    </button>
+  </div>
+</motion.div>
 
 
         {/* Submit Buttons */}

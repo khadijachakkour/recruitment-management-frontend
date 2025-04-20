@@ -12,8 +12,8 @@ interface User {
   id: string;
   username: string;
   email: string;
-  firstName?: string;
-  lastName?: string;
+  firstName: string;
+  lastName: string;
   role: string;
   department?: string;
 }
@@ -21,7 +21,8 @@ interface User {
 export default function ManageUsersPage() {
 
   const [selectedUser, setSelectedUser] = useState<User | null>(null);
-  const [selectedDepartmentsByUser, setSelectedDepartmentsByUser] = useState<{ [userId: string]: string[] }>({});  const [showDepartmentModal, setShowDepartmentModal] = useState(false);  
+  const [selectedDepartmentsByUser, setSelectedDepartmentsByUser] = useState<{ [userId: string]: string[] }>({});  
+  const [showDepartmentModal, setShowDepartmentModal] = useState(false);  
   const handleAssignDepartment = async () => {
     if (!selectedUser || !selectedDepartmentsByUser[selectedUser.id]?.length) return;
     try {
@@ -76,7 +77,24 @@ export default function ManageUsersPage() {
       console.error("Error loading users", err);
     }
   };
-
+  const fetchUserDepartments = async (userId: string) => {
+    try {
+      const response = await axios.get(
+        `http://localhost:5000/api/companies/user-departments/${userId}`,
+        {
+          headers: {
+            Authorization: `Bearer ${sessionStorage.getItem("access_token")}`,
+          },
+        }
+      );
+      setSelectedDepartmentsByUser((prev) => ({
+        ...prev,
+        [userId]: response.data.map((dept: { name: string }) => dept.name),
+      }));
+    } catch (err) {
+      console.error("Erreur lors de la récupération des départements de l'utilisateur :", err);
+    }
+  };
   const handleDelete = async () => {
     if (deleteUserId) {
       try {
@@ -149,7 +167,11 @@ export default function ManageUsersPage() {
 
     setFilteredUsers(filtered);
   };
-
+  const handleOpenDepartmentModal = async (user: User) => {
+    setSelectedUser(user);
+    await fetchUserDepartments(user.id); // Récupérer les départements affectés
+    setShowDepartmentModal(true);
+  };
   useEffect(() => {
     const fetchCompanyDepartments = async () => {
       try {
@@ -321,15 +343,12 @@ export default function ManageUsersPage() {
                 </button>
                 {/* Assign Department Action */}
                 <button
-                  onClick={() => {
-                    setSelectedUser(user);
-                    setShowDepartmentModal(true);
-                  }}
-                  className="text-blue-600 hover:text-blue-800 flex items-center gap-1"
-                >
-                  <PlusCircle size={16} />
-                  Assign Department
-                </button>
+  onClick={() => handleOpenDepartmentModal(user)}
+  className="text-blue-600 hover:text-blue-800 flex items-center gap-1"
+>
+  <PlusCircle size={16} />
+  Assign Department
+</button>
               </div>
             </td>
           </tr>
@@ -369,18 +388,6 @@ export default function ManageUsersPage() {
           </div>
         )}
       </div>
-      <ToastContainer
-        position="top-right"
-        autoClose={3000}
-        hideProgressBar={false}
-        newestOnTop={true}
-        closeOnClick
-        rtl={false}
-        pauseOnFocusLoss
-        draggable
-        pauseOnHover
-        theme="colored"
-        transition={Zoom}/>
       </main>
       </AdminLayout>
       {showDepartmentModal && selectedUser && (
@@ -408,7 +415,7 @@ export default function ManageUsersPage() {
     />
     {dept.name}
   </label>
-        ))}
+))}
       </div>
       <div className="flex justify-end gap-2 mt-6">
         <button
@@ -428,8 +435,19 @@ export default function ManageUsersPage() {
     </div>
 )}
 
-<ToastContainer transition={Zoom} />
-      </>
+<ToastContainer
+        position="top-right"
+        autoClose={2000}
+        hideProgressBar={false}
+        newestOnTop={true}
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+        theme="colored"
+        transition={Zoom} />
+            </>
   
 );
 }
