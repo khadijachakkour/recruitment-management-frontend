@@ -21,14 +21,13 @@ interface User {
 export default function ManageUsersPage() {
 
   const [selectedUser, setSelectedUser] = useState<User | null>(null);
-  const [selectedDepartments, setSelectedDepartments] = useState<string[]>([]);
-  const [showDepartmentModal, setShowDepartmentModal] = useState(false);  
+  const [selectedDepartmentsByUser, setSelectedDepartmentsByUser] = useState<{ [userId: string]: string[] }>({});  const [showDepartmentModal, setShowDepartmentModal] = useState(false);  
   const handleAssignDepartment = async () => {
-    if (!selectedUser || selectedDepartments.length === 0) return;
+    if (!selectedUser || !selectedDepartmentsByUser[selectedUser.id]?.length) return;
     try {
       await axios.put(
-        `http://localhost:4000/api/admin/users/${selectedUser.id}/departments`,
-        { departments: selectedDepartments }, // Envoyer un tableau
+        `http://localhost:5000/api/companies/users/${selectedUser.id}/departments`,
+        { departments: selectedDepartmentsByUser[selectedUser.id] },
         {
           headers: {
             Authorization: `Bearer ${sessionStorage.getItem("access_token")}`,
@@ -37,7 +36,7 @@ export default function ManageUsersPage() {
       );
       toast.success("Départements affectés avec succès !");
       setShowDepartmentModal(false);
-      fetchUsers(); // Rafraîchir la liste des utilisateurs
+      fetchUsers();
     } catch (err) {
       console.error("Erreur lors de l'affectation des départements", err);
       toast.error("Erreur lors de l'affectation.");
@@ -151,19 +150,6 @@ export default function ManageUsersPage() {
     setFilteredUsers(filtered);
   };
 
-  const fetchCompanyDepartments = async () => {
-    try {
-      const response = await axios.get("http://localhost:5000/api/companies/profile", {
-        headers: {
-          Authorization: `Bearer ${sessionStorage.getItem("access_token")}`,
-        },
-      });
-      setCompany(response.data);
-    } catch (err) {
-      console.error("Error fetching company departments:", err);
-      return [];
-    }
-  };
   useEffect(() => {
     const fetchCompanyDepartments = async () => {
       try {
@@ -181,7 +167,16 @@ export default function ManageUsersPage() {
     fetchUsers();
     fetchCompanyDepartments();
   }, []);
-  
+  const handleDepartmentChange = (userId: string, department: string, isChecked: boolean) => {
+    setSelectedDepartmentsByUser((prev) => {
+      const userDepartments = prev[userId] || [];
+      if (isChecked) {
+        return { ...prev, [userId]: [...userDepartments, department] };
+      } else {
+        return { ...prev, [userId]: userDepartments.filter((d) => d !== department) };
+      }
+    });
+  };
   return (
     <>
      <AdminLayout>
@@ -402,25 +397,17 @@ export default function ManageUsersPage() {
         User : <strong>{selectedUser.firstName} {selectedUser.lastName}</strong>
       </p>
       <div className="space-y-2">
-        {company?.departments?.map((dept) => (
-          <label key={dept.id} className="flex items-center gap-2">
-            <input
-              type="checkbox"
-              value={dept.name}
-              checked={selectedDepartments.includes(dept.name)}
-              onChange={(e) => {
-                if (e.target.checked) {
-                  setSelectedDepartments([...selectedDepartments, dept.name]);
-                } else {
-                  setSelectedDepartments(
-                    selectedDepartments.filter((d) => d !== dept.name)
-                  );
-                }
-              }}
-              className="form-checkbox"
-            />
-            {dept.name}
-          </label>
+      {company?.departments?.map((dept) => (
+  <label key={dept.id} className="flex items-center gap-2">
+    <input
+      type="checkbox"
+      value={dept.name}
+      checked={selectedDepartmentsByUser[selectedUser?.id]?.includes(dept.name) || false}
+      onChange={(e) => handleDepartmentChange(selectedUser!.id, dept.name, e.target.checked)}
+      className="form-checkbox"
+    />
+    {dept.name}
+  </label>
         ))}
       </div>
       <div className="flex justify-end gap-2 mt-6">
