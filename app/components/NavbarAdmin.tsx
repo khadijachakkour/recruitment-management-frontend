@@ -42,38 +42,6 @@ export default function NavbarAdmin() {
 
           {isRecruteur && (
             <ul className="navbar__nav">
-              <li className="navbar__dropdown">
-                <span className="navbar__nav-item">Job Offers</span>
-                <ul className="navbar__dropdown-menu">
-                  <li><Link href="/Recruteur/Offers/Create">Create Offer</Link></li>
-                  <li><Link href="/Recruteur/Offers/Manage">Manage Offers</Link></li>
-                  <li><Link href="/Recruteur/Offers/Publish">Multi-platform Publishing</Link></li>
-                </ul>
-              </li>
-
-              <li className="navbar__dropdown">
-                <span className="navbar__nav-item">Applications</span>
-                <ul className="navbar__dropdown-menu">
-                  <li><Link href="/Recruteur/Applications/Preselected">Pre-selected Candidates</Link></li>
-                  <li><Link href="/Recruteur/Applications/Shortlist">Shortlist Candidates</Link></li>
-                </ul>
-              </li>
-
-              <li className="navbar__dropdown">
-                <span className="navbar__nav-item">Interviews & Tests</span>
-                <ul className="navbar__dropdown-menu">
-                  <li><Link href="/Recruteur/Interviews/Invitations">Send Invitations</Link></li>
-                  <li><Link href="/Recruteur/Interviews/Schedule">Schedule Dates</Link></li>
-                </ul>
-              </li>
-
-              <li className="navbar__dropdown">
-                <span className="navbar__nav-item">Candidate Validation</span>
-                <ul className="navbar__dropdown-menu">
-                  <li><Link href="/Recruteur/Candidates/Status">Change Candidate Status</Link></li>
-                  <li><Link href="/Recruteur/Candidates/Notify">Notify Candidates</Link></li>
-                </ul>
-              </li>
 
               <li><Link href="/Recruteur/Recruitment-management" className="navbar__nav-item">Recruitment Management</Link></li>
               <li><Link href="/Recruteur/Notifications" className="navbar__nav-item">Notifications</Link></li>

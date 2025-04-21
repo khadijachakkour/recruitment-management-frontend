@@ -1,9 +1,9 @@
 "use client";
 import { useState } from "react";
 import NavbarAdmin from "./app/components/NavbarAdmin";
-import Sidebar from "./app/components/SidebarAdmin";
+import Sidebar from "./app/components/SidebarRecruteur";
 
-export default function AdminLayout({ children }: { children: React.ReactNode }) {
+export default function RecruteurLayout({ children }: { children: React.ReactNode }) {
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
 
   return (

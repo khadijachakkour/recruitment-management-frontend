@@ -31,8 +31,6 @@ const dataPie = [
 ]; 
 
 export default function AdminDashboard() { 
-  const [isSidebarOpen, setIsSidebarOpen] = useState(true); 
-  const toggleSidebar = () => setIsSidebarOpen(!isSidebarOpen); 
 
   const [roleCounts, setRoleCounts] = useState<{ [key: string]: number }>({}); 
   const [loading, setLoading] = useState(true); 
