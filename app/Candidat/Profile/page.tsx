@@ -32,6 +32,8 @@ export default function Profile() {
   const { isLoggedIn, userRoles, logoutCandidat } = useAuth();
   const router = useRouter();
   const [dataLoaded, setDataLoaded] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+
 
   useEffect(() => {
     if (!isLoggedIn) {
@@ -80,7 +82,7 @@ export default function Profile() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-
+    setIsLoading(true);
     try {
       if (shouldDeleteAvatar) {
         await deleteAvatar();
@@ -104,6 +106,8 @@ export default function Profile() {
     } catch (error) {
       console.error("Update failed:", error);
       toast.error("Profile update failed.");
+    } finally {
+      setIsLoading(false); 
     }
   };
 
@@ -286,12 +290,32 @@ export default function Profile() {
 
               {/* Buttons */}
               <div className="flex justify-center gap-4">
-                <button
-                  type="submit"
-                  className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-xl transition"
-                >
-                  Save Changes
-                </button>
+              <button
+  type="submit"
+  disabled={isLoading}
+  className="w-full bg-blue-600 text-white py-3 rounded-lg hover:bg-blue-700 transition disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+>
+  {isLoading ? (
+    <svg className="animate-spin h-5 w-5 text-white" viewBox="0 0 24 24">
+      <circle
+        className="opacity-25"
+        cx="12"
+        cy="12"
+        r="10"
+        stroke="currentColor"
+        strokeWidth="4"
+        fill="none"
+      />
+      <path
+        className="opacity-75"
+        fill="currentColor"
+        d="M4 12a8 8 0 018-8v8z"
+      />
+    </svg>
+  ) : (
+    "Save Changes"
+  )}
+</button>
                 <button
                   type="button"
                   onClick={handleCancel}

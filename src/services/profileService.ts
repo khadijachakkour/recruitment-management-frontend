@@ -42,17 +42,13 @@ export const updateProfileAndCv = async (formData: FormData) => {
   if (cv) {
     const cvFormData = new FormData();
     cvFormData.append("cv", cv);
-
     const res = await axios.post(`${API_URL}/upload-cv`, cvFormData, {
       headers: {
-        "Content-Type": "multipart/form-data",
         ...getAuthHeaders(),
       },
     });
     results.cv_url = res.data.cv_url;
   }
-
-  // Upload avatar si présent
   const avatar = formData.get("avatar") as File;
   if (avatar) {
     const avatarFormData = new FormData();
