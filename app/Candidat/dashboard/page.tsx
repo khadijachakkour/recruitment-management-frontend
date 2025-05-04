@@ -95,7 +95,7 @@ export default function DashboardCandidat() {
               title="Browse Jobs"
               icon={<Search size={28} />}
               description="Find jobs with our smart filters."
-              link="/jobs"
+              link="/Candidat/Listoffres"
             />
             <DashboardCard
               title="Apply for Jobs"

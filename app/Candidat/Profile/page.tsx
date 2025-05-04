@@ -5,7 +5,6 @@ import { deleteAvatar, deleteCv, getProfile, updateProfileAndCv } from "../../..
 import { toast } from "react-hot-toast";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/src/context/authContext";
-import NavbarCandidat from "../../components/NavbarCandidat";
 import Image from "next/image";
 import { LogOut, Menu, X, Home, Search, FileText, Briefcase, User, MessageSquare } from "lucide-react";
 import Link from "next/link";

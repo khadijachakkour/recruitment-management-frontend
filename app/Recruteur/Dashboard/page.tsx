@@ -25,7 +25,8 @@ const RecruteurPage = () => {
   const [selectedFilter, setSelectedFilter] = useState('All');
   const [departments, setDepartments] = useState<Department[]>([]); // Typage explicite
   const [loading, setLoading] = useState(true); // Loading state
-  const [error, setError] = useState(null); // Error state
+  const [error, setError] = useState(null); 
+  const [jobOffers, setJobOffers] = useState([]);
   const [userId, setUserId] = useState<string | null>(null);
   const router = useRouter();
 
@@ -65,7 +66,10 @@ const RecruteurPage = () => {
             Authorization: `Bearer ${sessionStorage.getItem("access_token")}`,
           },
         });
-  
+        if (data.userId) {
+          const jobsRes = await axios.get(`http://localhost:8081/api/offers/by-recruiter/${data.userId}`);
+          setJobOffers(jobsRes.data);
+        }        
         setUserId(data.userId);
         const response = await axios.get(`http://localhost:5000/api/companies/user-departments/${data.userId}`); // Replace with your API endpoint
         setDepartments(response.data);
@@ -191,6 +195,30 @@ const RecruteurPage = () => {
             </div>
           )}
         </div>
+{/* Job Offers Section */}
+<div className="bg-white p-6 rounded-xl shadow-lg border border-gray-200 mb-6">
+  <h3 className="text-lg font-semibold mb-4 text-gray-800">Job Offers Created</h3>
+  {jobOffers.length === 0 ? (
+    <p className="text-gray-500">No job offers created yet.</p>
+  ) : (
+    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+      {jobOffers.map((job: any) => (
+        <motion.div
+          key={job.id}
+          whileHover={{ scale: 1.03 }}
+          whileTap={{ scale: 0.98 }}
+          className="bg-gray-50 p-5 rounded-lg shadow-md border border-gray-200 hover:shadow-lg transition-transform" >
+          <h4 className="text-lg font-semibold text-blue-700">{job.title}</h4>
+          <button
+            onClick={() => router.push(`/Recruteur/Jobs/ViewJob/${job.id}`)}
+            className="mt-4 w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition">
+                View Details
+          </button>
+        </motion.div>
+      ))}
+    </div>
+  )}
+</div>
 
         {/* Messages and Activities */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">

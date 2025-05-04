@@ -45,7 +45,7 @@ const SidebarCandidat = ({ isOpen, toggle }: SidebarProps) => {
       </div>
       <nav className="mt-4 px-2 space-y-1 text-sm font-medium">
         <SidebarLink href="/Candidat/dashboard" icon={<Home size={18} />} text="Dashboard" isSidebarOpen={isOpen} />
-        <SidebarLink href="/Candidat/offres" icon={<Search size={18} />} text="Jobs" isSidebarOpen={isOpen} />
+        <SidebarLink href="/Candidat/Listoffres" icon={<Search size={18} />} text="Jobs" isSidebarOpen={isOpen} />
         <SidebarLink href="/applications" icon={<FileText size={18} />} text="Apply" isSidebarOpen={isOpen} />
         <SidebarLink href="/evaluations" icon={<Briefcase size={18} />} text="Evaluation" isSidebarOpen={isOpen} />
         <SidebarLink href="/candidature-status" icon={<User size={18} />} text="Tracking" isSidebarOpen={isOpen} />

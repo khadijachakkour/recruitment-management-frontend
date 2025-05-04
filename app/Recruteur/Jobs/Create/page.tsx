@@ -23,6 +23,10 @@ const CreateJobPage = () => {
   const [applicationDeadline, setApplicationDeadline] = useState('');
   const [departmentId, setDepartmentId] = useState<number | null>(null);
   const [departments, setDepartments] = useState<Department[]>([]);
+  const [experienceRequired, setExperienceRequired] = useState('');
+  const [educationLevel, setEducationLevel] = useState('');
+  const [languagesRequired, setLanguagesRequired] = useState('');
+  const [workMode, setWorkMode] = useState('');
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
 
   const router = useRouter();
@@ -58,6 +62,10 @@ const CreateJobPage = () => {
       contractType,
       applicationDeadline: new Date(applicationDeadline),
       departmentId,
+      experienceRequired,
+      educationLevel,
+      languagesRequired,
+      workMode,
     };
 
     try {
@@ -83,7 +91,6 @@ const CreateJobPage = () => {
     }
     if (step === 2) {
       if (!skillsRequired?.trim()) newErrors.skillsRequired = 'Skills are required.';
-      if (!contractType.trim()) newErrors.contractType = 'Contract type is required.';
     }
     if (step === 3) {
       if (!applicationDeadline.trim()) newErrors.applicationDeadline = 'Application deadline is required.';
@@ -122,7 +129,7 @@ const CreateJobPage = () => {
       case 2:
         return (
           <div className="space-y-6">
-            <h2 className="text-xl font-bold text-blue-700 flex items-center gap-2"><BadgePlus /> Requirements</h2>
+            <h2 className="text-xl font-bold text-blue-700 flex items-center gap-2"><BadgePlus /> Job Requirements</h2>
             <div>
               <label className="text-sm font-medium">Salary</label>
               <input type="number" value={salary || ''} onChange={(e) => setSalary(Number(e.target.value))} className={inputStyle} />
@@ -137,12 +144,20 @@ const CreateJobPage = () => {
               <input type="text" value={contractType} onChange={(e) => setContractType(e.target.value)} className={`${inputStyle} ${errors.contractType ? 'border-red-500' : ''}`} />
               {errors.contractType && <p className={errorStyle}>{errors.contractType}</p>}
             </div>
+            <div>
+              <label className="text-sm font-medium">Required Experience </label>
+              <input type="text" value={experienceRequired} onChange={(e) => setExperienceRequired(e.target.value)} className={inputStyle} />
+            </div>
+            <div>
+              <label className="text-sm font-medium">Education Level </label>
+              <input type="text" value={educationLevel} onChange={(e) => setEducationLevel(e.target.value)} className={inputStyle} />
+            </div>
           </div>
         );
       case 3:
         return (
           <div className="space-y-6">
-            <h2 className="text-xl font-bold text-blue-700 flex items-center gap-2"><CalendarDays /> Finalization</h2>
+            <h2 className="text-xl font-bold text-blue-700 flex items-center gap-2"><CalendarDays /> Offer Details</h2>
             <div>
               <label className="text-sm font-medium">Application Deadline</label>
               <input type="date" value={applicationDeadline} onChange={(e) => setApplicationDeadline(e.target.value)} className={`${inputStyle} ${errors.applicationDeadline ? 'border-red-500' : ''}`} />
@@ -170,8 +185,28 @@ const CreateJobPage = () => {
               </Select.Root>
               {errors.departmentId && <p className={errorStyle}>{errors.departmentId}</p>}
             </div>
-          </div>
+            <div>
+  <label className="text-sm font-medium">Required Languages</label>
+  <input
+    type="text"
+    value={languagesRequired}
+    onChange={(e) => setLanguagesRequired(e.target.value)}
+    className={inputStyle}/>
+   </div>
+    <div>
+      <label className="text-sm font-medium">Work Mode</label>
+      <input
+        type="text"
+        value={workMode}
+        onChange={(e) => setWorkMode(e.target.value)}
+        className={inputStyle}
+        placeholder="On-site / Hybrid / Remote"
+      />
+    </div>
+    </div>            
         );
+        default:
+        return null;
     }
   };
 

@@ -6,6 +6,7 @@ import { Briefcase, MapPin, CalendarDays, Coins } from 'lucide-react';
 import Link from 'next/link';
 import { FaBriefcase } from 'react-icons/fa';
 import SidebarCandidat from '@/app/components/SidebarCandidat';
+import { useRouter } from 'next/navigation';
 
 interface Offer {
   id: number;
@@ -25,7 +26,8 @@ const AllOffersPage = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [contractTypeFilter, setContractTypeFilter] = useState<string>('all');
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
-
+  const router = useRouter();
+  
   useEffect(() => {
     const fetchOffers = async () => {
       try {
@@ -65,14 +67,8 @@ const AllOffersPage = () => {
 
 
   const handleApply = (offerId: number) => {
-    axios.post(`http://localhost:8081/api/applications/apply`, { offerId })
-      .then(() => {
-        alert("Votre candidature a été envoyée !");
-      })
-      .catch((err) => {
-        console.error("Erreur lors de la candidature :", err);
-        alert("Une erreur s'est produite.");
-      });
+    router.push(`/Candidat/PostulerOffre/${offerId}`);
+
   };
   
   return (
@@ -124,7 +120,7 @@ const AllOffersPage = () => {
           >
             <div>
               <Link
-                href={`/candidat/offres/${offer.id}`}
+                href={`/Candidat/viewOffers/${offer.id}`}
                 className="block"
                 title={`View details of ${offer.title}`}
               >

@@ -4,6 +4,7 @@ import Footer from "./components/Footer";
 import "./styles/globals.css";
 import { AuthProvider } from "../src/context/authContext";
 import 'react-toastify/dist/ReactToastify.css';
+import { Toaster } from "react-hot-toast";
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
@@ -17,7 +18,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
 
           {/* Contenu principal */}
           <main className="flex-grow pt-16">{children}</main>
-
+          <Toaster position="top-right" />
           {/* Footer */}
           <Footer />
         </AuthProvider>

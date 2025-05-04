@@ -22,8 +22,7 @@ export default function Sidebar({ onToggle }: { onToggle: (isOpen: boolean) => v
     <aside
       className={`fixed z-[1100] top-0 left-0 h-full bg-white border-r shadow-md transition-all duration-300 ease-in-out ${
         isSidebarOpen ? "w-64" : "w-16"
-      }`}
-    >
+      }`}>
       {/* Header avec hamburger */}
       <div className="flex items-center justify-between p-4 border-b">
         <div className="flex items-center gap-2">
@@ -33,8 +32,7 @@ export default function Sidebar({ onToggle }: { onToggle: (isOpen: boolean) => v
 
         <button
           onClick={toggleSidebar}
-          className="text-gray-600 hover:text-blue-600 transition-colors"
-        >
+          className="text-gray-600 hover:text-blue-600 transition-colors">
           {isSidebarOpen ? <X size={26} /> : <Menu size={26} />}
         </button>
       </div>
@@ -43,17 +41,14 @@ export default function Sidebar({ onToggle }: { onToggle: (isOpen: boolean) => v
       <nav className="mt-4 px-2 space-y-1 text-sm font-medium">
         <Link
           href="/Recruteur/Dashboard"
-          className="flex items-center gap-3 px-3 py-2 rounded-lg text-gray-700 hover:bg-blue-100 hover:text-blue-700 transition-colors"
-        >
+          className="flex items-center gap-3 px-3 py-2 rounded-lg text-gray-700 hover:bg-blue-100 hover:text-blue-700 transition-colors">
           <Home size={18} /> {isSidebarOpen && <span>Dashboard</span>}
         </Link>
-
         {/* Job Offers */}
         <div className="navbar__dropdown">
           <button
             onClick={() => toggleDropdown("jobOffers")}
-            className="flex items-center justify-between w-full px-3 py-2 rounded-lg text-gray-700 hover:bg-blue-100 hover:text-blue-700 transition-colors"
-          >
+            className="flex items-center justify-between w-full px-3 py-2 rounded-lg text-gray-700 hover:bg-blue-100 hover:text-blue-700 transition-colors">
             <span className="flex items-center gap-3">
               <Building size={18} />
               {isSidebarOpen && <span>Job Offers</span>}
@@ -65,24 +60,21 @@ export default function Sidebar({ onToggle }: { onToggle: (isOpen: boolean) => v
               <li>
                 <Link
                   href="/Recruteur/Jobs/Create"
-                  className="block px-3 py-2 rounded-lg text-gray-700 hover:bg-blue-100 hover:text-blue-700 transition-colors"
-                >
+                  className="block px-3 py-2 rounded-lg text-gray-700 hover:bg-blue-100 hover:text-blue-700 transition-colors">
                   Create Offer
                 </Link>
               </li>
               <li>
                 <Link
-                  href="/Recruteur/Offers/Manage"
-                  className="block px-3 py-2 rounded-lg text-gray-700 hover:bg-blue-100 hover:text-blue-700 transition-colors"
-                >
+                  href="/Recruteur/Jobs/ManageOffers"
+                  className="block px-3 py-2 rounded-lg text-gray-700 hover:bg-blue-100 hover:text-blue-700 transition-colors">
                   Manage Offers
                 </Link>
               </li>
               <li>
                 <Link
                   href="/Recruteur/Offers/Publish"
-                  className="block px-3 py-2 rounded-lg text-gray-700 hover:bg-blue-100 hover:text-blue-700 transition-colors"
-                >
+                  className="block px-3 py-2 rounded-lg text-gray-700 hover:bg-blue-100 hover:text-blue-700 transition-colors">
                   Multi-platform Publishing
                 </Link>
               </li>
