@@ -1,24 +1,28 @@
-"use client";
-import { useState } from "react";
 import { FaSearch, FaMapMarkerAlt, FaBriefcase } from "react-icons/fa";
-import "../styles/SearchBar.css";  // Importation du fichier CSS
 
-export default function SearchBar() {
-  const [jobTitle, setJobTitle] = useState("");
-  const [location, setLocation] = useState("");
-  const [keywords, setKeywords] = useState("");
+interface Props {
+  jobTitle: string;
+  setJobTitle: (value: string) => void;
+  location: string;
+  setLocation: (value: string) => void;
+  keywords: string;
+  setKeywords: (value: string) => void;
+  onSearch: () => void;
+}
 
+export default function SearchBar({
+  jobTitle, setJobTitle,
+  location, setLocation,
+  keywords, setKeywords,
+  onSearch
+}: Props) {
   const handleSubmit = (event: React.FormEvent) => {
     event.preventDefault();
-    console.log("Job Title:", jobTitle, "Location:", location, "Keywords:", keywords);
+    onSearch();
   };
 
   return (
-    <form
-      onSubmit={handleSubmit}
-      className="hero-searchbar"
-    >
-      {/* Job Title Field */}
+    <form onSubmit={handleSubmit} className="hero-searchbar">
       <div className="search-input">
         <FaBriefcase className="icon" />
         <input
@@ -26,10 +30,10 @@ export default function SearchBar() {
           placeholder="Job Title"
           value={jobTitle}
           onChange={(e) => setJobTitle(e.target.value)}
+          className="w-64"
         />
       </div>
 
-      {/* Location Field */}
       <div className="search-input">
         <FaMapMarkerAlt className="icon" />
         <input
@@ -37,10 +41,10 @@ export default function SearchBar() {
           placeholder="Location"
           value={location}
           onChange={(e) => setLocation(e.target.value)}
+          className="w-64"
         />
       </div>
 
-      {/* Keywords Field */}
       <div className="search-input">
         <FaSearch className="icon" />
         <input
@@ -48,10 +52,10 @@ export default function SearchBar() {
           placeholder="Keywords"
           value={keywords}
           onChange={(e) => setKeywords(e.target.value)}
+          className="w-64"
         />
       </div>
 
-      {/* Search Button */}
       <button type="submit" className="search-button">
         Search
       </button>

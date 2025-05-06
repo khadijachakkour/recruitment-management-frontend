@@ -13,10 +13,6 @@ export default function Hero() {
             Each month, more than 3 million job seekers turn to our website in their job search for work...
           </p>
 
-          {/* Nouvelle barre de recherche améliorée */}
-          <div className="mt-8 flex justify-start w-full">
-            <SearchBar />
-          </div>
         </div>
 
         {/* Image à droite du texte */}
