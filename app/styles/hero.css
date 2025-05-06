@@ -35,16 +35,6 @@
   padding: 100px 20px;
 }
 
-.hero-image {
-  width: 100%;
-  height: 700px;
-  max-width: 800px;
-  background-image: url("/images/Image.png");
-  background-size: cover;
-  background-position: center;
-  background-repeat: no-repeat;
-}
-
 .hero-searchbar {
   animation: fadeInUp 1.6s ease-out;
 }
