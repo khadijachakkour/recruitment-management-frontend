@@ -8,61 +8,65 @@ export default function Footer() {
   if (isAdmin) {
     // Footer minimaliste pour les admins
     return (
-      <footer className="bg-gray-900 text-white py-4 text-center mt-auto">
+      <footer className="bg-gray-900 text-white py-2 text-center mt-auto">
         <p className="text-sm text-gray-400">© {new Date().getFullYear()} JobBox Admin Panel</p>
       </footer>
     );
   }
 
-  // Footer complet pour les autres utilisateurs
+  // Footer général pour les recruteurs, managers RH, et candidats
   return (
-    <footer className="bg-gray-900 text-white py-10 mt-auto">
-      <div className="container mx-auto grid grid-cols-1 md:grid-cols-4 gap-8 px-6">
+    <footer className="bg-gray-900 text-white py-6 mt-auto">
+      <div className="container mx-auto grid grid-cols-1 md:grid-cols-4 gap-6 px-4">
         {/* Colonne 1 - Logo & Description */}
         <div>
-          <h2 className="text-2xl font-bold">JobBox</h2>
-          <p className="mt-3 text-gray-400">
-            The best platform to find your dream job easily and quickly.
+          <h2 className="text-xl font-bold">JobBox</h2>
+          <p className="mt-2 text-gray-400 text-sm">
+            Find your dream job or recruit top talent quickly and efficiently with JobBox.
           </p>
         </div>
 
-        {/* Colonne 2 - Liens Rapides */}
+        {/* Colonne 2 - Liens spécifiques pour Candidats */}
         <div>
-          <h3 className="text-lg font-semibold">Quick Links</h3>
-          <ul className="mt-3 space-y-2">
-            <li><a href="#" className="text-gray-400 hover:text-white">Find a Job</a></li>
-            <li><a href="#" className="text-gray-400 hover:text-white">Recruiters</a></li>
-            <li><a href="#" className="text-gray-400 hover:text-white">Candidates</a></li>
-            <li><a href="#" className="text-gray-400 hover:text-white">Blog</a></li>
+          <h3 className="text-md font-semibold">For Job Seekers</h3>
+          <ul className="mt-2 space-y-1">
+            <li><a href="#" className="text-gray-400 hover:text-white transition duration-300 ease-in-out text-sm">Find a Job</a></li>
+            <li><a href="#" className="text-gray-400 hover:text-white transition duration-300 ease-in-out text-sm">Create Profile</a></li>
+            <li><a href="#" className="text-gray-400 hover:text-white transition duration-300 ease-in-out text-sm">Job Alerts</a></li>
+            <li><a href="#" className="text-gray-400 hover:text-white transition duration-300 ease-in-out text-sm">Career Advice</a></li>
           </ul>
         </div>
 
-        {/* Colonne 3 - Support */}
+        {/* Colonne 3 - Liens spécifiques pour Recruteurs / RH */}
         <div>
-          <h3 className="text-lg font-semibold">Support</h3>
-          <ul className="mt-3 space-y-2">
-            <li><a href="#" className="text-gray-400 hover:text-white">Help Center</a></li>
-            <li><a href="#" className="text-gray-400 hover:text-white">Privacy Policy</a></li>
-            <li><a href="#" className="text-gray-400 hover:text-white">Terms of Service</a></li>
+          <h3 className="text-md font-semibold">For Recruiters & HR</h3>
+          <ul className="mt-2 space-y-1">
+            <li><a href="#" className="text-gray-400 hover:text-white transition duration-300 ease-in-out text-sm">Post a Job</a></li>
+            <li><a href="#" className="text-gray-400 hover:text-white transition duration-300 ease-in-out text-sm">Manage Candidates</a></li>
+            <li><a href="#" className="text-gray-400 hover:text-white transition duration-300 ease-in-out text-sm">Employer Dashboard</a></li>
+            <li><a href="#" className="text-gray-400 hover:text-white transition duration-300 ease-in-out text-sm">Recruitment Resources</a></li>
           </ul>
         </div>
 
-        {/* Colonne 4 - Contact */}
+        {/* Colonne 4 - Support & Contact */}
         <div>
-          <h3 className="text-lg font-semibold">Contact</h3>
-          <p className="mt-3 text-gray-400">123 Main Street, City, Country</p>
-          <p className="text-gray-400">Email: support@jobbox.com</p>
-          <p className="text-gray-400">Phone: +123 456 7890</p>
+          <h3 className="text-md font-semibold">Support & Contact</h3>
+          <ul className="mt-2 space-y-1">
+            <li><a href="#" className="text-gray-400 hover:text-white transition duration-300 ease-in-out text-sm">Help Center</a></li>
+            <li><a href="#" className="text-gray-400 hover:text-white transition duration-300 ease-in-out text-sm">Privacy Policy</a></li>
+            <li><a href="#" className="text-gray-400 hover:text-white transition duration-300 ease-in-out text-sm">Terms of Service</a></li>
+            <li><a href="#" className="text-gray-400 hover:text-white transition duration-300 ease-in-out text-sm">Contact Us</a></li>
+          </ul>
 
           {/* Icônes réseaux sociaux */}
           <div className="flex mt-4 space-x-4">
-            <a href="#" className="text-gray-400 hover:text-white text-xl">
+            <a href="#" aria-label="Facebook" className="text-gray-400 hover:text-white text-xl transition duration-300 ease-in-out">
               <i className="fab fa-facebook"></i>
             </a>
-            <a href="#" className="text-gray-400 hover:text-white text-xl">
+            <a href="#" aria-label="Twitter" className="text-gray-400 hover:text-white text-xl transition duration-300 ease-in-out">
               <i className="fab fa-twitter"></i>
             </a>
-            <a href="#" className="text-gray-400 hover:text-white text-xl">
+            <a href="#" aria-label="LinkedIn" className="text-gray-400 hover:text-white text-xl transition duration-300 ease-in-out">
               <i className="fab fa-linkedin"></i>
             </a>
           </div>
@@ -70,7 +74,7 @@ export default function Footer() {
       </div>
 
       {/* Copyright */}
-      <div className="text-center text-gray-500 text-sm mt-8">
+      <div className="border-t border-gray-700 pt-3 text-center text-white text-xs mt-6">
         © {new Date().getFullYear()} JobBox. All rights reserved.
       </div>
     </footer>

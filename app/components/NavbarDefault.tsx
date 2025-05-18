@@ -10,14 +10,14 @@ export default function NavbarDefault() {
 
   return (
     <nav className="navbar">
-      <div className="container mx-auto flex justify-between items-center p-4">
-        <Link href="/" className="navbar__logo">JobBox</Link>
+      <div className="container mx-auto flex justify-between items-center p-2"> 
+        <Link href="/" className="navbar__logo text-lg">JobBox</Link> 
         {!isLoggedIn &&(
-        <ul className="hidden md:flex space-x-6 navbar__nav">
-          <li><Link href="/" className="navbar__nav-item">Find Jobs</Link></li>
-          <li><Link href="/employers" className="navbar__nav-item">Employers</Link></li>
-          <li><Link href="/candidates" className="navbar__nav-item">Candidates</Link></li>
-          <li><Link href="/blog" className="navbar__nav-item">Blog</Link></li>
+        <ul className="hidden md:flex space-x-4 navbar__nav"> 
+          <li><Link href="#" className="navbar__nav-item text-sm">Find Jobs</Link></li> 
+          <li><Link href="#" className="navbar__nav-item text-sm">Companies</Link></li> 
+          <li><Link href="#" className="navbar__nav-item text-sm">Candidates</Link></li> 
+          <li><Link href="#" className="navbar__nav-item text-sm">Blog</Link></li> 
         </ul>
         )}
         <div className="navbar__button-container">
@@ -25,32 +25,32 @@ export default function NavbarDefault() {
             userRoles.includes("Candidat") ? (
               <>
                 <Link href="/Candidat/Profile" className="navbar__icon-link">
-                  <FaUserCircle className="navbar__profile-icon" size={35} />
+                  <FaUserCircle className="navbar__profile-icon" size={30} /> {/* Réduction de la taille de l'icône */}
                 </Link>
-                <button onClick={logoutCandidat} className="navbar__connexion">Logout</button>
+                <button onClick={logoutCandidat} className="navbar__connexion text-sm">Logout</button> {/* Réduction de la taille du bouton */}
               </>
             ) : userRoles.includes("Admin") ? (
               <>
                 <ul className="navbar__nav">
-              <li><Link href="/Admin/Dashboard" className="navbar__nav-item">Dashboard</Link></li>
-              <li><Link href="/Admin/Create-profile" className="navbar__nav-item">Create Company Profile</Link></li>
-              <li><Link href="/Admin/User-management" className="navbar__nav-item">User Management</Link></li>
-              <li><Link href="/Admin/Recruitment-management" className="navbar__nav-item">Recruitment Management</Link></li>
-              <li><Link href="/Admin/Notifications" className="navbar__nav-item">Notifications</Link></li>
-              <li><Link href="/Admin/Account-settings" className="navbar__nav-item">Account Settings</Link></li>
-              <li>
-                  <button onClick={logoutAdmin} className="navbar__logout-btn">
-                    <i className="fas fa-sign-out-alt navbar__logout-icon"></i>
-                    Logout
-                  </button>
-                </li>
-            </ul>
+                  <li><Link href="/Admin/Dashboard" className="navbar__nav-item text-sm">Dashboard</Link></li> {/* Réduction de la taille du texte */}
+                  <li><Link href="/Admin/Create-profile" className="navbar__nav-item text-sm">Create Company Profile</Link></li> {/* Réduction de la taille du texte */}
+                  <li><Link href="#" className="navbar__nav-item text-sm">User Management</Link></li> {/* Réduction de la taille du texte */}
+                  <li><Link href="/Admin/Recruitment-management" className="navbar__nav-item text-sm">Recruitment Management</Link></li> {/* Réduction de la taille du texte */}
+                  <li><Link href="#" className="navbar__nav-item text-sm">Notifications</Link></li> {/* Réduction de la taille du texte */}
+                  <li><Link href="#" className="navbar__nav-item text-sm">Account Settings</Link></li> {/* Réduction de la taille du texte */}
+                  <li>
+                    <button onClick={logoutAdmin} className="navbar__logout-btn text-sm">
+                      <i className="fas fa-sign-out-alt navbar__logout-icon"></i>
+                      Logout
+                    </button>
+                  </li>
+                </ul>
               </>
             ) : null
           ) : (
-            <div className="hidden md:flex space-x-4">
-              <Link href="/login/Candidat" className="navbar__connexion">Sign In</Link>
-              <Link href="/login" className="navbar__entreprises">Employers / Post Job</Link>
+            <div className="hidden md:flex space-x-3"> {/* Réduction de l'espacement entre les éléments */}
+              <Link href="/login/Candidat" className="navbar__connexion text-sm">Sign In</Link> {/* Réduction de la taille du texte */}
+              <Link href="/login" className="navbar__entreprises text-sm">Employers / Post Job</Link> {/* Réduction de la taille du texte */}
             </div>
           )}
         </div>

@@ -3,7 +3,7 @@
     display: flex;
     justify-content: center;
     align-items: center;
-    min-height: 90vh;
+    min-height: 70vh;
     background-color: white;
   }
   
@@ -19,7 +19,7 @@
   
   /* Titre et sous-titre */
   .title {
-    font-size: 24px;
+    font-size: 22px;
     font-weight: bold;
     margin-bottom: 0.5rem;
   }
@@ -70,7 +70,7 @@
     border: none;
     cursor: pointer;
     color: #6c757d;
-    font-size: 18px;
+    font-size: 15px;
   }
   
   /* Bouton Sign Up */
@@ -93,7 +93,7 @@
   /* Lien Sign In */
   .signInText {
     margin-top: 1rem;
-    font-size: 14px;
+    font-size: 12px;
   }
   
   .signInLink {
@@ -107,8 +107,8 @@
   }
   
   .welcomeMessage {
-    font-size: 18px;
-    font-weight: 500;
+    font-size: 15px;
+    font-weight: 700;
     color: #007bff;
     margin-bottom: 2rem;
     line-height: 1.5;

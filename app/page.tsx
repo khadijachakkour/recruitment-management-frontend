@@ -3,15 +3,19 @@ import Hero from "./components/Hero";
  import Categories from "./components/Categories";
 import Navbar from "./components/NavbarDefault";
 import FeaturesAndMotivationSection from "./components/FeaturesAndMotivationSection";
+import HiringBanner from "./components/HiringBanner";
 
 export default function Home() {
   return (
     <>
      <Navbar/>
-      <Hero />
-      <FeaturesAndMotivationSection />
-      <Categories />
-      <JobList />
+     <main className="space-y-22">
+        <Hero />
+        <FeaturesAndMotivationSection />
+        <Categories />
+        <HiringBanner />
+        <JobList />
+      </main>
     </>
   );
 }

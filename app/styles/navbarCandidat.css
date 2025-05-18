@@ -2,7 +2,7 @@
 
 .navbar {
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-  padding: 16px 24px;
+  padding: 8px 16px;
   position: fixed;
   top: 0;
   left: 0;
@@ -12,8 +12,8 @@
 }
 
 .navbar__logo {
-  font-size: 2rem;
-  font-weight: 600;
+  font-size: 1.5rem;
+  font-weight: 500;
   color: #007bff;
   cursor: pointer;
   transition: transform 0.3s;

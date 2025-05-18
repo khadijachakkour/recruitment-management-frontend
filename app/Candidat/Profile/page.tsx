@@ -98,7 +98,10 @@ export default function Profile() {
       formData.append("education_level", profile.education_level);
       formData.append("skills", profile.skills);
       if (cvFile) formData.append("cv", cvFile);
-      if (avatarFile) formData.append("avatar", avatarFile);
+      if (avatarFile) {
+        formData.append("avatar", avatarFile);
+        formData.append("upload_preset", "recruitment_upload");
+      }
 
       await updateProfileAndCv(formData);
       router.push("/Candidat/dashboard");

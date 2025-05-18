@@ -20,6 +20,7 @@ import NProgress from "nprogress";
 import "nprogress/nprogress.css";
 import { useAuth } from "@/src/context/authContext";
 import SidebarCandidat from "@/app/components/SidebarCandidat";
+import NavbarCandidat from "@/app/components/NavbarCandidat";
 
 const customStyle = `
 #nprogress {
@@ -56,7 +57,7 @@ export default function DashboardCandidat() {
     <>
       <style>{customStyle}</style>
 
-      <div className="flex min-h-screen bg-gray-100">
+      <div className="flex min-h-screen bg-white">
 
       <SidebarCandidat isOpen={isSidebarOpen} toggle={() => setIsSidebarOpen(!isSidebarOpen)} />
 <main className={`flex-1 transition-all duration-300 ${isSidebarOpen ? "ml-64" : "ml-16"} p-6`}>

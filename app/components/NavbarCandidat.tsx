@@ -10,16 +10,15 @@ export default function NavbarCandidat() {
 
   return (
     <nav className="navbar">
-      <div className="container mx-auto flex justify-between items-center p-4">
-        <Link href="/" className="navbar__logo">JobBox</Link>
+      <div className="container mx-auto flex justify-between items-center p-1.5">
+        <Link href="/" className="navbar__logo text-lg">JobBox</Link>
 
-        {/* Links that are visible when the user is not logged in */}
         {!isLoggedIn && (
-          <ul className="hidden md:flex space-x-6 navbar__nav">
-            <li><Link href="/" className="navbar__nav-item">Find Jobs</Link></li>
-            <li><Link href="/employers" className="navbar__nav-item">Employers</Link></li>
-            <li><Link href="/candidates" className="navbar__nav-item">Candidates</Link></li>
-            <li><Link href="/blog" className="navbar__nav-item">Blog</Link></li>
+          <ul className="hidden md:flex space-x-4 navbar__nav">
+            <li><Link href="#" className="navbar__nav-item text-sm">Find Jobs</Link></li>
+            <li><Link href="#" className="navbar__nav-item text-sm">Companies</Link></li>
+            <li><Link href="#" className="navbar__nav-item text-sm">Candidates</Link></li>
+            <li><Link href="#" className="navbar__nav-item text-sm">Blog</Link></li>
           </ul>
         )}
 
@@ -28,15 +27,15 @@ export default function NavbarCandidat() {
           {isLoggedIn && userRoles.includes("Candidat") ? (
             <>
               <Link href="/Candidat/Profile" className="navbar__icon-link">
-                <FaUserCircle className="navbar__profile-icon" size={35} />
+                <FaUserCircle className="navbar__profile-icon" size={30} />
               </Link>
-              <button onClick={logoutCandidat} className="navbar__connexion">Logout</button>
+              <button onClick={logoutCandidat} className="navbar__connexion text-sm">Logout</button>
             </>
           ) : (
             /* Display sign-in and post job buttons if the user is not logged in */
             <div className="hidden md:flex space-x-4">
-              <Link href="/login/Candidat" className="navbar__connexion">Sign In</Link>
-              <Link href="/login" className="navbar__entreprises">Employers / Post Job</Link>
+              <Link href="/login/Candidat" className="navbar__connexion text-sm">Sign In</Link>
+              <Link href="/login" className="navbar__entreprises text-sm">Employers / Post Job</Link>
             </div>
           )}
         </div>

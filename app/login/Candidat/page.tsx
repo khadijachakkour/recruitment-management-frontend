@@ -43,31 +43,27 @@ export default function LoginPage() {
   return (
     <>
       <NavbarCandidat />
-      <div className="flex items-center justify-center min-h-screen px-4">
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6 }}
-          className="w-full max-w-md space-y-6"
-        >
+      <div className="flex items-center justify-center min-h-screen px-2">
+        <div
+          className="w-full max-w-sm space-y-4">
           <div>
-            <h2 className="text-3xl font-bold text-gray-800 text-center">Sign in</h2>
-            <p className="text-sm text-gray-500 text-center">Access your Candidat account</p>
+            <h2 className="text-xl font-bold text-gray-800 text-center">Sign in</h2>
+            <p className="text-sm text-gray-800 text-center">Access your Candidat account</p>
           </div>
           {/* Social buttons */}
-                    <div className="flex space-x-3">
-                      <button className="flex-1 flex items-center justify-center border rounded-lg py-2 px-4 hover:bg-gray-100 transition">
+                    <div className="flex space-x-2">
+                      <button className="flex-1 flex items-center justify-center border rounded-lg py-1 px-2 hover:bg-gray-100 transition">
                         <Image src="/icons/icons8-google.svg" alt="Google" width={20} height={20} />
                         <span className="ml-2 text-sm font-medium">Google</span>
                       </button>
-                      <button className="flex-1 flex items-center justify-center border rounded-lg py-2 px-4 hover:bg-gray-100 transition">
+                      <button className="flex-1 flex items-center justify-center border rounded-lg py-1 px-2 hover:bg-gray-100 transition">
                         <Image src="/icons/icons8-microsoft.svg" alt="Microsoft" width={20} height={20} />
                         <span className="ml-2 text-sm font-medium">Microsoft</span>
                       </button>
                     </div>
          
                     <div className="relative text-center text-gray-400 text-sm">
-            <span className="px-2 bg-white relative z-10">or continue with email</span>
+            <span className="px-4 bg-white relative z-10">or continue with email</span>
             <div className="absolute left-0 right-0 top-1/2 h-px bg-gray-200 z-0"></div>
           </div>
 
@@ -111,7 +107,7 @@ export default function LoginPage() {
 
             {/* Submit */}
             <button
-              type="submit"
+              type="submit" 
               className="w-full bg-gradient-to-br from-[#007bff] to-[#0056b3] hover:opacity-90 text-white font-semibold py-2 rounded-lg transition"
             >
               Sign in
@@ -120,11 +116,11 @@ export default function LoginPage() {
 
           <p className="text-sm text-center text-gray-600">
             Don&apos;t have an account?{" "}
-            <Link href="/register/Candidat" className="text-blue-600 font-medium ml-1 hover:underline">
+            <Link href="/register/Candidat" className="text-blue-600 font-medium ml-1 hover:underline  border-red-500 z-50 relative">
               Sign Up
             </Link>
           </p>
-        </motion.div>
+        </div>
       </div>
     </>
   );

@@ -13,6 +13,7 @@ interface AuthContextType {
   login: (token: string) => void;
   logoutAdmin: () => Promise<void>; 
   logoutCandidat: () => Promise<void>; 
+  isLoggingOut: boolean;
 
 }
 
@@ -23,7 +24,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [userRoles, setUserRoles] = useState<string[]>([]);
   const [isAuthLoaded, setIsAuthLoaded] = useState(false);
-
+  const [isLoggingOut, setIsLoggingOut] = useState(false);
   const router = useRouter(); // ✅ Gestion des redirections
 
 
@@ -68,8 +69,7 @@ const intervalId = setInterval(checkLoginStatus, 500);
 //Logout Admin
 const logoutAdmin = async () => {
   try {
-    console.log("Début de la fonction logout");
-
+    setIsLoggingOut(true);
     // ✅ Stocker le rôle AVANT de réinitialiser `userRoles`
     const role = userRoles.length > 0 ? userRoles[0] : null;
     console.log("Rôle actuel avant logout :", role);
@@ -91,11 +91,14 @@ const logoutAdmin = async () => {
     }
   } catch (error) {
     console.error("Erreur lors de la déconnexion", error);
+  } finally {
+    setIsLoggingOut(false); // Deactivate spinner
   }
 };
 
 //Logout Candidat
 const logoutCandidat = async () => {
+  setIsLoggingOut(true);
   try {
 
     // ✅ Stocker le rôle AVANT de réinitialiser `userRoles`
@@ -119,14 +122,26 @@ const logoutCandidat = async () => {
     }
   } catch (error) {
     console.error("Erreur lors de la déconnexion", error);
+  } finally {
+    setIsLoggingOut(false); // Deactivate spinner
   }
 };
  return (
-    <AuthContext.Provider value={{ isAuthLoaded, isLoggedIn, userRoles, login, logoutAdmin, logoutCandidat ,}}>
-      {children}
+    <AuthContext.Provider value={{ isAuthLoaded, isLoggedIn, userRoles, login, logoutAdmin, logoutCandidat, isLoggingOut}}>
+            {isLoggingOut && <LoadingSpinner />}
+            {children}
     </AuthContext.Provider>
   );
 };
+
+const LoadingSpinner = () => (
+  <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
+    <div className="relative">
+      <div className="w-16 h-16 border-4 border-blue-600 border-t-transparent rounded-full animate-spin"></div>
+      <div className="absolute inset-0 w-20 h-20 border-4 border-blue-400 border-t-transparent rounded-full animate-spin animate-reverse"></div>
+    </div>
+  </div>
+);
 export const useAuth = () => {
   const context = useContext(AuthContext);
   if (!context) {

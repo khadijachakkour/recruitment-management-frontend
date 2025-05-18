@@ -11,14 +11,21 @@ import { jwtDecode } from "jwt-decode";
 import { DecodedToken } from "@/app/types/DecodedToken";
 import Image from "next/image";
 import Link from "next/link";
-import { useAuth } from "@/src/context/authContext";
 import NavbarAdmin from "../components/NavbarAdmin";
+
+function Spinner() {
+  return (
+    <div className="flex justify-center items-center">
+      <div className="w-10 h-10 border-4 border-blue-500 border-t-transparent rounded-full animate-spin"></div>
+    </div>
+  );
+}
 
 export default function LoginPage() {
   const router = useRouter();
   const [showPassword, setShowPassword] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
-  const {userRoles } = useAuth();
+  const [isLoading, setIsLoading] = useState(false);
   
 
   const {
@@ -28,6 +35,7 @@ export default function LoginPage() {
   } = useForm<{ email: string; password: string }>();
 
   const onSubmit = async ({ email, password }: { email: string; password: string }) => {
+    setIsLoading(true);
     try {
       const accessToken = await login(email, password);
 
@@ -55,36 +63,38 @@ export default function LoginPage() {
           router.push("/RH/Dashboard");
         } else {
           setErrorMessage("You are not authorized to access this page.");
+          setIsLoading(false);
         }
       }
     } catch (error) {
       console.error(error);
       setErrorMessage("Login error: Please check your credentials.");
+      setIsLoading(false);
     }
   };
 
   return (
     <>
-          <NavbarAdmin />
-    <div className="flex items-center justify-center min-h-screen px-4">
+  <NavbarAdmin />
+    <div className="flex items-center justify-center min-h-screen px-2">
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.6 }}
-        className="w-full max-w-md space-y-6"
+        className="w-full max-w-sm space-y-4"
       >
         <div>
-          <h2 className="text-3xl font-bold text-gray-800 text-center">Sign in</h2>
-          <p className="text-sm text-gray-500 text-center">Access your account</p>
+          <h2 className="text-xl font-bold text-gray-800 text-center">Sign in</h2>
+          <p className="text-sm text-gray-800 text-center">Access your account</p>
         </div>
 
         {/* Social buttons */}
         <div className="flex space-x-3">
-          <button className="flex-1 flex items-center justify-center border rounded-lg py-2 px-4 hover:bg-gray-100 transition">
+          <button className="flex-1 flex items-center justify-center border rounded-lg py-1 px-2 hover:bg-gray-100 transition">
             <Image src="/icons/icons8-google.svg" alt="Google" width={20} height={20} />
             <span className="ml-2 text-sm font-medium">Google</span>
           </button>
-          <button className="flex-1 flex items-center justify-center border rounded-lg py-2 px-4 hover:bg-gray-100 transition">
+          <button className="flex-1 flex items-center justify-center border rounded-lg py-1 px-2 hover:bg-gray-100 transition">
             <Image src="/icons/icons8-microsoft.svg" alt="Microsoft" width={20} height={20} />
             <span className="ml-2 text-sm font-medium">Microsoft</span>
           </button>
@@ -146,17 +156,20 @@ export default function LoginPage() {
           </button>
         </form>
 
-        {userRoles.includes("Admin") && (
   <p className="text-sm text-center text-gray-600">
     Don&apos;t have an account?{" "}
-    <Link href="/register/Admin" className="text-blue-600 font-medium ml-1">
-      Create one
+    <Link href="/register/Admin" className="text-blue-600 font-medium ml-1 hover:underline  border-red-500 z-50 relative">
+      Sign Up
     </Link>
   </p>
-)}
-
       </motion.div>
     </div>
+    {isLoading && (
+  <div className="fixed inset-0 bg-white bg-opacity-70 z-50 flex items-center justify-center">
+    <div className="w-12 h-12 border-4 border-blue-600 border-t-transparent rounded-full animate-spin"></div>
+    <span className="sr-only">Loading...</span>
+  </div>
+)}
     </>
     );
 }

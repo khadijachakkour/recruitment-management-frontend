@@ -91,8 +91,6 @@ export default function AdminDashboard() {
         {/* Welcome Box */}
         <div className="bg-gradient-to-r from-blue-600 to-blue-400 rounded-xl shadow-lg p-6 flex justify-between items-center mb-6">
           <h2 className="text-xl font-semibold text-white">Welcome Back</h2>
-          <button className="bg-blue-700 text-white px-4 py-2 rounded-md hover:bg-blue-800 transition-all">            Edit Profile
-          </button>
         </div>
 
         {company && (
@@ -123,7 +121,7 @@ export default function AdminDashboard() {
         View Profile
       </button>
       <button
-        className="px-4 py-2 text-sm bg-gray-100 text-gray-800 rounded-md hover:bg-gray-200 transition-all"
+        className="px-4 py-2 text-sm bg-white-100 text-blue-700 rounded-md hover:bg-gray-200 transition-all"
         onClick={() => window.location.href = "/Admin/Edite-CompanyProfile"}
       >
         Edit
@@ -156,7 +154,7 @@ export default function AdminDashboard() {
             <h3 className="text-lg font-semibold mb-4 text-gray-800">Users</h3>
             <table className="w-full text-sm text-gray-700">
               <thead>
-                <tr className="border-b bg-gray-100 text-left">
+                <tr className="border-b bg-white-100 text-left">
                   <th className="p-2">Name</th>
                   <th className="p-2">Role</th>
                 </tr>
@@ -164,7 +162,7 @@ export default function AdminDashboard() {
               <tbody>
                 {[["John Doe", "Recruiter"], ["Jane Smith", "Manager"], ["Alice Johnson", "HR Staff"]].map(
                   ([name, role]) => (
-                    <tr key={name} className="hover:bg-gray-50 border-b">
+                    <tr key={name} className="hover:bg-white-50 border-b">
                       <td className="p-2">{name}</td>
                       <td className="p-2">{role}</td>
                     </tr>
@@ -234,7 +232,7 @@ export default function AdminDashboard() {
             <motion.button
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.98 }}
-              className="bg-gray-600 text-white px-4 py-2 rounded-md flex items-center gap-2 hover:bg-gray-700 transition-all"
+              className="bg-white-600 text-white px-4 py-2 rounded-md flex items-center gap-2 "
             >
               <FileText size={18} /> View Reports
             </motion.button>
