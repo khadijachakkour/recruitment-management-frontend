@@ -8,21 +8,20 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
 
   return (
     <div className="flex">
-      {/* Sidebar */}
+
       <Sidebar onToggle={(isOpen) => setIsSidebarOpen(isOpen)} />
 
-      {/* Main Content */}
       <div
         className={`flex-1 min-h-screen transition-all duration-300`}
         style={{
-          marginLeft: isSidebarOpen ? "16rem" : "4rem", // Ajuste dynamiquement la marge gauche
+          marginLeft: isSidebarOpen ? "16rem" : "4rem", 
         }}
       >
         {/* Navbar */}
         <NavbarAdmin />
 
         {/* Page Content */}
-        <div className="pt-16">{children}</div>
+        <div className="pt-16 bg-white">{children}</div>
       </div>
     </div>
   );

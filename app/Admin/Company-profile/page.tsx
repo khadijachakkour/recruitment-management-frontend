@@ -189,14 +189,14 @@ export default function CompanyProfile() {
           <Image
             src={company.ceoImage}
             alt="CEO"
-            width={80}
+            width={60}
             height={60}
             className="rounded-full object-cover border-2 border-gray-300 shadow-md"
             unoptimized
           />
         ) : (
-          <div className="w-20 h-20 bg-gray-200 rounded-full flex items-center justify-center border border-gray-300">
-            <FiUser size={40} className="text-gray-500" />
+          <div className="w-19 h-19 bg-gray-200 rounded-full flex items-center justify-center border border-gray-300">
+            <FiUser size={35} className="text-gray-500" />
           </div>
         )}
         <div>
