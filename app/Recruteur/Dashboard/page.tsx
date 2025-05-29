@@ -11,12 +11,13 @@ import {
   ResponsiveContainer,
 } from 'recharts';
 import { motion } from 'framer-motion';
-import { Users, Briefcase, CalendarClock, PlusCircle, MessageCircle, Search, ChevronDown, ChevronUp } from 'lucide-react';
+import { Users, Briefcase, CalendarClock, PlusCircle, MessageCircle, Search, ChevronDown, ChevronUp, LogOut } from 'lucide-react';
 import RecruteurLayout from '@/RecruteurLayout';
 import { useRouter } from 'next/navigation';
 import { BarChart, Bar, Cell } from 'recharts';
 import Select from 'react-select';
 import { ApplicationModesIcons } from "../../components/ApplicationModesIcons";
+import { useAuth } from "@/src/context/authContext";
 
 interface Department {
   id: number;
@@ -60,6 +61,7 @@ const RecruteurPage = () => {
   });
   const [newTask, setNewTask] = useState('');
   const router = useRouter();
+  const { logoutAdmin } = useAuth();
 
   const filterOptions = ['All', 'Applications', 'Postings', 'Interviews'];
 
@@ -270,7 +272,15 @@ const RecruteurPage = () => {
             </div>
             <div className="bg-gradient-to-br from-[#007bff] to-[#00b4d8] text-white font-bold rounded-full w-12 h-12 flex items-center justify-center text-xl uppercase shadow-md">
               {recruiterProfile ? `${recruiterProfile.firstName?.[0] || ''}${recruiterProfile.lastName?.[0] || ''}` : 'RR'}
-            </div>            
+            </div>
+            {/* Modern Logout Icon Button */}
+            <button
+              onClick={logoutAdmin}
+              title="Logout"
+              className="ml-2 p-2 rounded-full hover:bg-blue-100 transition flex items-center justify-center group"
+            >
+              <LogOut className="w-6 h-6 text-gray-500 group-hover:text-[#007bff] transition" />
+            </button>
           </div>
         </header>
 

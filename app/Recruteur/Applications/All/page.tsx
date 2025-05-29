@@ -1,7 +1,6 @@
 "use client";
 import { useEffect, useState, useMemo } from "react";
 import axios from "axios";
-import { motion } from "framer-motion";
 import { ChevronDown, ChevronUp, User, FileText, Mail } from "lucide-react";
 import RecruteurLayout from "@/RecruteurLayout";
 import Select from "react-select";
@@ -21,6 +20,11 @@ export default function AllApplicationsPage() {
   const [currentPage, setCurrentPage] = useState(1);
   const [pageSize] = useState(5);
   const [filteredApplications, setFilteredApplications] = useState<any[]>([]);
+  const [mounted, setMounted] = useState(false); 
+
+  useEffect(() => {
+    setMounted(true); 
+  }, []);
 
   useEffect(() => {
     const fetchOffers = async () => {
@@ -127,143 +131,171 @@ export default function AllApplicationsPage() {
 
   return (
     <RecruteurLayout>
-      <main className="w-full min-h-screen px-2 sm:px-8 lg:px-16 pt-28 pb-16">
-        {/* En-tête */}
-        <div className="max-w-5xl mx-auto mb-8">
-          <h1 className="text-4xl font-extrabold text-blue-900 mb-2 text-center">Applications by Job Offer</h1>
-          <p className="text-center text-blue-700 text-lg">Consult and manage all applications by offer, filter and export easily.</p>
+      <main className="w-full min-h-screen px-2 sm:px-8 lg:px-16 pt-28 pb-16 bg-gradient-to-br from-blue-50 to-blue-100">
+        {/* En-tête amélioré */}
+        <div className="max-w-5xl mx-auto mb-10 flex flex-col items-center gap-2">
+          <div className="flex items-center gap-3">
+            <User className="w-10 h-10 text-blue-700" />
+            <h1 className="text-4xl font-extrabold text-blue-900 text-center">Applications by Job Offer</h1>
+          </div>
+          <p className="text-center text-blue-700 text-lg font-medium">Consult and manage all applications by offer, filter and export easily.</p>
         </div>
 
-        {/* Panneau de filtres */}
-        <div className="max-w-5xl mx-auto bg-white rounded-xl shadow p-6 mb-8 flex flex-col md:flex-row gap-4 md:items-end md:justify-between">
-          <div className="flex-1 min-w-[200px]">
-            <label className="block text-blue-800 font-semibold mb-1">Offer</label>
-            <Select
-              options={offerOptions}
-              value={selectedOffer}
-              onChange={(val) => {
-                setSelectedOffer(val);
-                if (val && !applicationsByOffer[val.value]) handleToggleOffer(val.value);
-              }}
-              placeholder="Select an offer..."
-              isSearchable
-              classNamePrefix="react-select"
-            />
+        {!mounted ? (
+          <div className="flex justify-center items-center h-40">
+            <span className="text-blue-500 text-lg font-semibold">Loading...</span>
           </div>
-          <div className="flex-1 min-w-[180px]">
-            <label className="block text-blue-800 font-semibold mb-1">Status</label>
-            <select
-              className="w-full rounded border border-blue-200 px-3 py-2 text-blue-900 focus:outline-none focus:ring-2 focus:ring-blue-300"
-              value={statusFilter}
-              onChange={(e) => setStatusFilter(e.target.value)}
-            >
-              {statusOptions.map((opt) => (
-                <option key={opt.value} value={opt.value}>{opt.label}</option>
-              ))}
-            </select>
-          </div>
-          <div className="flex-1 min-w-[220px]">
-            <label className="block text-blue-800 font-semibold mb-1">Date range</label>
-            <DatePicker
-              selectsRange
-              startDate={dateRange[0]}
-              endDate={dateRange[1]}
-              onChange={(update) => setDateRange(update as [Date | null, Date | null])}
-              isClearable
-              className="w-full rounded border border-blue-200 px-3 py-2 text-blue-900 focus:outline-none focus:ring-2 focus:ring-blue-300"
-              placeholderText="Select date range"
-            />
-          </div>
-        </div>
-
-        {/* Tableau des candidatures */}
-        <div className="max-w-5xl mx-auto">
-          {!selectedOffer ? (
-            <div className="flex justify-center items-center h-40">
-              <span className="text-blue-500 text-lg font-semibold">Select an offer to view applications.</span>
+        ) : (
+          <>
+            {/* Panneau de filtres modernisé */}
+            <div className="max-w-5xl mx-auto bg-white/80 backdrop-blur rounded-2xl shadow-lg p-8 mb-10 flex flex-col md:flex-row gap-6 md:items-end md:justify-between border border-blue-100">
+              <div className="flex-1 min-w-[200px]">
+                <label className="block text-blue-800 font-semibold mb-2">Offer</label>
+                <Select
+                  options={offers.map((offer) => ({ value: offer.id, label: `${offer.title} (${offer.candidatureCount ?? 0})` }))}
+                  value={selectedOffer}
+                  onChange={(val) => {
+                    setSelectedOffer(val);
+                    if (val && !applicationsByOffer[val.value]) handleToggleOffer(val.value);
+                  }}
+                  placeholder="Select an offer..."
+                  isSearchable
+                  classNamePrefix="react-select"
+                  styles={{
+                    control: (base) => ({ ...base, borderColor: '#3b82f6', boxShadow: 'none' }),
+                  }}
+                />
+              </div>
+              <div className="flex-1 min-w-[180px]">
+                <label className="block text-blue-800 font-semibold mb-2">Status</label>
+                <select
+                  className="w-full rounded-lg border border-blue-200 px-3 py-2 text-blue-900 focus:outline-none focus:ring-2 focus:ring-blue-300 bg-white"
+                  value={statusFilter}
+                  onChange={(e) => setStatusFilter(e.target.value)}>
+                  {statusOptions.map((opt) => (
+                    <option key={opt.value} value={opt.value}>{opt.label}</option>
+                  ))}
+                </select>
+              </div>
+              <div className="flex-1 min-w-[220px]">
+                <label className="block text-blue-800 font-semibold mb-2">Date range</label>
+                <DatePicker
+                  selectsRange
+                  startDate={dateRange[0]}
+                  endDate={dateRange[1]}
+                  onChange={(update) => setDateRange(update as [Date | null, Date | null])}
+                  isClearable
+                  className="w-full rounded-lg border border-blue-200 px-3 py-2 text-blue-900 focus:outline-none focus:ring-2 focus:ring-blue-300 bg-white"
+                  placeholderText="Select date range"
+                />
+              </div>
+              <button
+                className="mt-4 md:mt-0 px-4 py-2 rounded-lg bg-blue-600 text-white font-semibold shadow hover:bg-blue-700 transition"
+                onClick={() => {
+                  setSelectedOffer(null);
+                  setStatusFilter("");
+                  setDateRange([null, null]);
+                }}>
+                Reset filters
+              </button>
             </div>
-          ) : loading ? (
-            <div className="flex justify-center items-center h-40">
-              <span className="text-blue-500 text-lg font-semibold">Loading applications...</span>
-            </div>
-          ) : (
-            <div className="overflow-x-auto">
-              {paginatedApplications.length === 0 ? (
+            {/* Tableau des candidatures modernisé */}
+            <div className="max-w-5xl mx-auto">
+              {selectedOffer && (
+                <div className="mb-4 flex items-center justify-between">
+                  <span className="text-blue-800 font-semibold text-lg">{filteredApplications.length} applications found</span>
+                </div>
+              )}
+              {!selectedOffer ? (
                 <div className="flex justify-center items-center h-40">
-                  <span className="text-blue-500 text-lg font-semibold">No applications found for this offer.</span>
+                  <span className="text-blue-500 text-lg font-semibold">Select an offer to view applications.</span>
+                </div>
+              ) : loading ? (
+                <div className="flex justify-center items-center h-40">
+                  <span className="text-blue-500 text-lg font-semibold">Loading applications...</span>
                 </div>
               ) : (
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  {paginatedApplications.map((app: any) => {
-                    if (app.candidate_id && !candidateInfo[app.candidate_id]) fetchCandidateInfo(app.candidate_id);
-                    const info = app.candidate_id ? candidateInfo[app.candidate_id] : undefined;
-                    return (
-                      <div key={app.id} className="bg-white rounded-xl shadow-lg border border-blue-100 p-6 flex flex-col gap-2">
-                        <div className="flex items-center gap-3 mb-2">
-                          <User className="w-6 h-6 text-blue-500" />
-                          <span className="font-bold text-blue-900 text-lg">{info ? info.name : 'Loading...'}</span>
-                        </div>
-                        <div className="flex items-center gap-2 text-blue-700 text-sm">
-                          <Mail className="w-4 h-4" />
-                          <span>{info ? info.email : 'Loading...'}</span>
-                        </div>
-                        <div className="flex items-center gap-2 mt-1">
-                          <span className="text-xs text-blue-500">Submission:</span>
-                          <span className="text-xs font-semibold">{app.date_soumission ? new Date(app.date_soumission).toLocaleDateString() : ''}</span>
-                        </div>
-                        <div className="flex items-center gap-2 mt-1">
-                          <span className="text-xs text-blue-500">Status:</span>
-                          <span className={`font-bold px-3 py-1 rounded-full text-xs ml-1 ${
-                            app.status === 'acceptee' ? 'bg-green-100 text-green-700' :
-                            app.status === 'refusee' ? 'bg-red-100 text-red-700' :
-                            'bg-yellow-100 text-yellow-700'
-                          }`}>
-                            {app.status === 'acceptee' ? 'Accepté' : app.status === 'refusee' ? 'Refusé' : 'En attente'}
-                          </span>
-                        </div>
-                        <div className="flex gap-3 mt-3">
-                          {app.cv_url && (
-                            <a href={app.cv_url} target="_blank" rel="noopener noreferrer" className="flex items-center gap-1 bg-gradient-to-r from-blue-500 to-blue-700 text-white px-4 py-1.5 rounded-full text-xs font-semibold shadow hover:from-blue-600 hover:to-blue-800 transition">
-                              <FileText className="w-4 h-4" /> CV
-                            </a>
-                          )}
-                        </div>
-                      </div>
-                    );
-                  })}
+                <div className="overflow-x-auto">
+                  {paginatedApplications.length === 0 ? (
+                    <div className="flex justify-center items-center h-40">
+                      <span className="text-blue-500 text-lg font-semibold">No applications found for this offer.</span>
+                    </div>
+                  ) : (
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                      {paginatedApplications.map((app: any) => {
+                        if (app.candidate_id && !candidateInfo[app.candidate_id]) fetchCandidateInfo(app.candidate_id);
+                        const info = app.candidate_id ? candidateInfo[app.candidate_id] : undefined;
+                        return (
+                          <div key={app.id} className="bg-white rounded-2xl shadow-xl border border-blue-100 p-6 flex flex-col gap-3 hover:shadow-2xl transition">
+                            <div className="flex items-center gap-3 mb-2">
+                              <User className="w-7 h-7 text-blue-500" />
+                              <span className="font-bold text-blue-900 text-lg">{info ? info.name : 'Loading...'}</span>
+                            </div>
+                            <div className="flex items-center gap-2 text-blue-700 text-sm">
+                              <Mail className="w-4 h-4" />
+                              <span>{info ? info.email : 'Loading...'}</span>
+                            </div>
+                            <div className="flex items-center gap-2 mt-1">
+                              <span className="text-xs text-blue-500">Submission:</span>
+                              <span className="text-xs font-semibold">{app.date_soumission ? new Date(app.date_soumission).toLocaleDateString() : ''}</span>
+                            </div>
+                            <div className="flex items-center gap-2 mt-1">
+                              <span className="text-xs text-blue-500">Status:</span>
+                              <span className={`font-bold px-3 py-1 rounded-full text-xs ml-1 shadow ${
+                                app.status === 'acceptee' ? 'bg-green-100 text-green-700 border border-green-200' :
+                                app.status === 'refusee' ? 'bg-red-100 text-red-700 border border-red-200' :
+                                'bg-yellow-100 text-yellow-700 border border-yellow-200'
+                              }`}>
+                                {app.status === 'acceptee' ? 'Accepté' : app.status === 'refusee' ? 'Refusé' : 'En attente'}
+                              </span>
+                            </div>
+                            <div className="flex gap-3 mt-3">
+                              {app.cv_url && (
+                                <a href={app.cv_url} target="_blank" rel="noopener noreferrer" className="flex items-center gap-1 bg-gradient-to-r from-blue-500 to-blue-700 text-white px-4 py-1.5 rounded-full text-xs font-semibold shadow hover:from-blue-600 hover:to-blue-800 transition">
+                                  <FileText className="w-4 h-4" /> CV
+                                </a>
+                              )}
+                              <a href={`mailto:${info?.email}`} className="flex items-center gap-1 bg-blue-100 text-blue-700 px-4 py-1.5 rounded-full text-xs font-semibold shadow hover:bg-blue-200 transition">
+                                <Mail className="w-4 h-4" /> Contact
+                              </a>
+                            </div>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  )}
                 </div>
               )}
             </div>
-          )}
-        </div>
-
-        {/* Pagination */}
-        {selectedOffer && filteredApplications.length > pageSize && (
-          <div className="flex justify-center mt-8 gap-2">
-            <button
-              className="px-3 py-1 rounded bg-blue-100 text-blue-700 font-bold hover:bg-blue-200 disabled:opacity-50"
-              onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
-              disabled={currentPage === 1}
-            >
-              Previous
-            </button>
-            {[...Array(totalPages)].map((_, idx) => (
-              <button
-                key={idx}
-                className={`px-3 py-1 rounded font-bold ${currentPage === idx + 1 ? 'bg-blue-600 text-white' : 'bg-blue-100 text-blue-700 hover:bg-blue-200'}`}
-                onClick={() => setCurrentPage(idx + 1)}
-              >
-                {idx + 1}
-              </button>
-            ))}
-            <button
-              className="px-3 py-1 rounded bg-blue-100 text-blue-700 font-bold hover:bg-blue-200 disabled:opacity-50"
-              onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
-              disabled={currentPage === totalPages}
-            >
-              Next
-            </button>
-          </div>
+            {/* Pagination modernisée */}
+            {selectedOffer && filteredApplications.length > pageSize && (
+              <div className="flex justify-center mt-10 gap-2">
+                <button
+                  className="px-4 py-2 rounded-lg bg-blue-100 text-blue-700 font-bold hover:bg-blue-200 disabled:opacity-50 shadow"
+                  onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
+                  disabled={currentPage === 1}
+                >
+                  Previous
+                </button>
+                {[...Array(totalPages)].map((_, idx) => (
+                  <button
+                    key={idx}
+                    className={`px-4 py-2 rounded-lg font-bold shadow ${currentPage === idx + 1 ? 'bg-blue-600 text-white' : 'bg-blue-100 text-blue-700 hover:bg-blue-200'}`}
+                    onClick={() => setCurrentPage(idx + 1)}
+                  >
+                    {idx + 1}
+                  </button>
+                ))}
+                <button
+                  className="px-4 py-2 rounded-lg bg-blue-100 text-blue-700 font-bold hover:bg-blue-200 disabled:opacity-50 shadow"
+                  onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
+                  disabled={currentPage === totalPages}
+                >
+                  Next
+                </button>
+              </div>
+            )}
+          </>
         )}
       </main>
     </RecruteurLayout>
