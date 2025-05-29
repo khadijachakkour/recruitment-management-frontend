@@ -1,12 +1,11 @@
 import { useState } from "react";
 import { Home, Users, Settings, Bell, Building, Menu, X, Briefcase } from "lucide-react";
 import Link from "next/link";
-import { useAuth } from "@/src/context/authContext"; // Import the auth context
 
 export default function Sidebar({ onToggle }: { onToggle: (isOpen: boolean) => void }) {
+  // Sidebar ouverte par défaut
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
   const [openDropdown, setOpenDropdown] = useState<string | null>(null); // Track which dropdown is open
-  const { logoutAdmin } = useAuth(); // Use the logoutAdmin function from the auth context
 
   const toggleSidebar = () => {
     const newState = !isSidebarOpen;
@@ -25,9 +24,8 @@ export default function Sidebar({ onToggle }: { onToggle: (isOpen: boolean) => v
       }`}>
       {/* Header avec hamburger */}
       <div className="flex items-center justify-between p-4 border-b">
-        <div className="flex items-center gap-2">
-          {isSidebarOpen && <Home size={24} className="text-blue-600" />}
-          {isSidebarOpen && <h1 className="text-xl font-bold text-blue-700">Recruteur</h1>}
+        <div className="flex items-center gap-4">
+       {isSidebarOpen && <h1 className="text-2xl font-bold" style={{ color: "#007bff" }}>SmartHire</h1>}
         </div>
 
         <button
@@ -112,6 +110,14 @@ export default function Sidebar({ onToggle }: { onToggle: (isOpen: boolean) => v
                   Shortlist Candidates
                 </Link>
               </li>
+              <li>
+                <Link
+                  href="/Recruteur/Applications/All"
+                  className="block px-3 py-2 rounded-lg text-gray-700 hover:bg-blue-100 hover:text-blue-700 transition-colors"
+                >
+                  View Applications
+                </Link>
+              </li>
             </ul>
           )}
         </div>
@@ -147,14 +153,6 @@ export default function Sidebar({ onToggle }: { onToggle: (isOpen: boolean) => v
         >
           <Settings size={18} /> {isSidebarOpen && <span>Account Settings</span>}
         </Link>
-
-        {/* Logout */}
-        <button
-          onClick={logoutAdmin} // Use the logoutAdmin function
-          className="flex items-center gap-3 px-3 py-2 rounded-lg text-gray-700 hover:bg-red-100 hover:text-red-700 transition-colors"
-        >
-          <X size={18} /> {isSidebarOpen && <span>Logout</span>}
-        </button>
       </nav>
     </aside>
   );

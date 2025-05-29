@@ -3,7 +3,6 @@
 import { useEffect, useState } from 'react';
 import { useParams } from 'next/navigation';
 import axios from 'axios';
-import SidebarCandidat from '@/app/components/SidebarCandidat';
 import { MapPin, Calendar, DollarSign, ListChecks, FileText, Send, BookOpen, User, Briefcase } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { useRouter } from 'next/navigation';
@@ -29,7 +28,6 @@ const ViewJobPage = () => {
   const id = Array.isArray(params?.id) ? params.id[0] : params?.id;
 
   const [job, setJob] = useState<Offer | null>(null);
-  const [isSidebarOpen, setIsSidebarOpen] = useState(true);
   const router = useRouter();
 
   useEffect(() => {
@@ -55,10 +53,6 @@ const ViewJobPage = () => {
 
   return (
     <div className="flex min-h-screen bg-white-100">
-      <div className={`${isSidebarOpen ? 'w-64' : 'w-64'} transition-all duration-300`}>
-        <SidebarCandidat isOpen={isSidebarOpen} toggle={() => setIsSidebarOpen(!isSidebarOpen)} />
-      </div>
-
       <main className="flex-1 p-6">
         <div className="max-w-4xl mx-auto space-y-6">
         <motion.div

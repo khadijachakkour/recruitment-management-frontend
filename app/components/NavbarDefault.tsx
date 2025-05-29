@@ -11,7 +11,7 @@ export default function NavbarDefault() {
   return (
     <nav className="navbar">
       <div className="container mx-auto flex justify-between items-center p-2"> 
-        <Link href="/" className="navbar__logo text-lg">JobBox</Link> 
+        <Link href="/" className="navbar__logo text-lg">SmartHire</Link> 
         {!isLoggedIn &&(
         <ul className="hidden md:flex space-x-4 navbar__nav"> 
           <li><Link href="#" className="navbar__nav-item text-sm">Find Jobs</Link></li> 

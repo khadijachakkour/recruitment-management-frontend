@@ -28,7 +28,7 @@ export const updateProfileAndCv = async (formData: FormData) => {
     skills: formData.get("skills"),
   };
 
-  await axios.put(`${API_URL}/profile`, profilePart, {
+  await axios.put(`${API_URL}/updateprofile`, profilePart, {
     headers: {
       "Content-Type": "application/json",
       ...getAuthHeaders(),

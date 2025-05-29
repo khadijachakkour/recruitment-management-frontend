@@ -1,10 +1,12 @@
 "use client"; 
 import { useEffect, useState } from "react"; 
 import axios from "axios"; 
-import { ResponsiveContainer, PieChart, Pie, Cell} from "recharts";
+import { ResponsiveContainer, PieChart, Pie, Cell, BarChart, Bar, XAxis, YAxis, Tooltip} from "recharts";
 import { motion, AnimatePresence } from "framer-motion";
 import { Bell, Users, FileText, Search, PlusCircle, Eye, Trash2 } from "lucide-react";
 import AdminLayout from "@/AdminLayout"; 
+import Swal from 'sweetalert2';
+
 
 const dataLine = [ 
   { name: "1", value: 2 }, 
@@ -52,6 +54,8 @@ export default function AdminDashboard() {
   const [recruitmentDistribution, setRecruitmentDistribution] = useState(dataPie);
   const [loadingDistribution, setLoadingDistribution] = useState(true);
   const [errorDistribution, setErrorDistribution] = useState<string | null>(null);
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [selectedUserId, setSelectedUserId] = useState<string | null>(null);
 
   useEffect(() => {
     const fetchAdminData = async () => {
@@ -123,20 +127,51 @@ useEffect(() => {
     }
   };
 
-  const handleDeleteUser = async (userId: string) => {
-    if (!confirm("Êtes-vous sûr de vouloir supprimer cet utilisateur ?")) return;
+ const handleDeleteUser = async (userId: string) => {
+  const result = await Swal.fire({
+    title: "Delete this user?",
+    icon: "warning",
+    showCancelButton: true,
+    confirmButtonColor: "#d33",
+    cancelButtonColor: "#3085d6",
+    confirmButtonText: "Yes, delete",
+    cancelButtonText: "Cancel",
+    customClass: {
+      popup: "small-swal",
+    }
+  });
+
+  if (result.isConfirmed) {
     try {
-      await axios.delete(`http://localhost:4000/api/users/${userId}`, {
+      await axios.delete(`http://localhost:4000/api/users/users/${userId}`, {
         headers: {
           Authorization: `Bearer ${sessionStorage.getItem("access_token")}`,
         },
       });
       setUsers(users.filter(user => user.id !== userId));
       setFilteredUsers(filteredUsers.filter(user => user.id !== userId));
+      Swal.fire({
+        title: "Deleted!",
+        text: "The user has been deleted.",
+        icon: "success",
+        customClass: {
+          popup: "small-swal",
+        }
+      });
     } catch (error) {
-      setError("Erreur lors de la suppression de l'utilisateur.");
+      setError("Error occurred while deleting the user.");
+      Swal.fire({
+        title: "Error",
+        text: "Failed to delete the user.",
+        icon: "error",
+        customClass: {
+          popup: "small-swal",
+        }
+      });
     }
-  };
+  }
+};
+
 
   const getInitials = (user: User) => {
     if (user.firstName && user.lastName) {
@@ -171,10 +206,34 @@ useEffect(() => {
   return (
     <AdminLayout>
       <main className="p-6 pt-20 bg-white min-h-screen">
-        {/* Header */}
+        {/* En-tête avec profil admin connecté */}
         <div className="flex justify-between items-center mb-8">
           <div className="flex items-center gap-4">
-            <Bell size={22} className="text-blue-600 cursor-pointer animate-bounce-slow" />
+            {/* Profil admin moderne */}
+            {userId && users.length > 0 && (() => {
+              const adminUser = users.find(u => u.id === userId);
+              if (!adminUser) return null;
+              return (
+                <div className="flex items-center gap-3 bg-white border border-blue-100 rounded-xl shadow-sm px-4 py-2">
+                  <div className="w-12 h-12 rounded-full bg-blue-100 flex items-center justify-center text-xl font-bold text-blue-700 border-2 border-blue-200 overflow-hidden">
+                    <img
+                      src={"/images/default-avatar.png"}
+                      alt="Avatar Admin"
+                      className="w-full h-full object-cover"
+                    />
+                  </div>
+                  <div className="flex flex-col">
+                    <span className="font-semibold text-blue-900 text-base">
+                      {adminUser.firstName && adminUser.lastName
+                        ? `${adminUser.firstName} ${adminUser.lastName}`
+                        : adminUser.username}
+                    </span>
+                    <span className="text-xs text-gray-500">Administrateur</span>
+                  </div>
+                </div>
+              );
+            })()}
+            <Bell size={22} className="text-blue-600 cursor-pointer animate-bounce-slow ml-6" />
             <span className="font-bold text-2xl text-gray-900 tracking-tight drop-shadow-sm">Admin Dashboard</span>
           </div>
         </div>
@@ -408,6 +467,25 @@ useEffect(() => {
     {errorDistribution && <div className="text-center text-red-500 text-sm mt-2">{errorDistribution}</div>}
   </div>
 </div>
+        </div>
+
+        {/* Graphique en barres : Candidatures par mois */}
+        <div className="bg-white p-8 rounded-2xl shadow-xl border border-gray-100 mb-8">
+          <h3 className="text-lg font-bold mb-4 text-gray-800">Candidatures par mois</h3>
+          <ResponsiveContainer width="100%" height={300}>
+            <BarChart data={dataBar} margin={{ top: 10, right: 30, left: 0, bottom: 0 }}>
+              <defs>
+                <linearGradient id="colorBar" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="5%" stopColor="#3b82f6" stopOpacity={0.8}/>
+                  <stop offset="95%" stopColor="#3b82f6" stopOpacity={0.2}/>
+                </linearGradient>
+              </defs>
+              <XAxis dataKey="name" stroke="#888"/>
+              <YAxis stroke="#888"/>
+              <Tooltip/>
+              <Bar dataKey="value" fill="url(#colorBar)" radius={[8,8,0,0]} />
+            </BarChart>
+          </ResponsiveContainer>
         </div>
 
         {/* Actions */}

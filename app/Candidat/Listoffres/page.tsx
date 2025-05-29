@@ -5,8 +5,8 @@ import axios from 'axios';
 import { Briefcase, MapPin, CalendarDays, Coins } from 'lucide-react';
 import Link from 'next/link';
 import { FaBriefcase } from 'react-icons/fa';
-import SidebarCandidat from '@/app/components/SidebarCandidat';
 import { useRouter } from 'next/navigation';
+import NavbarCandidat from '@/app/components/NavbarCandidat';
 
 interface Offer {
   id: number;
@@ -44,7 +44,6 @@ const AllOffersPage = () => {
     fetchOffers();
   }, []);
 
-  // Filtering function based on the search query and contract type filter
   const filterOffers = () => {
     let filtered = offers;
 
@@ -73,8 +72,7 @@ const AllOffersPage = () => {
   
   return (
     <div className="flex min-h-screen bg-gray-100">
-      <SidebarCandidat isOpen={isSidebarOpen} toggle={() => setIsSidebarOpen(!isSidebarOpen)} />
-      
+   <NavbarCandidat />
       <main className={`flex-1 transition-all duration-300 ${isSidebarOpen ? "ml-64" : "ml-16"} p-6`}>
         <div className="max-w-6xl mx-auto py-10 px-4">
           <h1 className="text-4xl font-bold mb-8 text-center text-blue-800">Available Job Offers</h1>

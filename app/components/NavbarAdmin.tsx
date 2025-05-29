@@ -12,7 +12,7 @@ export default function NavbarAdmin() {
     <nav className="navbar">
       <div className="container mx-auto flex justify-between items-center p-2 navbar__nav-container">
         <Link href={isAdmin ? "/Admin/Dashboard" : isRecruteur ? "/Recruteur/Dashboard" : "/"} className="navbar__logo">
-          JobBox
+          SmartHire
         </Link>
 
         {!isLoggedIn && (

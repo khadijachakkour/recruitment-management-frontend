@@ -11,7 +11,7 @@ export default function NavbarCandidat() {
   return (
     <nav className="navbar">
       <div className="container mx-auto flex justify-between items-center p-1.5">
-        <Link href="/" className="navbar__logo text-lg">JobBox</Link>
+        <Link href="/Candidat/dashboard" className="navbar__logo text-lg">SmartHire</Link>
 
         {!isLoggedIn && (
           <ul className="hidden md:flex space-x-4 navbar__nav">
@@ -26,6 +26,15 @@ export default function NavbarCandidat() {
           {/* Display user profile and logout button if the user is logged in */}
           {isLoggedIn && userRoles.includes("Candidat") ? (
             <>
+              <div className="hidden md:flex space-x-4 mr-4">
+                <Link href="/Candidat/dashboard" className="navbar__nav-item text-sm">Dashboard</Link>
+                <Link href="/Candidat/Listoffres" className="navbar__nav-item text-sm">Jobs</Link>
+                <Link href="/applications" className="navbar__nav-item text-sm">Apply</Link>
+                <Link href="/evaluations" className="navbar__nav-item text-sm">Evaluation</Link>
+                <Link href="/candidature-status" className="navbar__nav-item text-sm">Tracking</Link>
+                <Link href="/companies" className="navbar__nav-item text-sm">Companies</Link>
+                <Link href="/messages" className="navbar__nav-item text-sm">Messaging</Link>
+              </div>
               <Link href="/Candidat/Profile" className="navbar__icon-link">
                 <FaUserCircle className="navbar__profile-icon" size={30} />
               </Link>

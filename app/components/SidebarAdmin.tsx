@@ -3,7 +3,7 @@ import { Home, Users, Settings, Bell, Building, Menu, X } from "lucide-react";
 import Link from "next/link";
 
 export default function Sidebar({ onToggle }: { onToggle: (isOpen: boolean) => void }) {
-  const [isSidebarOpen, setIsSidebarOpen] = useState(true);
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
   const toggleSidebar = () => {
     const newState = !isSidebarOpen;

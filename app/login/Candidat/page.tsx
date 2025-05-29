@@ -45,7 +45,7 @@ export default function LoginPage() {
       <NavbarCandidat />
       <div className="flex items-center justify-center min-h-screen px-2">
         <div
-          className="w-full max-w-sm space-y-4">
+          className="w-full max-w-sm space-y-4 transform scale-110">
           <div>
             <h2 className="text-xl font-bold text-gray-800 text-center">Sign in</h2>
             <p className="text-sm text-gray-800 text-center">Access your Candidat account</p>

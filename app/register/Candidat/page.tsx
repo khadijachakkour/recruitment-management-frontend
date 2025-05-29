@@ -48,8 +48,8 @@ export default function CandidateRegisterPage() {
   return (
     <>
       <NavbarAdmin />
-      <div className="min-h-screen bg-white flex items-center justify-center px-2 py-6">
-        <div className="w-full max-w-sm space-y-4">
+      <div className="min-h-screen bg-white flex items-center justify-center px-4 py-6">
+        <div className="w-full max-w-sm space-y-4 transform scale-110">
           <div className="text-center">
             <h2 className="text-2xl font-bold text-gray-800">Create Account</h2>
           </div>

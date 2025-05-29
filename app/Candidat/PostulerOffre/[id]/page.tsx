@@ -1,12 +1,12 @@
-"use client";
+'use client';
 
 import { useEffect, useState } from "react";
 import { toast } from "react-hot-toast";
 import { useParams, useRouter } from "next/navigation";
 import { useAuth } from "@/src/context/authContext";
 import Link from "next/link";
-import { LogOut, Menu, X, Home, Search, FileText, Briefcase, User, MessageSquare } from "lucide-react";
-
+import { LogOut, Menu, X, Home, Search, FileText, Briefcase, User, MessageSquare, Eye } from "lucide-react";
+import NavbarCandidat from "@/app/components/NavbarCandidat";
 
 export default function Postulation() {
   const { isLoggedIn, logoutCandidat } = useAuth();
@@ -17,21 +17,64 @@ export default function Postulation() {
   const [coverLetterPreviewUrl, setCoverLetterPreviewUrl] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [offerId, setOfferId] = useState("");
+  const [offerTitle, setOfferTitle] = useState<string>("");
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
-  
+  const [error, setError] = useState<string | null>(null);
+
   const params = useParams();
   const id = Array.isArray(params?.id) ? params.id[0] : params?.id;
-  
+
+  // Clean up URL objects to prevent memory leaks
+  useEffect(() => {
+    return () => {
+      if (cvPreviewUrl) URL.revokeObjectURL(cvPreviewUrl);
+      if (coverLetterPreviewUrl) URL.revokeObjectURL(coverLetterPreviewUrl);
+    };
+  }, [cvPreviewUrl, coverLetterPreviewUrl]);
+
   useEffect(() => {
     if (id) {
       setOfferId(id);
+      fetch(`http://localhost:8081/api/offers/offerById/${id}`)
+        .then((res) => res.json())
+        .then((data) => {
+          if (data && data.title) setOfferTitle(data.title);
+        })
+        .catch(() => setOfferTitle(""));
     }
   }, [id]);
 
+  const validateFile = (file: File | null, field: string): boolean => {
+    if (!file) return true; // Optional for cover letter
+    const allowedTypes = ['application/pdf', 'application/msword', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'];
+    const maxSize = 5 * 1024 * 1024; // 5MB
+    if (!allowedTypes.includes(file.type)) {
+      toast.error(`${field} must be a PDF, DOC, or DOCX file.`);
+      return false;
+    }
+    if (file.size > maxSize) {
+      toast.error(`${field} must be less than 5MB.`);
+      return false;
+    }
+    return true;
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setError(null);
     setIsLoading(true);
-   
+
+    // Validate files
+    if (!cvFile) {
+      toast.error("Please upload a resume.");
+      setIsLoading(false);
+      return;
+    }
+    if (!validateFile(cvFile, "Resume") || (coverLetterFile && !validateFile(coverLetterFile, "Cover Letter"))) {
+      setIsLoading(false);
+      return;
+    }
+
     const formData = new FormData();
     formData.append("offer_id", offerId);
     if (cvFile) formData.append("cv", cvFile);
@@ -49,150 +92,201 @@ export default function Postulation() {
       const result = await response.json();
 
       if (response.ok) {
-        console.log("TOAST SHOULD DISPLAY");
-        toast.success("Candidature envoyée avec succès !");
+        toast.success("Application submitted successfully!");
         router.push("/Candidat/dashboard");
       } else if (response.status === 409) {
-        toast.error("Vous avez déjà postulé à cette offre.");
+        toast.error("You have already applied for this job.");
       } else {
-        toast.error(result.message || "Une erreur est survenue lors de la postulation.");
+        setError(result.message || "An error occurred while submitting the application.");
+        toast.error(result.message || "An error occurred while submitting the application.");
       }
-
     } catch (error) {
+      setError("Failed to submit application. Please try again.");
       toast.error("An error occurred while submitting the application.");
     } finally {
       setIsLoading(false);
     }
   };
 
-  const toggleSidebar = () => {
-    setIsSidebarOpen(!isSidebarOpen);
-  };
   return (
-    <>
-      <div className="flex min-h-screen bg-white-100">
-        {/* SIDEBAR */}
-        <aside
-          className={`fixed top-0 left-0 h-full bg-white border-r shadow-lg transition-all duration-300 ease-in-out z-40 ${
-            isSidebarOpen ? "w-64" : "w-16"
-          }`}
-        >
-          <div className="flex items-center justify-between p-4 border-b">
-            <div className="flex items-center gap-2">
-              {isSidebarOpen && <h2 className="text-2xl font-bold text-blue-600">Candidate</h2>}
+    <div className="flex min-h-screen bg-gradient-to-br from-blue-50 via-white to-blue-100">
+      <NavbarCandidat />
+      <main className="flex-1 flex items-center justify-center p-4 sm:p-6 pt-16">
+        <div className="w-full max-w-2xl bg-white/90 backdrop-blur-md rounded-3xl shadow-2xl p-6 border border-gray-100 relative overflow-hidden">
+          <div className="absolute inset-0 pointer-events-none">
+            <div className="absolute -top-10 -right-10 w-40 h-40 bg-blue-100 rounded-full opacity-30 blur-2xl" />
+            <div className="absolute -bottom-10 -left-10 w-32 h-32 bg-blue-200 rounded-full opacity-20 blur-2xl" />
+          </div>
+          <div className="flex flex-col items-center mb-6 relative z-10 mb-3">
+            <h2 className="text-xl sm:text-2xl font-extrabold text-gray-900 text-center tracking-tight">Apply for this Job</h2>
+            <p className="mt-1 text-sm text-gray-600 text-center max-w-md">
+              Complete your application for this professional opportunity.
+            </p>
+            <div className="mt-3 w-full flex justify-center">
+              <span className="inline-block bg-gradient-to-r from-blue-600 to-blue-400 text-white px-4 py-1.5 rounded-full font-semibold shadow-md text-sm">
+                {offerTitle || "(Job Title)"}
+              </span>
             </div>
-            <button
-              onClick={toggleSidebar}
-              className="text-gray-600 hover:text-blue-600 transition-colors"
-            >
-              {isSidebarOpen ? <X size={26} /> : <Menu size={26} />}
-            </button>
           </div>
-          <nav className="mt-4 px-2 space-y-1 text-sm font-medium">
-            <SidebarLink href="/Candidat/dashboard" icon={<Home size={18} />} text="Dashboard" isSidebarOpen={isSidebarOpen} />
-            <SidebarLink href="/Candidat/Listoffres" icon={<Search size={18} />} text="Jobs" isSidebarOpen={isSidebarOpen} />
-            <SidebarLink href="/applications" icon={<FileText size={18} />} text="Apply" isSidebarOpen={isSidebarOpen} />
-            <SidebarLink href="/evaluations" icon={<Briefcase size={18} />} text="Evaluation" isSidebarOpen={isSidebarOpen} />
-            <SidebarLink href="/candidature-status" icon={<User size={18} />} text="Tracking" isSidebarOpen={isSidebarOpen} />
-            <SidebarLink href="/companies" icon={<Search size={18} />} text="Companies" isSidebarOpen={isSidebarOpen} />
-            <SidebarLink href="/messages" icon={<MessageSquare size={18} />} text="Messaging" isSidebarOpen={isSidebarOpen} />
-          </nav>
-          <div className="p-4 border-t">
-            <button
-              onClick={logoutCandidat}
-              className="flex items-center gap-3 px-3 py-2 rounded-lg text-gray-700 hover:bg-red-100 hover:text-red-700 transition-colors w-full"
-            >
-              <LogOut size={18} />
-              {isSidebarOpen && <span>Logout</span>}
-            </button>
-          </div>
-        </aside>
-        <main className="flex-1 ml-64 p-6">
-          <div className="max-w-4xl mx-auto mt-10 p-8 bg-white rounded-2xl shadow-xl">
-            <h2 className="text-4xl font-bold text-center text-gray-800 mb-10">Apply for Job</h2>
-            <form onSubmit={handleSubmit} className="space-y-10">
-              <section>
-                <h3 className="text-xl font-semibold mb-4">Curriculum Vitae (CV)</h3>
+
+          <form onSubmit={handleSubmit} className="space-y-5 relative z-10" aria-busy={isLoading}>
+            {isLoading && (
+              <div className="absolute inset-0 bg-white/50 backdrop-blur-sm flex items-center justify-center z-20">
+                <svg className="animate-spin h-8 w-8 text-blue-600" viewBox="0 0 24 24">
+                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none" />
+                  <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8z" />
+                </svg>
+              </div>
+            )}
+            <section>
+              <label className="block text-sm font-semibold text-gray-800 mb-1 flex items-center gap-2" htmlFor="cv-input">
+                <FileText className="w-4 h-4 text-blue-500" /> Resume <span className="text-xs text-gray-400 font-normal">(PDF, DOC, DOCX)</span>
+              </label>
+              <div className="mt-1">
                 <input
+                  id="cv-input"
                   type="file"
                   accept=".pdf,.doc,.docx"
                   onChange={(e) => {
                     const file = e.target.files?.[0] || null;
-                    setCvFile(file);
-                    setCvPreviewUrl(file ? URL.createObjectURL(file) : null);
+                    if (file) {
+                      setCvFile(file);
+                      setCvPreviewUrl(file ? URL.createObjectURL(file) : null);
+                    }
                   }}
-                  className="w-full border p-2 rounded-lg"
+                  className="block w-full text-sm text-gray-700 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-gradient-to-r file:from-blue-600 file:to-blue-400 file:text-white hover:file:from-blue-700 hover:file:to-blue-500 transition focus:ring-2 focus:ring-blue-400 focus:outline-none border border-gray-200 rounded-lg shadow-sm"
+                  aria-label="Upload your resume in PDF, DOC, or DOCX format"
                 />
-                {cvPreviewUrl && (
-                  <iframe src={cvPreviewUrl} className="mt-4 w-full h-96 border rounded-lg" />
-                )}
-              </section>
+              </div>
+              {cvFile && (
+                <p className="mt-1 text-sm text-gray-600">Selected: {cvFile.name}</p>
+              )}
+              {cvPreviewUrl && (
+                <div className="mt-3 transition-transform hover:scale-102">
+                  <iframe
+                    src={cvPreviewUrl}
+                    className="w-full h-40 border border-blue-200 rounded-lg shadow-md bg-white"
+                    title="Resume Preview"
+                  />
+                  <a
+                    href={cvPreviewUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="mt-1 flex items-center gap-1 text-sm text-blue-600 hover:underline"
+                  >
+                    <Eye className="w-4 h-4" /> View Full
+                  </a>
+                </div>
+              )}
+            </section>
 
-              <section>
-                <h3 className="text-xl font-semibold mb-4">Cover Letter (Optional)</h3>
+            <div className="flex items-center justify-center gap-2 my-4">
+              <div className="flex-1 border-t border-dashed border-blue-100" />
+              <span className="text-xs text-gray-500 font-medium bg-blue-50 px-2 py-1 rounded-full">Optional Section</span>
+              <div className="flex-1 border-t border-dashed border-blue-100" />
+            </div>
+
+            <section>
+              <label className="block text-sm font-semibold text-gray-800 mb-1 flex items-center gap-2" htmlFor="cover-letter-input">
+                <FileText className="w-4 h-4 text-blue-500" /> Cover Letter <span className="text-xs text-gray-400 font-normal">(Optional)</span>
+              </label>
+              <div className="mt-1">
                 <input
+                  id="cover-letter-input"
                   type="file"
                   accept=".pdf,.doc,.docx"
                   onChange={(e) => {
                     const file = e.target.files?.[0] || null;
-                    setCoverLetterFile(file);
-                    setCoverLetterPreviewUrl(file ? URL.createObjectURL(file) : null);
+                    if (file) {
+                      setCoverLetterFile(file);
+                      setCoverLetterPreviewUrl(file ? URL.createObjectURL(file) : null);
+                    }
                   }}
-                  className="w-full border p-2 rounded-lg"
+                  className="block w-full text-sm text-gray-700 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-gradient-to-r file:from-blue-600 file:to-blue-400 file:text-white hover:file:from-blue-700 hover:file:to-blue-500 transition focus:ring-2 focus:ring-blue-400 focus:outline-none border border-gray-200 rounded-lg shadow-sm"
+                  aria-label="Upload your cover letter in PDF, DOC, or DOCX format (optional)"
                 />
-                {coverLetterPreviewUrl && (
-                  <iframe src={coverLetterPreviewUrl} className="mt-4 w-full h-96 border rounded-lg" />
-                )}
-              </section>
+              </div>
+              {coverLetterFile && (
+                <p className="mt-1 text-sm text-gray-600">Selected: {coverLetterFile.name}</p>
+              )}
+              {coverLetterPreviewUrl && (
+                <div className="mt-3 transition-transform hover:scale-102">
+                  <iframe
+                    src={coverLetterPreviewUrl}
+                    className="w-full h-40 border border-blue-200 rounded-lg shadow-md bg-white"
+                    title="Cover Letter Preview"
+                  />
+                  <a
+                    href={coverLetterPreviewUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="mt-1 flex items-center gap-1 text-sm text-blue-600 hover:underline"
+                  >
+                    <Eye className="w-4 h-4" /> View Full
+                  </a>
+                </div>
+              )}
+            </section>
 
-              <div className="flex justify-center gap-4">
+            {error && (
+              <div className="mt-4 text-center">
+                <p className="text-sm text-red-600">{error}</p>
                 <button
-                  type="submit"
-                  disabled={isLoading}
-                  className="w-full bg-blue-600 text-white py-3 rounded-lg hover:bg-blue-700 transition disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+                  onClick={handleSubmit}
+                  className="mt-2 text-sm text-blue-600 hover:underline"
                 >
-                  {isLoading ? (
-                    <svg className="animate-spin h-5 w-5 text-white" viewBox="0 0 24 24">
-                      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none" />
-                      <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8z" />
-                    </svg>
-                  ) : (
-                    "Submit Application"
-                  )}
-                </button>
-                <button
-                  type="button"
-                  onClick={() => router.push("/Candidat/dashboard")}
-                  className="bg-gray-200 hover:bg-gray-300 text-gray-800 px-6 py-3 rounded-xl transition"
-                >
-                  Cancel
+                  Retry
                 </button>
               </div>
-            </form>
-          </div>
-        </main>
-      </div>
-    </>
+            )}
+
+            <div className="flex flex-col sm:flex-row justify-center gap-4 mt-6">
+              <button
+                type="submit"
+                disabled={isLoading}
+                className="w-full sm:w-auto bg-gradient-to-r from-blue-600 to-blue-400 text-white py-2.5 px-8 rounded-lg font-bold shadow-lg hover:from-blue-700 hover:to-blue-500 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 text-base"
+              >
+                {isLoading ? (
+                  <svg className="animate-spin h-5 w-5 text-white" viewBox="0 0 24 24" aria-label="Loading">
+                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none" />
+                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8z" />
+                  </svg>
+                ) : (
+                  <span>Submit</span>
+                )}
+              </button>
+              <button
+                type="button"
+                onClick={() => router.push("/Candidat/dashboard")}
+                className="w-full sm:w-auto border border-gray-300 bg-white text-gray-700 py-2.5 px-8 rounded-lg font-bold shadow-md hover:bg-gray-100 transition-all duration-200 text-base"
+              >
+                Cancel
+              </button>
+            </div>
+          </form>
+        </div>
+      </main>
+    </div>
   );
 }
 
 function SidebarLink({
-    href,
-    icon,
-    text,
-    isSidebarOpen,
-  }: {
-    href: string;
-    icon: React.ReactNode;
-    text: string;
-    isSidebarOpen: boolean;
-  }) {
-    return (
-      <Link href={href}>
-        <div className="flex items-center gap-3 px-3 py-2 rounded-lg text-gray-700 hover:bg-blue-100 hover:text-blue-700 transition-colors">
-          {icon}
-          {isSidebarOpen && <span>{text}</span>}
-        </div>
-      </Link>
-    );
-  }
+  href,
+  icon,
+  text,
+  isSidebarOpen,
+}: {
+  href: string;
+  icon: React.ReactNode;
+  text: string;
+  isSidebarOpen: boolean;
+}) {
+  return (
+    <Link href={href}>
+      <div className="flex items-center gap-3 px-4 py-3 rounded-lg text-gray-700 hover:bg-blue-50 hover:text-blue-600 transition-colors">
+        {icon}
+        {isSidebarOpen && <span className="text-sm font-medium">{text}</span>}
+      </div>
+    </Link>
+  );
+}

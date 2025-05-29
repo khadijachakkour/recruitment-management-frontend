@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { Briefcase, MapPin, CalendarDays, FileText } from "lucide-react";
 import SearchBar from "./SearchBar";
-
+import { useAuth } from "@/src/context/authContext";
 
 interface Offer {
   id: number;
@@ -16,7 +16,6 @@ interface Offer {
   createdAt: string;
   description: string;
   applicationDeadline: string;
-
 }
 
 const ITEMS_PER_PAGE = 6;
@@ -34,14 +33,15 @@ export default function JobList() {
   const [currentPage, setCurrentPage] = useState(1);
 
   const router = useRouter();
+  const { isLoggedIn } = useAuth();
 
   const [expandedOfferIds, setExpandedOfferIds] = useState<number[]>([]);
 
-const toggleDescription = (id: number) => {
-  setExpandedOfferIds((prev) =>
-    prev.includes(id) ? prev.filter((offerId) => offerId !== id) : [...prev, id]
-  );
-};
+  const toggleDescription = (id: number) => {
+    setExpandedOfferIds((prev) =>
+      prev.includes(id) ? prev.filter((offerId) => offerId !== id) : [...prev, id]
+    );
+  };
 
   useEffect(() => {
     const fetchOffers = async () => {
@@ -203,7 +203,13 @@ const toggleDescription = (id: number) => {
 
 <div className="flex justify-end mt-4">
   <button
-    onClick={() => router.push("/login/Candidat")}
+    onClick={() => {
+      if (isLoggedIn) {
+        router.push(`/Candidat/PostulerOffre/${offer.id}`);
+      } else {
+        router.push("/login/Candidat");
+      }
+    }}
     className="px-6 py-2 text-sm font-semibold bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-all"
   >
     Apply Now
