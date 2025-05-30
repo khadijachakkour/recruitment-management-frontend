@@ -219,7 +219,7 @@ const CreateJobPage = () => {
   };
 
   return (
-    <RecruteurLayout noSidebarMargin>
+    <RecruteurLayout>
       <div className="flex min-h-[60vh] items-center justify-center bg-white py-6 px-2">
         <div className="w-full max-w-2xl rounded-2xl bg-white shadow-2xl p-8 border border-blue-100">
           {/* Stepper */}

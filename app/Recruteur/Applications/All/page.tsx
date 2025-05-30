@@ -131,7 +131,7 @@ export default function AllApplicationsPage() {
 
   return (
     <RecruteurLayout>
-      <main className="w-full min-h-screen px-2 sm:px-8 lg:px-16 pt-28 pb-16 bg-gradient-to-br from-blue-50 to-blue-100">
+      <main className="w-full min-h-screen px-2 sm:px-8 lg:px-16 pt-28 pb-16 bg-white">
         {/* En-tête amélioré */}
         <div className="max-w-5xl mx-auto mb-10 flex flex-col items-center gap-2">
           <div className="flex items-center gap-3">

@@ -67,7 +67,6 @@ const AllOffersPage = () => {
 
   const handleApply = (offerId: number) => {
     router.push(`/Candidat/PostulerOffre/${offerId}`);
-
   };
   
   return (

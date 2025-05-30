@@ -8,7 +8,7 @@ export default function ChooseJobTypePage() {
   const router = useRouter();
 
   return (
-    <RecruteurLayout noSidebarMargin>
+    <RecruteurLayout>
       <div className="flex items-center justify-center min-h-[80vh] w-full bg-white">
         <div className="flex flex-col items-center justify-center w-full max-w-4xl px-8 py-16">
           <h1 className="text-xl md:text-xl font-extrabold text-gray-900 text-center mb-2 tracking-tight">
