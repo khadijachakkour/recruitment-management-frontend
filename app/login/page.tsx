@@ -12,6 +12,7 @@ import { DecodedToken } from "@/app/types/DecodedToken";
 import Image from "next/image";
 import Link from "next/link";
 import NavbarAdmin from "../components/NavbarAdmin";
+import { Loader2 } from "lucide-react";
 
 function Spinner() {
   return (
@@ -76,85 +77,90 @@ export default function LoginPage() {
   return (
     <>
   <NavbarAdmin />
-    <div className="flex items-center justify-center min-h-screen px-2">
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.6 }}
-        className="w-full max-w-sm space-y-4"
-      >
-        <div>
-          <h2 className="text-xl font-bold text-gray-800 text-center">Sign in</h2>
-          <p className="text-sm text-gray-800 text-center">Access your account</p>
+    <div className="flex items-center justify-center min-h-screen px-4">
+      {isLoading ? (
+        <div className="flex justify-center items-center min-h-screen bg-white w-full">
+          <Loader2 className="w-10 h-10 text-blue-600 animate-spin" />
         </div>
-
-        {/* Social buttons */}
-        <div className="flex space-x-3">
-          <button className="flex-1 flex items-center justify-center border rounded-lg py-1 px-2 hover:bg-gray-100 transition">
-            <Image src="/icons/icons8-google.svg" alt="Google" width={20} height={20} />
-            <span className="ml-2 text-sm font-medium">Google</span>
-          </button>
-          <button className="flex-1 flex items-center justify-center border rounded-lg py-1 px-2 hover:bg-gray-100 transition">
-            <Image src="/icons/icons8-microsoft.svg" alt="Microsoft" width={20} height={20} />
-            <span className="ml-2 text-sm font-medium">Microsoft</span>
-          </button>
-        </div>
-
-        <div className="relative text-center text-gray-400 text-sm">
-          <span className="px-2 bg-white relative z-10">or continue with email</span>
-          <div className="absolute left-0 right-0 top-1/2 h-px bg-gray-200 z-0"></div>
-        </div>
-
-        {errorMessage && <p className="text-red-500 text-sm text-center">{errorMessage}</p>}
-
-        <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-          {/* Email */}
-          <div className="relative">
-            <FaEnvelope className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
-            <input
-              type="email"
-              placeholder="Email"
-              {...register("email", { required: "Email is required" })}
-              className="w-full pl-10 pr-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-            />
-            {errors.email && <p className="text-red-500 text-xs mt-1">{errors.email.message}</p>}
+      ) : (
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6 }}
+          className="w-full max-w-md space-y-4 scale-110 md:scale-125"
+        >
+          <div>
+            <h2 className="text-xl font-bold text-gray-800 text-center">Sign in</h2>
+            <p className="text-sm text-gray-800 text-center">Access your account</p>
           </div>
 
-          {/* Password */}
-          <div className="relative">
-            <FaLock className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
-            <input
-              type={showPassword ? "text" : "password"}
-              placeholder="Password"
-              {...register("password", { required: "Password is required" })}
-              className="w-full pl-10 pr-10 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-            />
-            <button
-              type="button"
-              className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500"
-              onClick={() => setShowPassword(!showPassword)}
-            >
-              {showPassword ? <FaRegEye /> : <FaRegEyeSlash />}
+          {/* Social buttons */}
+          <div className="flex space-x-3">
+            <button className="flex-1 flex items-center justify-center border rounded-lg py-1 px-2 hover:bg-gray-100 transition">
+              <Image src="/icons/icons8-google.svg" alt="Google" width={20} height={20} />
+              <span className="ml-2 text-sm font-medium">Google</span>
             </button>
-            {errors.password && (
-              <p className="text-red-500 text-xs mt-1">{errors.password.message}</p>
-            )}
+            <button className="flex-1 flex items-center justify-center border rounded-lg py-1 px-2 hover:bg-gray-100 transition">
+              <Image src="/icons/icons8-microsoft.svg" alt="Microsoft" width={20} height={20} />
+              <span className="ml-2 text-sm font-medium">Microsoft</span>
+            </button>
           </div>
 
-          {/* Forgot password */}
-          <div className="text-right">
-            <Link href="/forgot-password" className="text-sm text-blue-600 hover:underline">
-              Forgot password?
-            </Link>
+          <div className="relative text-center text-gray-400 text-sm">
+            <span className="px-2 bg-white relative z-10">or continue with email</span>
+            <div className="absolute left-0 right-0 top-1/2 h-px bg-gray-200 z-0"></div>
           </div>
 
-          <button
-            type="submit"
-            className="w-full bg-gradient-to-br from-[#007bff] to-[#0056b3] hover:opacity-90 text-white font-semibold py-2 rounded-lg transition"
-          >
-            Sign in
-          </button>
-        </form>
+          {errorMessage && <p className="text-red-500 text-sm text-center">{errorMessage}</p>}
+
+          <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+            {/* Email */}
+            <div className="relative">
+              <FaEnvelope className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
+              <input
+                type="email"
+                placeholder="Email"
+                {...register("email", { required: "Email is required" })}
+                className="w-full pl-10 pr-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+              />
+              {errors.email && <p className="text-red-500 text-xs mt-1">{errors.email.message}</p>}
+            </div>
+
+            {/* Password */}
+            <div className="relative">
+              <FaLock className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
+              <input
+                type={showPassword ? "text" : "password"}
+                placeholder="Password"
+                {...register("password", { required: "Password is required" })}
+                className="w-full pl-10 pr-10 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+              />
+              <button
+                type="button"
+                className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500"
+                onClick={() => setShowPassword(!showPassword)}
+              >
+                {showPassword ? <FaRegEye /> : <FaRegEyeSlash />}
+              </button>
+              {errors.password && (
+                <p className="text-red-500 text-xs mt-1">{errors.password.message}</p>
+              )}
+            </div>
+
+            {/* Forgot password */}
+            <div className="text-right">
+              <Link href="/forgot-password" className="text-sm text-blue-600 hover:underline">
+                Forgot password?
+              </Link>
+            </div>
+
+            <button
+              type="submit"
+              className="w-full bg-gradient-to-br from-[#007bff] to-[#0056b3] hover:opacity-90 text-white font-semibold py-2 rounded-lg transition"
+            >
+              Sign in
+            </button>
+          </form>
 
   <p className="text-sm text-center text-gray-600">
     Don&apos;t have an account?{" "}
@@ -162,14 +168,9 @@ export default function LoginPage() {
       Sign Up
     </Link>
   </p>
-      </motion.div>
+        </motion.div>
+      )}
     </div>
-    {isLoading && (
-  <div className="fixed inset-0 bg-white bg-opacity-70 z-50 flex items-center justify-center">
-    <div className="w-12 h-12 border-4 border-blue-600 border-t-transparent rounded-full animate-spin"></div>
-    <span className="sr-only">Loading...</span>
-  </div>
-)}
     </>
     );
 }

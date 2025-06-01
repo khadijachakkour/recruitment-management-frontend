@@ -1,16 +1,18 @@
 import { useState } from "react";
 import { Home, Users, Settings, Bell, Building, Menu, X, Briefcase } from "lucide-react";
+import { FaUser } from "react-icons/fa";
 import Link from "next/link";
 
-export default function Sidebar({ onToggle }: { onToggle: (isOpen: boolean) => void }) {
-  // Sidebar ouverte par défaut
-  const [isSidebarOpen, setIsSidebarOpen] = useState(true);
+interface SidebarRecruteurProps {
+  isSidebarOpen: boolean;
+  onToggle: (isOpen: boolean) => void;
+}
+
+export default function Sidebar({ isSidebarOpen, onToggle }: SidebarRecruteurProps) {
   const [openDropdown, setOpenDropdown] = useState<string | null>(null); // Track which dropdown is open
 
   const toggleSidebar = () => {
-    const newState = !isSidebarOpen;
-    setIsSidebarOpen(newState);
-    onToggle(newState); // Notify parent about the state change
+    onToggle(!isSidebarOpen);
   };
 
   const toggleDropdown = (menu: string) => {
@@ -25,7 +27,7 @@ export default function Sidebar({ onToggle }: { onToggle: (isOpen: boolean) => v
       {/* Header avec hamburger */}
       <div className="flex items-center justify-between p-4 border-b">
         <div className="flex items-center gap-4">
-       {isSidebarOpen && <h1 className="text-2xl font-bold" style={{ color: "#007bff" }}>SmartHire</h1>}
+          {isSidebarOpen && <h1 className="text-2xl font-bold" style={{ color: "#007bff" }}>SmartHire</h1>}
         </div>
 
         <button
@@ -96,7 +98,7 @@ export default function Sidebar({ onToggle }: { onToggle: (isOpen: boolean) => v
             <ul className="ml-6 space-y-1">
               <li>
                 <Link
-                  href="/Recruteur/Applications/Preselected"
+                  href="/Recruteur/Applications/PreselectedApplication"
                   className="block px-3 py-2 rounded-lg text-gray-700 hover:bg-blue-100 hover:text-blue-700 transition-colors"
                 >
                   Pre-selected Candidates
@@ -138,6 +140,12 @@ export default function Sidebar({ onToggle }: { onToggle: (isOpen: boolean) => v
           <Briefcase size={18} /> {isSidebarOpen && <span>Recruitment Management</span>}
         </Link>
 
+     {/* Mon Profil */}
+        <Link
+          href="/Recruteur/Profile"
+          className="flex items-center gap-3 px-3 py-2 rounded-lg text-gray-700 hover:bg-blue-100 hover:text-blue-700 transition-colors">
+          <FaUser size={18} /> {isSidebarOpen && <span>Profil</span>}
+        </Link>
         {/* Notifications */}
         <Link
           href="/Recruteur/Notifications"

@@ -28,7 +28,7 @@ export default function ManageProfile() {
     
     const fetchProfile = async () => {
       try {
-        const response = await axios.get("http://localhost:4000/api/admin/profileAdmin", {
+        const response = await axios.get("http://localhost:4000/api/users/UserProfile", {
           headers: {
             Authorization: `Bearer ${sessionStorage.getItem("access_token")}`,
           },

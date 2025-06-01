@@ -1,17 +1,6 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import Link from "next/link";
-import { motion } from "framer-motion";
-import {
-  Briefcase,
-  FileText,
-  MessageSquare,
-  Search,
-  User,
-  BarChart2,
-  ClipboardList,
-} from "lucide-react";
 import NProgress from "nprogress";
 import "nprogress/nprogress.css";
 import { useAuth } from "@/src/context/authContext";

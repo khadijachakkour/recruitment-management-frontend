@@ -74,7 +74,6 @@ export default function AdminDashboard() {
         });
         setRoleCounts(roleRes.data);
   
-        // 👇 Appel pour les infos d'entreprise
         const companyRes = await axios.get(`http://localhost:5000/api/companies/by-admin/${data.userId}`, {
           headers: {
             Authorization: `Bearer ${sessionStorage.getItem("access_token")}`,
@@ -205,11 +204,9 @@ useEffect(() => {
 
   return (
     <AdminLayout>
-      <main className="p-6 pt-20 bg-white min-h-screen">
-        {/* En-tête avec profil admin connecté */}
+      <main className="w-full min-h-screen font-sans bg-white px-2 sm:px-8 lg:px-16 pt-28 pb-16">
         <div className="flex justify-between items-center mb-8">
           <div className="flex items-center gap-4">
-            {/* Profil admin moderne */}
             {userId && users.length > 0 && (() => {
               const adminUser = users.find(u => u.id === userId);
               if (!adminUser) return null;

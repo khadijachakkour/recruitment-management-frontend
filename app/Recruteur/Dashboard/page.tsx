@@ -11,7 +11,7 @@ import {
   ResponsiveContainer,
 } from 'recharts';
 import { motion } from 'framer-motion';
-import { Users, Briefcase, CalendarClock, PlusCircle, MessageCircle, Search, ChevronDown, ChevronUp, LogOut } from 'lucide-react';
+import { Users, Briefcase, CalendarClock, PlusCircle, MessageCircle} from 'lucide-react';
 import RecruteurLayout from '@/RecruteurLayout';
 import { useRouter } from 'next/navigation';
 import { BarChart, Bar, Cell } from 'recharts';
@@ -19,7 +19,7 @@ import Select from 'react-select';
 import { ApplicationModesIcons } from "../../components/ApplicationModesIcons";
 import { useAuth } from "@/src/context/authContext";
 
-interface Department {
+interface  Department {
   id: number;
   name: string;
 }
@@ -238,18 +238,16 @@ const RecruteurPage = () => {
 
   return (
     <RecruteurLayout>
-      <main className="w-full min-h-screen font-sans bg-white px-2 sm:px-8 lg:px-16 pt-28 pb-16">
-        {/* New Offer Button */}
+      <main className="w-full min-h-screen font-sans bg-white px-2 sm:px-8 lg:px-16 pb-16">
+        <div className="h-10" />
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5 }}
-          className="mb-10 flex justify-end"
-        >
+          className="mb-10 flex justify-end">
           <button
             onClick={() => router.push('/Recruteur/Jobs/ChooseType')}
-            className="flex items-center gap-2 bg-gradient-to-r from-[#00b4d8] to-[#007bff] text-white px-7 py-3 rounded-full shadow-lg hover:from-[#4ea8de] hover:to-[#007bff] transition-transform transform hover:scale-105 font-semibold text-base drop-shadow-md"
-          >
+            className="flex items-center gap-2 bg-gradient-to-r from-[#00b4d8] to-[#007bff] text-white px-7 py-3 rounded-full shadow-lg hover:from-[#4ea8de] hover:to-[#007bff] transition-transform transform hover:scale-105 font-semibold text-base drop-shadow-md">
             <PlusCircle className="w-5 h-5" />
             New offer
           </button>
@@ -270,22 +268,21 @@ const RecruteurPage = () => {
               </div>
               <h4 className="text-base font-semibold text-[#023e8a] mb-1 tracking-wide">{stat.title === 'Candidatures' ? 'Applications' : stat.title === 'Shortlistés' ? 'Shortlisted' : stat.title === 'En attente' ? 'Pending' : stat.title}</h4>
               <p className={`text-2xl font-extrabold tracking-tight ${
-                stat.title === 'Candidatures' ? 'text-[#ff9800]' : // orange for Applications
-                stat.title === 'Shortlistés' ? 'text-[#43a047]' : // green for Shortlisted
-                stat.title === 'En attente' ? 'text-[#fbc02d]' : // yellow for Pending
-                stat.title === 'Messages' ? 'text-[#e53935]' : // red for Messages
+                stat.title === 'Candidatures' ? 'text-[#ff9800]' : 
+                stat.title === 'Shortlistés' ? 'text-[#43a047]' : 
+                stat.title === 'En attente' ? 'text-[#fbc02d]' : 
+                stat.title === 'Messages' ? 'text-[#e53935]' : 
                 'text-[#007bff]'
               }`}>{stat.value}</p>
             </motion.div>
           ))}
         </section>
 
-        {/* Discover Applications Modes Section (just after stats) */}
         <motion.section
           initial={{ opacity: 0, y: 24 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.7, ease: 'easeOut' }}
-          className="mb-16 w-full mt-4"
+          className="mb-16 w-full"
         >
           <div className="relative flex flex-col items-center">
             <h2 className="text-3xl font-extrabold text-blue-900 mb-8 flex items-center gap-3">
@@ -693,12 +690,10 @@ const RecruteurPage = () => {
                   </button>
                 </div>
               )}
-              {/* Voir plus button */}
               <div className="flex justify-end mt-6">
                 <button
                   onClick={() => router.push('/Recruteur/Jobs/ManageOffers')}
-                  className="bg-gradient-to-r from-[#00b4d8] to-[#007bff] text-white px-7 py-2.5 rounded-full font-semibold shadow hover:from-[#4ea8de] hover:to-[#007bff] transition-all"
-                >
+                  className="bg-gradient-to-r from-[#00b4d8] to-[#007bff] text-white px-7 py-2.5 rounded-full font-semibold shadow hover:from-[#4ea8de] hover:to-[#007bff] transition-all">
                   Voir plus
                 </button>
               </div>

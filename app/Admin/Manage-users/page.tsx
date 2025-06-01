@@ -202,9 +202,7 @@ export default function ManageUsersPage() {
   return (
     <>
      <AdminLayout>
-          
-                  {/* Main Content */}
-                  <main className="p-6 pt-24">
+      <main className="p-6 pt-24">
       <div className="p-6 max-w-6xl mx-auto space-y-10">
 
         {/* Filter Options */}

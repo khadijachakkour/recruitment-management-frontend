@@ -1,32 +1,33 @@
-import { useState } from "react";
-import { Home, Users, Settings, Bell, Building, Menu, X } from "lucide-react";
+import { Home, Users, Settings, Building, Menu, X } from "lucide-react";
 import Link from "next/link";
 
-export default function Sidebar({ onToggle }: { onToggle: (isOpen: boolean) => void }) {
-  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+interface SidebarProps {
+  isSidebarOpen: boolean;
+  onToggle: (isOpen: boolean) => void;
+}
 
+export default function Sidebar({ isSidebarOpen, onToggle }: SidebarProps) {
   const toggleSidebar = () => {
-    const newState = !isSidebarOpen;
-    setIsSidebarOpen(newState);
-    onToggle(newState); // Notify parent about the state change
+    onToggle(!isSidebarOpen);
   };
 
   return (
     <aside
-  className={`fixed z-[1100] top-0 left-0 h-full bg-white border-r shadow-md transition-all duration-300 ease-in-out ${
-    isSidebarOpen ? "w-64" : "w-16"
-  }`}
->
+      className={`fixed z-[1100] top-0 left-0 h-full bg-white border-r shadow-md transition-all duration-300 ease-in-out ${
+        isSidebarOpen ? "w-64" : "w-16"
+      }`}
+    >
       {/* Header avec hamburger */}
       <div className="flex items-center justify-between p-4 border-b">
         <div className="flex items-center gap-2">
           {isSidebarOpen && <Home size={24} className="text-blue-600" />}
           {isSidebarOpen && <h1 className="text-xl font-bold text-blue-700">Admin</h1>}
         </div>
-
+        {/* Hamburger/X button always visible */}
         <button
           onClick={toggleSidebar}
           className="text-gray-600 hover:text-blue-600 transition-colors"
+          aria-label={isSidebarOpen ? "Fermer le menu" : "Ouvrir le menu"}
         >
           {isSidebarOpen ? <X size={26} /> : <Menu size={26} />}
         </button>

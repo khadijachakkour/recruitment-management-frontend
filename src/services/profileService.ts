@@ -18,7 +18,6 @@ export const getProfile = async () => {
   return response.data;
 };
 
-
 export const updateProfileAndCv = async (formData: FormData) => {
   const profilePart = {
     phone_number: formData.get("phone_number"),
@@ -72,4 +71,29 @@ export const deleteAvatar = async () => {
 
 export const deleteCv = async () => {
   return axios.delete(`${API_URL}/delete-cv`, { headers: getAuthHeaders() });
+};
+
+// Récupérer le profil utilisateur (API: /UserProfile)
+export const getRecruteurProfile = async () => {
+  const response = await axios.get('http://localhost:4000/api/users/UserProfile', { headers: getAuthHeaders() });
+  return response.data;
+};
+
+// Mettre à jour le profil du recruteur
+export const updateRecruteurProfile = async (profileData: any) => {
+  // Adapter les champs envoyés à l'API backend
+  const payload = {
+    firstname: profileData.firstname,
+    lastname: profileData.lastname,
+    email: profileData.email,
+    username: profileData.username,
+    ...(profileData.password && { password: profileData.password }),
+  };
+  const response = await axios.put('http://localhost:4000/api/users/updateProfileCurrentUser', payload, {
+    headers: {
+      "Content-Type": "application/json",
+      ...getAuthHeaders(),
+    },
+  });
+  return response.data;
 };
