@@ -11,7 +11,7 @@ import {
   ResponsiveContainer,
 } from 'recharts';
 import { motion } from 'framer-motion';
-import { Users, Briefcase, CalendarClock, PlusCircle, MessageCircle} from 'lucide-react';
+import { Users, Briefcase, CalendarClock, PlusCircle, MessageCircle, Loader2} from 'lucide-react';
 import RecruteurLayout from '@/RecruteurLayout';
 import { useRouter } from 'next/navigation';
 import { BarChart, Bar, Cell } from 'recharts';
@@ -42,7 +42,6 @@ const RecruteurPage = () => {
   oldTasks.map(task => ({
     text: task.text,
     done: task.done,
-    // Always store ISO string, never toLocaleString
     createdAt: task.createdAt ? new Date(task.createdAt).toISOString() : new Date().toISOString(),
   }));
   const [tasks, setTasks] = useState<{ text: string; done: boolean; createdAt: string }[]>(() => {
@@ -76,8 +75,12 @@ const RecruteurPage = () => {
 
   const messages: { sender: string; text: string }[] = [];
 
-  // Ajout du state pour le nombre d'offres
   const [offersCount, setOffersCount] = useState<number>(0);
+
+  // Agenda widget state
+  const [agendaInterviews, setAgendaInterviews] = useState<any[]>([]);
+  const [agendaLoading, setAgendaLoading] = useState(false);
+  const [selectedAgendaDay, setSelectedAgendaDay] = useState<string | null>(null);
 
   useEffect(() => {
     const fetchDepartments = async () => {
@@ -122,7 +125,6 @@ const RecruteurPage = () => {
       try {
         const offersRes = await axios.get(`http://localhost:8081/api/offers/by-recruiter/${userId}`);
         const offers = offersRes.data;
-        // Pour chaque offre, récupérer le nombre de candidatures
         const offersWithCounts = await Promise.all(
           offers.map(async (offer: any) => {
             try {
@@ -149,11 +151,31 @@ const RecruteurPage = () => {
       }
     };
 
+    const fetchAgendaInterviews = async () => {
+      setAgendaLoading(true);
+      try {
+        const { data } = await axios.get("http://localhost:4000/api/users/userId", {
+          headers: {
+            Authorization: `Bearer ${sessionStorage.getItem("access_token")}`,
+          },
+        });
+        if (data.userId) {
+          const res = await axios.get(`http://localhost:3004/api/entretiens/recruteur/${data.userId}`);
+          setAgendaInterviews(res.data);
+        }
+      } catch {
+        setAgendaInterviews([]);
+      } finally {
+        setAgendaLoading(false);
+      }
+    };
+
     fetchDepartments();
     fetchRecruiterProfile();
     if (userId) {
       fetchOffersWithCounts();
       fetchOffersCount();
+      fetchAgendaInterviews();
     }
   }, [userId]);
 
@@ -187,7 +209,6 @@ const RecruteurPage = () => {
     }
   }, [tasks]);
 
-  // Tasks handlers
   const handleAddTask = () => {
     if (newTask.trim() !== '') {
       setTasks([
@@ -207,7 +228,7 @@ const RecruteurPage = () => {
   const handleDeleteTask = (idx: number) => {
     setTasks(tasks.filter((_, i) => i !== idx));
   };
-  // Inline edit
+
   const [editingTaskIdx, setEditingTaskIdx] = useState<number | null>(null);
   const [editingTaskText, setEditingTaskText] = useState('');
   const handleEditTask = (idx: number) => {
@@ -233,8 +254,37 @@ const RecruteurPage = () => {
   useEffect(() => { setIsMounted(true); }, []);
 
   if (!isMounted) {
-    return <div className="min-h-screen flex items-center justify-center text-blue-700 text-lg">Chargement...</div>;
+    return  <div className="flex justify-center items-center min-h-screen bg-white w-full">
+          <Loader2 className="w-10 h-10 text-blue-600 animate-spin" />
+        </div>;}
+
+  function getStartOfWeek(date: Date) {
+    const d = new Date(date);
+    const day = d.getDay();
+    const diff = d.getDate() - day + (day === 0 ? -6 : 1);
+    return new Date(d.setDate(diff));
   }
+  function getWeekDays() {
+    const start = getStartOfWeek(new Date());
+    return Array.from({ length: 7 }, (_, i) => {
+      const d = new Date(start);
+      d.setDate(start.getDate() + i);
+      return d;
+    });
+  }
+  const weekDays = getWeekDays();
+
+  // Filter interviews for selected day
+  const agendaInterviewsForDay = (day: Date) =>
+    agendaInterviews.filter(e => {
+      if (!e.date) return false;
+      const edate = new Date(e.date);
+      return (
+        edate.getFullYear() === day.getFullYear() &&
+        edate.getMonth() === day.getMonth() &&
+        edate.getDate() === day.getDate()
+      );
+    });
 
   return (
     <RecruteurLayout>
@@ -427,13 +477,13 @@ const RecruteurPage = () => {
           )}
         </div>
 
+<div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-12">
         {/* Departments */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5 }}
-          className="bg-white p-8 rounded-2xl shadow-lg border border-[#caf0f8] mb-12 w-full"
-        >
+          className="bg-white p-8 rounded-2xl shadow-lg border border-[#caf0f8] mb-12 w-full">
           <h3 className="text-lg font-bold text-[#023e8a] mb-6">Departments</h3>
           {loading ? (
             <p className="text-[#00b4d8] text-base">Loading departments...</p>
@@ -456,6 +506,68 @@ const RecruteurPage = () => {
             </div>
           )}
         </motion.div>
+      {/* Agenda Widget */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5 }}
+          className="bg-white p-6 rounded-2xl shadow-lg border border-[#caf0f8] mb-12 w-full max-w-3xl mx-auto">
+          <div className="flex items-center justify-between mb-4">
+            <h3 className="text-lg font-bold text-[#023e8a] flex items-center gap-2">
+              <svg className="w-6 h-6 text-blue-500" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><path strokeLinecap="round" strokeLinejoin="round" d="M16 2v4M8 2v4M3 10h18"/></svg>
+              Agenda (This week)
+            </h3>
+            <button
+              onClick={() => router.push('/Recruteur/AgendaEntretien')}
+              className="px-4 py-2 rounded-lg bg-blue-600 hover:bg-blue-700 text-white font-semibold shadow transition text-sm"
+            >
+              View full agenda
+            </button>
+          </div>
+          <div className="flex gap-2 justify-between">
+            {weekDays.map((day, idx) => {
+              const isToday = new Date().toDateString() === day.toDateString();
+              const interviews = agendaInterviewsForDay(day);
+              return (
+                <div
+                  key={idx}
+                  className={`flex-1 flex flex-col items-center cursor-pointer rounded-lg px-2 py-2 border transition-all ${isToday ? 'border-blue-500 bg-blue-50' : 'border-transparent hover:border-blue-200'} ${selectedAgendaDay === day.toDateString() ? 'ring-2 ring-blue-400' : ''}`}
+                  onClick={() => setSelectedAgendaDay(day.toDateString())}
+                >
+                  <span className={`text-xs font-semibold mb-1 ${isToday ? 'text-blue-700' : 'text-gray-500'}`}>{day.toLocaleDateString('en-US', { weekday: 'short' })}</span>
+                  <span className={`text-lg font-bold ${isToday ? 'text-blue-700' : 'text-gray-700'}`}>{day.getDate()}</span>
+                  {interviews.length > 0 && (
+                    <span className="mt-1 text-xs bg-blue-100 text-blue-700 rounded-full px-2 py-0.5 font-semibold">{interviews.length} interview{interviews.length > 1 ? 's' : ''}</span>
+                  )}
+                </div>
+              );
+            })}
+          </div>
+          {/* List interviews for selected day */}
+          {selectedAgendaDay && (
+            <div className="mt-6">
+              <h4 className="text-base font-bold text-blue-900 mb-2 flex items-center gap-2">
+                <svg className="w-4 h-4 text-blue-400" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><path strokeLinecap="round" strokeLinejoin="round" d="M16 2v4M8 2v4M3 10h18"/></svg>
+                Interviews on {new Date(selectedAgendaDay).toLocaleDateString('en-GB', { weekday: 'long', year: 'numeric', month: 'short', day: 'numeric' })}
+              </h4>
+              <ul className="space-y-2">
+                {agendaInterviewsForDay(new Date(selectedAgendaDay)).length === 0 ? (
+                  <li className="text-gray-400 text-sm">No interviews.</li>
+                ) : (
+                  agendaInterviewsForDay(new Date(selectedAgendaDay)).map((e, idx) => (
+                    <li key={e.id || idx} className="bg-blue-50 border border-blue-100 rounded-lg px-4 py-2 flex flex-col md:flex-row md:items-center gap-2">
+                      <span className="font-semibold text-blue-900">{e.type === 'Visio' ? 'Video' : 'In-person'}</span>
+                      <span className="text-gray-700">{e.candidate?.firstName} {e.candidate?.lastName}</span>
+                      <span className="text-gray-500 text-xs">{e.date ? new Date(e.date).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : ''}</span>
+                      <span className="text-gray-400 text-xs ml-auto">{e.lieu}</span>
+                    </li>
+                  ))
+                )}
+              </ul>
+            </div>
+          )}
+        </motion.div>
+        </div>
 
         {/* Tasks & Messages Section */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-12">
@@ -633,8 +745,7 @@ const RecruteurPage = () => {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5 }}
-          className="bg-white p-8 rounded-2xl shadow-lg border border-[#caf0f8] mb-12 w-full"
-        >
+          className="bg-white p-8 rounded-2xl shadow-lg border border-[#caf0f8] mb-12 w-full">
           <h3 className="text-lg font-bold text-[#023e8a] mb-6 flex items-center gap-3">
             Jobs
             <span className="ml-2 text-sm text-gray-400">({offersCount})</span>
@@ -676,8 +787,7 @@ const RecruteurPage = () => {
                     <button
                       key={i}
                       onClick={() => setCurrentJobsPage(i + 1)}
-                      className={`px-3 py-1 rounded-full font-semibold border ${currentJobsPage === i + 1 ? 'bg-gradient-to-r from-[#007bff] to-[#00b4d8] text-white' : 'text-[#007bff] border-[#caf0f8] bg-white hover:bg-[#eaf6ff]'} transition`}
-                    >
+                      className={`px-3 py-1 rounded-full font-semibold border ${currentJobsPage === i + 1 ? 'bg-gradient-to-r from-[#007bff] to-[#00b4d8] text-white' : 'text-[#007bff] border-[#caf0f8] bg-white hover:bg-[#eaf6ff]'} transition`}>
                       {i + 1}
                     </button>
                   ))}
@@ -700,6 +810,8 @@ const RecruteurPage = () => {
             </>
           )}
         </motion.div>
+
+       
       </main>
     </RecruteurLayout>
   );

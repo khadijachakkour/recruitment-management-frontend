@@ -6,27 +6,23 @@ export default function Footer() {
   const isAdmin = isLoggedIn && userRoles.includes("Admin");
 
   if (isAdmin) {
-    // Footer minimaliste pour les admins
     return (
       <footer className="bg-gray-900 text-white py-2 text-center mt-auto">
-        <p className="text-sm text-gray-400">© {new Date().getFullYear()} JobBox Admin Panel</p>
+        <p className="text-sm text-gray-400">© {new Date().getFullYear()} SmartHire Admin Panel</p>
       </footer>
     );
   }
 
-  // Footer général pour les recruteurs, managers RH, et candidats
   return (
     <footer className="bg-gray-900 text-white py-6 mt-auto">
       <div className="container mx-auto grid grid-cols-1 md:grid-cols-4 gap-6 px-4">
-        {/* Colonne 1 - Logo & Description */}
         <div>
-          <h2 className="text-xl font-bold">JobBox</h2>
+          <h2 className="text-xl font-bold">SmartHire</h2>
           <p className="mt-2 text-gray-400 text-sm">
             Find your dream job or recruit top talent quickly and efficiently with JobBox.
           </p>
         </div>
 
-        {/* Colonne 2 - Liens spécifiques pour Candidats */}
         <div>
           <h3 className="text-md font-semibold">For Job Seekers</h3>
           <ul className="mt-2 space-y-1">
@@ -37,7 +33,6 @@ export default function Footer() {
           </ul>
         </div>
 
-        {/* Colonne 3 - Liens spécifiques pour Recruteurs / RH */}
         <div>
           <h3 className="text-md font-semibold">For Recruiters & HR</h3>
           <ul className="mt-2 space-y-1">
@@ -48,7 +43,6 @@ export default function Footer() {
           </ul>
         </div>
 
-        {/* Colonne 4 - Support & Contact */}
         <div>
           <h3 className="text-md font-semibold">Support & Contact</h3>
           <ul className="mt-2 space-y-1">
@@ -58,7 +52,6 @@ export default function Footer() {
             <li><a href="#" className="text-gray-400 hover:text-white transition duration-300 ease-in-out text-sm">Contact Us</a></li>
           </ul>
 
-          {/* Icônes réseaux sociaux */}
           <div className="flex mt-4 space-x-4">
             <a href="#" aria-label="Facebook" className="text-gray-400 hover:text-white text-xl transition duration-300 ease-in-out">
               <i className="fab fa-facebook"></i>
@@ -73,7 +66,6 @@ export default function Footer() {
         </div>
       </div>
 
-      {/* Copyright */}
       <div className="border-t border-gray-700 pt-3 text-center text-white text-xs mt-6">
         © {new Date().getFullYear()} JobBox. All rights reserved.
       </div>

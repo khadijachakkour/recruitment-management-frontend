@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Home, Users, Settings, Bell, Building, Menu, X, Briefcase } from "lucide-react";
-import { FaUser } from "react-icons/fa";
+import { FaUser, FaCalendarCheck } from "react-icons/fa";
 import Link from "next/link";
 
 interface SidebarRecruteurProps {
@@ -16,7 +16,7 @@ export default function Sidebar({ isSidebarOpen, onToggle }: SidebarRecruteurPro
   };
 
   const toggleDropdown = (menu: string) => {
-    setOpenDropdown(openDropdown === menu ? null : menu); // Toggle the dropdown
+    setOpenDropdown(openDropdown === menu ? null : menu);
   };
 
   return (
@@ -71,13 +71,6 @@ export default function Sidebar({ isSidebarOpen, onToggle }: SidebarRecruteurPro
                   Manage Offers
                 </Link>
               </li>
-              <li>
-                <Link
-                  href="/Recruteur/Offers/Publish"
-                  className="block px-3 py-2 rounded-lg text-gray-700 hover:bg-blue-100 hover:text-blue-700 transition-colors">
-                  Multi-platform Publishing
-                </Link>
-              </li>
             </ul>
           )}
         </div>
@@ -106,14 +99,6 @@ export default function Sidebar({ isSidebarOpen, onToggle }: SidebarRecruteurPro
               </li>
               <li>
                 <Link
-                  href="/Recruteur/Applications/Shortlist"
-                  className="block px-3 py-2 rounded-lg text-gray-700 hover:bg-blue-100 hover:text-blue-700 transition-colors"
-                >
-                  Shortlist Candidates
-                </Link>
-              </li>
-              <li>
-                <Link
                   href="/Recruteur/Applications/All"
                   className="block px-3 py-2 rounded-lg text-gray-700 hover:bg-blue-100 hover:text-blue-700 transition-colors"
                 >
@@ -123,6 +108,14 @@ export default function Sidebar({ isSidebarOpen, onToggle }: SidebarRecruteurPro
             </ul>
           )}
         </div>
+
+        {/* Planned Interviews */}
+        <Link
+          href="/Recruteur/EntretienPlanifie"
+          className="flex items-center gap-3 px-3 py-2 rounded-lg text-gray-700 hover:bg-blue-100 hover:text-blue-700 transition-colors"
+        >
+          <FaCalendarCheck size={18} /> {isSidebarOpen && <span>Planned Interviews</span>}
+        </Link>
 
         {/* Departments */}
         <Link
