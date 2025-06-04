@@ -1,153 +1,144 @@
-"use client";   //ce fichier doit être exécuté côté client 
-import { createContext, useContext, useEffect, useState } from "react";
-import { jwtDecode } from "jwt-decode";
-import { useRouter } from "next/navigation";
-import { DecodedToken } from "@/app/types/DecodedToken";
+"use client";
 
+   import { createContext, useContext, useEffect, useState } from "react";
+   import { jwtDecode } from "jwt-decode";
+   import { useRouter } from "next/navigation";
+   import { DecodedToken } from "@/app/types/DecodedToken";
 
-//Définition du Contexte d'Authentification qui va stocker l'état d'authentification globalement dans l'application.
-interface AuthContextType {
-  isLoggedIn: boolean;
-  isAuthLoaded: boolean;
-  userRoles: string[];
-  login: (token: string) => void;
-  logoutAdmin: () => Promise<void>; 
-  logoutCandidat: () => Promise<void>; 
-  isLoggingOut: boolean;
+   interface AuthContextType {
+     isLoggedIn: boolean;
+     isAuthLoaded: boolean;
+     userRoles: string[];
+     candidatId?: string; // Ajout de candidatId
+     login: (token: string) => void;
+     logoutAdmin: () => Promise<void>;
+     logoutCandidat: () => Promise<void>;
+     isLoggingOut: boolean;
+   }
 
-}
+   const AuthContext = createContext<AuthContextType | null>(null);
 
-const AuthContext = createContext<AuthContextType | null>(null);
+   export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
+     const [isLoggedIn, setIsLoggedIn] = useState(false);
+     const [userRoles, setUserRoles] = useState<string[]>([]);
+     const [candidatId, setCandidatId] = useState<string | undefined>(undefined);
+     const [isAuthLoaded, setIsAuthLoaded] = useState(false);
+     const [isLoggingOut, setIsLoggingOut] = useState(false);
+     const router = useRouter();
 
-//Le provider qui va envelopper toute l'application et fournir les données d'authentification.
-export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const [userRoles, setUserRoles] = useState<string[]>([]);
-  const [isAuthLoaded, setIsAuthLoaded] = useState(false);
-  const [isLoggingOut, setIsLoggingOut] = useState(false);
-  const router = useRouter(); // ✅ Gestion des redirections
+     const getUserInfo = (token: string): { roles: string[]; candidatId?: string } => {
+       try {
+         const decodedToken: DecodedToken = jwtDecode(token);
+         return {
+           roles: decodedToken?.realm_access?.roles || [],
+           candidatId: decodedToken?.candidatId || decodedToken?.sub, // Utilise sub si candidatId n'existe pas
+         };
+       } catch (error) {
+         console.error("Erreur de décodage du token:", error);
+         return { roles: [], candidatId: undefined };
+       }
+     };
 
+     useEffect(() => {
+       const checkLoginStatus = () => {
+         const token = sessionStorage.getItem("access_token");
+         if (token) {
+           setIsLoggedIn(true);
+           const { roles, candidatId } = getUserInfo(token);
+           setUserRoles(roles);
+           setCandidatId(candidatId);
+           setIsAuthLoaded(true);
+         } else {
+           setIsLoggedIn(false);
+           setUserRoles([]);
+           setCandidatId(undefined);
+           setIsAuthLoaded(true);
+         }
+       };
 
+       checkLoginStatus();
+       const intervalId = setInterval(checkLoginStatus, 500);
+       return () => clearInterval(intervalId);
+     }, []);
 
-  const getUserRoles = (token: string): string[] => {
-    try {
-      const decodedToken: DecodedToken = jwtDecode(token);
-      return decodedToken?.realm_access?.roles || [];
-    } catch (error) {
-      console.error("Erreur de décodage du token:", error);
-      return [];
-    }
-  };
+     const login = (token: string) => {
+       sessionStorage.setItem("access_token", token);
+       setIsLoggedIn(true);
+       const { roles, candidatId } = getUserInfo(token);
+       setUserRoles(roles);
+       setCandidatId(candidatId);
+       console.log("Utilisateur connecté :", {
+         isLoggedIn: true,
+         userRoles: roles,
+         candidatId,
+       });
+     };
 
-  useEffect(() => {
-    const checkLoginStatus = () => {
-      const token = sessionStorage.getItem("access_token");
-      if (token) {
-        setIsLoggedIn(true);
-        setUserRoles(getUserRoles(token));
-        setIsAuthLoaded(true);
-      } else {
-        setIsLoggedIn(false);
-        setUserRoles([]);
-      }  };
-    checkLoginStatus();
-const intervalId = setInterval(checkLoginStatus, 500);
-    return () => clearInterval(intervalId);
-  }, []);
-    
-  const login = (token: string) => {
-    sessionStorage.setItem("access_token", token);
-    setIsLoggedIn(true);
-    setUserRoles(getUserRoles(token));
-    console.log("Utilisateur connecté :", {
-        isLoggedIn: true,
-        userRoles: getUserRoles(token),
-    });
+     const logoutAdmin = async () => {
+       try {
+         setIsLoggingOut(true);
+         const response = await fetch("http://localhost:4000/logout", {
+           method: "POST",
+           credentials: "include",
+         });
+         if (response.ok) {
+           sessionStorage.removeItem("access_token");
+           setIsLoggedIn(false);
+           setUserRoles([]);
+           setCandidatId(undefined);
+           router.push("/login");
+         }
+       } catch (error) {
+         console.error("Erreur lors de la déconnexion", error);
+       } finally {
+         setIsLoggingOut(false);
+       }
+     };
 
-};
+     const logoutCandidat = async () => {
+       try {
+         setIsLoggingOut(true);
+         const response = await fetch("http://localhost:4000/logout", {
+           method: "POST",
+           credentials: "include",
+         });
+         if (response.ok) {
+           sessionStorage.removeItem("access_token");
+           setIsLoggedIn(false);
+           setUserRoles([]);
+           setCandidatId(undefined);
+           router.push("/login/Candidat");
+         }
+       } catch (error) {
+         console.error("Erreur lors de la déconnexion", error);
+       } finally {
+         setIsLoggingOut(false);
+       }
+     };
 
-//Logout Admin
-const logoutAdmin = async () => {
-  try {
-    setIsLoggingOut(true);
-    // ✅ Stocker le rôle AVANT de réinitialiser `userRoles`
-    const role = userRoles.length > 0 ? userRoles[0] : null;
-    console.log("Rôle actuel avant logout :", role);
+     return (
+       <AuthContext.Provider
+         value={{ isAuthLoaded, isLoggedIn, userRoles, candidatId, login, logoutAdmin, logoutCandidat, isLoggingOut }}
+       >
+         {isLoggingOut && <LoadingSpinner />}
+         {children}
+       </AuthContext.Provider>
+     );
+   };
 
-    // Appel à l'API de déconnexion
-    const response = await fetch("http://localhost:4000/logout", {
-      method: "POST",
-      credentials: "include",
-    });
+   const LoadingSpinner = () => (
+     <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
+       <div className="relative">
+         <div className="w-16 h-16 border-4 border-blue-600 border-t-transparent rounded-full animate-spin"></div>
+         <div className="absolute inset-0 w-20 h-20 border-4 border-blue-400 border-t-transparent rounded-full animate-spin animate-reverse"></div>
+       </div>
+     </div>
+   );
 
-    if (response.ok) {
-      sessionStorage.removeItem("access_token");
-
-      setIsLoggedIn(false);
-      setUserRoles([]);
-
-        router.push("/login");
-      
-    }
-  } catch (error) {
-    console.error("Erreur lors de la déconnexion", error);
-  } finally {
-    setIsLoggingOut(false); // Deactivate spinner
-  }
-};
-
-//Logout Candidat
-const logoutCandidat = async () => {
-  setIsLoggingOut(true);
-  try {
-
-    // ✅ Stocker le rôle AVANT de réinitialiser `userRoles`
-    const role = userRoles.length > 0 ? userRoles[0] : null;
-
-    // Appel à l'API de déconnexion
-    const response = await fetch("http://localhost:4000/logout", {
-      method: "POST",
-      credentials: "include",
-    });
-
-    if (response.ok) {
-      sessionStorage.removeItem("access_token");
-
-      // ✅ Réinitialisation après l'utilisation du rôle
-      setIsLoggedIn(false);
-      setUserRoles([]);
-
-        router.push("/login/Candidat");
-      
-    }
-  } catch (error) {
-    console.error("Erreur lors de la déconnexion", error);
-  } finally {
-    setIsLoggingOut(false); // Deactivate spinner
-  }
-};
- return (
-    <AuthContext.Provider value={{ isAuthLoaded, isLoggedIn, userRoles, login, logoutAdmin, logoutCandidat, isLoggingOut}}>
-            {isLoggingOut && <LoadingSpinner />}
-            {children}
-    </AuthContext.Provider>
-  );
-};
-
-const LoadingSpinner = () => (
-  <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
-    <div className="relative">
-      <div className="w-16 h-16 border-4 border-blue-600 border-t-transparent rounded-full animate-spin"></div>
-      <div className="absolute inset-0 w-20 h-20 border-4 border-blue-400 border-t-transparent rounded-full animate-spin animate-reverse"></div>
-    </div>
-  </div>
-);
-export const useAuth = () => {
-  const context = useContext(AuthContext);
-  if (!context) {
-    throw new Error("useAuth must be used within an AuthProvider");
-  }
-  return context;
-}; 
-
-
+   export const useAuth = () => {
+     const context = useContext(AuthContext);
+     if (!context) {
+       throw new Error("useAuth must be used within an AuthProvider");
+     }
+     return context;
+   };

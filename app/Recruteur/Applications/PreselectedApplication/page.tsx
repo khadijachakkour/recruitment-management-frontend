@@ -122,24 +122,36 @@ const PreselectedApplicationPage = () => {
     setShowModal({open: true, candidate});
     setInterviewDate("");
     setInterviewTime("");
-    setInterviewType("");
+    setInterviewType("visio");
     setInterviewLocation("");
   };
   const handleCloseModal = () => setShowModal({open: false});
   const handleConfirm = async () => {
     if (!showModal.candidate || !recruteurId) return;
     try {
-      const entretienPayload = {
-        date: new Date(`${interviewDate}T${interviewTime}`),
+      let entretienPayload: any = {
+        date: interviewDate,
+        heure: interviewTime,
         type: interviewType === "visio" ? "Visio" : "Presentiel",
-        lieu: interviewLocation,
         recruteurId: recruteurId,
         candidatureId: showModal.candidate.id, 
+        candidatId: showModal.candidate.candidate_id,
         statut: "PLANIFIE"
       };
-      console.log("Payload entretien:", entretienPayload);
-      await axios.post("http://localhost:3004/api/entretiens/CreateEntretien", entretienPayload);
-      // Mise à jour du statut de la candidature associée
+      // Pour presentiel, lieu est requis et non vide
+      if (interviewType === "presentiel") {
+        entretienPayload = { ...entretienPayload, lieu: interviewLocation };
+      }
+      // Pour visio, ne pas inclure le champ lieu du tout
+await axios.post(
+  "http://localhost:3004/api/entretiens/CreateEntretien",
+  entretienPayload,
+  {
+    headers: {
+      Authorization: `Bearer ${sessionStorage.getItem("access_token")}`,
+    },
+  }
+);      // Mise à jour du statut de la candidature associée
       const candidatureId = showModal.candidate.id;
       if (candidatureId) {
         await axios.patch(`http://localhost:8082/api/candidatures/update/${candidatureId}`, { status: "selectionnee_entretien" });
@@ -336,18 +348,21 @@ const PreselectedApplicationPage = () => {
                   <option value="presentiel">In-person</option>
                 </select>
               </div>
-              <div>
-                <label className="block text-sm font-semibold mb-1 text-blue-700">{interviewType === "visio" ? "Video link" : "Location"}</label>
-                <input
-                  type="text"
-                  value={interviewLocation}
-                  onChange={e => setInterviewLocation(e.target.value)}
-                  ref={locationInputRef}
-                  placeholder={interviewType === "visio" ? "https://..." : "Office address"}
-                  required
-                  className="w-full border-2 border-blue-200 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400"
-                />
-              </div>
+              {/* Afficher le champ location seulement si presentiel */}
+              {interviewType === "presentiel" && (
+                <div>
+                  <label className="block text-sm font-semibold mb-1 text-blue-700">Location</label>
+                  <input
+                    type="text"
+                    value={interviewLocation}
+                    onChange={e => setInterviewLocation(e.target.value)}
+                    ref={locationInputRef}
+                    placeholder="Office address"
+                    required
+                    className="w-full border-2 border-blue-200 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400"
+                  />
+                </div>
+              )}
               <button type="submit" className="w-full bg-gradient-to-r from-blue-600 to-blue-500 hover:from-blue-700 hover:to-blue-600 text-white py-3 rounded-xl font-bold text-lg mt-2 shadow-lg border-2 border-blue-600 transition">Confirm</button>
             </form>
           </div>
