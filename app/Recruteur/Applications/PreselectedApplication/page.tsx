@@ -39,6 +39,7 @@ const PreselectedApplicationPage = () => {
   const [confirmRefuse, setConfirmRefuse] = useState<{open: boolean, candidateId?: string} >({open: false});
   const [currentPage, setCurrentPage] = useState(1);
   const locationInputRef = useRef<HTMLInputElement>(null);
+  const [recruteurName, setRecruteurName] = useState<string>("");
 
   const fetchCandidates = async () => {
     if (!offerId) return;
@@ -109,6 +110,8 @@ const PreselectedApplicationPage = () => {
         });
         if (data.userId) {
           setRecruteurId(data.userId);
+          const userRes = await axios.get(`http://localhost:4000/api/users/userbyId/${data.userId}`);
+        setRecruteurName(`${userRes.data.firstName || ""} ${userRes.data.lastName || ""}`.trim());
           const offersRes = await axios.get(`http://localhost:8081/api/offers/by-recruiter/${data.userId}`);
           setOffers(offersRes.data);
         }
@@ -129,11 +132,12 @@ const PreselectedApplicationPage = () => {
   const handleConfirm = async () => {
     if (!showModal.candidate || !recruteurId) return;
     try {
+     const dateTime = `${interviewDate}T${interviewTime}:00`;
       let entretienPayload: any = {
-        date: interviewDate,
-        heure: interviewTime,
+        date: dateTime,
         type: interviewType === "visio" ? "Visio" : "Presentiel",
         recruteurId: recruteurId,
+        recruteurName: recruteurName,
         candidatureId: showModal.candidate.id, 
         candidatId: showModal.candidate.candidate_id,
         statut: "PLANIFIE"

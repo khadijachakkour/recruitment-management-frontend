@@ -75,8 +75,24 @@ export default function NotificationsPage() {
                     <span className="inline-block w-3 h-3 bg-blue-500 rounded-full border-2 border-white shadow"></span>
                   )}
                 </span>
-                <div className="flex-1 min-w-0">
-                  <div className={`text-base leading-snug ${!notif.read ? "font-semibold text-blue-900" : "text-gray-700"}`}>{notif.message}</div>
+
+<div className="flex-1 min-w-0">
+                  <div className={`text-base leading-snug ${!notif.read ? "font-semibold text-blue-900" : "text-gray-700"}`}>
+                    {notif.message}
+                    {
+                      <div className="mt-2">
+                        <a
+                          href={notif.url}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="text-blue-600 underline hover:text-blue-800 font-medium"
+                        >
+                         {notif.url}
+                        </a>
+                      </div>
+                    }
+                  </div>
+
                   <div className="text-xs text-gray-400 mt-2 flex items-center gap-2">
                     {timeAgo(notif.createdAt)}
                   </div>

@@ -120,6 +120,18 @@ useEffect(() => {
                                   </span>
                                   <div className="flex-1">
                                     <div className="text-sm font-semibold text-blue-900">{notif.message}</div>
+                                    {notif.url && (
+                                      <div className="mt-1">
+                                        <a
+                                          href={notif.url}
+                                          target="_blank"
+                                          rel="noopener noreferrer"
+                                          className="text-blue-600 underline hover:text-blue-800 font-medium text-xs"
+                                        >
+                                          {notif.url}
+                                        </a>
+                                      </div>
+                                    )}
                                     <div className="text-xs text-gray-400 mt-1">{new Date(notif.createdAt).toLocaleString()}</div>
                                   </div>
                                 </li>
