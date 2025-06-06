@@ -288,8 +288,8 @@ const RecruteurPage = () => {
 
   return (
     <RecruteurLayout>
-      <main className="w-full min-h-screen font-sans bg-white px-2 sm:px-8 lg:px-16 pb-16">
-        <div className="h-10" />
+      <main className="w-full min-h-screen font-sans bg-white px-2 sm:px-8 lg:px-14 pb-14">
+        <div className="h-8" />
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -304,14 +304,14 @@ const RecruteurPage = () => {
         </motion.div>
 
         {/* Stats Cards */}
-        <section className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 mb-12">
+        <section className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-10">
           {stats.map((stat, idx) => (
             <motion.div
               key={idx}
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5, delay: idx * 0.1 }}
-              className="bg-white rounded-2xl shadow-lg border border-[#caf0f8] hover:shadow-xl transition-all flex flex-col items-center w-full py-8 px-4 group relative overflow-hidden"
+              className="bg-white rounded-xl shadow-lg border border-[#caf0f8] hover:shadow-xl transition-all flex flex-col items-center w-full py-8 px-4 group relative overflow-hidden"
             >
               <div className={`bg-gradient-to-br ${stat.color} text-white rounded-full w-14 h-14 flex items-center justify-center text-2xl mb-3 shadow-md group-hover:scale-110 transition-transform`}>
                 <stat.icon size={28} />
@@ -335,11 +335,11 @@ const RecruteurPage = () => {
           className="mb-16 w-full"
         >
           <div className="relative flex flex-col items-center">
-            <h2 className="text-3xl font-extrabold text-blue-900 mb-8 flex items-center gap-3">
+            <h2 className="text-2xl font-extrabold text-blue-900 mb-8 flex items-center gap-3">
               {ApplicationModesIcons.sparkles}
               Application Review Modes
             </h2>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-8 w-full max-w-7xl">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 w-full max-w-7xl">
               {/* Manual Review Card */}
               <motion.div
                 whileHover={{ y: -6, scale: 1.03, boxShadow: '0 8px 32px 0 rgba(59,130,246,0.10)' }}
@@ -383,7 +383,7 @@ const RecruteurPage = () => {
         </motion.section>
 
         {/* Chart and Top Jobs */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-12">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-10">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
@@ -413,14 +413,14 @@ const RecruteurPage = () => {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5 }}
-              className="bg-white p-8 rounded-2xl shadow-xl border border-[#eaf6ff] w-full"
+              className="bg-white p-8 rounded-xl shadow-xl border border-[#eaf6ff] w-full"
             >
-              <div className="mb-6 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+              <div className="mb-6 flex flex-col md:flex-row md:items-center md:justify-between gap-3">
                 <h3 className="text-lg font-bold text-[#023e8a] flex items-center gap-2 mb-0">
                   <span className="inline-block w-2 h-6 rounded bg-gradient-to-b from-[#007bff] to-[#00b4d8] mr-2"></span>
                   Applications per Offer
                 </h3>
-                <div className="w-full md:w-96">
+                <div className="w-full md:w-90">
                   <Select
                     isMulti
                     options={offersWithCounts.map(offer => ({ value: offer.id, label: offer.title }))}
@@ -477,7 +477,7 @@ const RecruteurPage = () => {
           )}
         </div>
 
-<div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-12">
+<div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-2">
         {/* Departments */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -512,7 +512,7 @@ const RecruteurPage = () => {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5 }}
           className="bg-white p-6 rounded-2xl shadow-lg border border-[#caf0f8] mb-12 w-full max-w-3xl mx-auto">
-          <div className="flex items-center justify-between mb-4">
+          <div className="flex items-center justify-between mb-2">
             <h3 className="text-lg font-bold text-[#023e8a] flex items-center gap-2">
               <svg className="w-6 h-6 text-blue-500" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><path strokeLinecap="round" strokeLinejoin="round" d="M16 2v4M8 2v4M3 10h18"/></svg>
               Agenda (This week)
@@ -570,7 +570,7 @@ const RecruteurPage = () => {
         </div>
 
         {/* Tasks & Messages Section */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-12">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-10">
           {/* Tasks Section */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}

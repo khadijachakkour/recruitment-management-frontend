@@ -10,7 +10,7 @@ interface Entretien {
   lieu: string;
   statut: string;
   candidatureId: string;
-  offer_id?: string; // Add offer_id here
+  offer_id?: string; 
   candidate?: {
     firstName?: string;
     lastName?: string;
@@ -31,6 +31,12 @@ const PlannedInterviewsPage = () => {
   const [statusFilter, setStatusFilter] = useState("");
   const [offerFilter, setOfferFilter] = useState("");
   const [dateFilter, setDateFilter] = useState("");
+  const [showCancelModal, setShowCancelModal] = useState(false);
+  const [entretienToCancel, setEntretienToCancel] = useState<string | null>(null);
+  const [entretienToComplete, setEntretienToComplete] = useState<string | null>(null);
+
+  // Pour stocker les liens Jitsi récupérés
+  const [jitsiLinks, setJitsiLinks] = useState<{ [id: string]: string }>({});
 
   useEffect(() => {
     const fetchRecruteurIdAndEntretiens = async () => {
@@ -86,6 +92,45 @@ const PlannedInterviewsPage = () => {
   const totalPages = Math.ceil(filteredEntretiens.length / itemsPerPage);
   const paginatedEntretiens = filteredEntretiens.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage);
 
+  // Ouvre la modal de confirmation
+  const openCancelModal = (entretienId: string) => {
+    setEntretienToCancel(entretienId);
+    setShowCancelModal(true);
+  };
+  // Ferme la modal
+  const closeCancelModal = () => {
+    setShowCancelModal(false);
+    setEntretienToCancel(null);
+  };
+
+  // Annuler un entretien (avec modal)
+  const handleCancel = async () => {
+    if (!entretienToCancel) return;
+    setLoading(true);
+    setError(null);
+    try {
+      await axios.put(`http://localhost:3004/api/entretiens/entretiens/${entretienToCancel}`, { statut: "Annule" });
+      setEntretiens(prev => prev.map(e => e.id === entretienToCancel ? { ...e, statut: "Annule" } : e));
+      closeCancelModal();
+    } catch (err: any) {
+      setError("Erreur lors de l'annulation de l'entretien.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Récupère le lien Jitsi pour un entretien Visio si besoin
+  const fetchJitsiUrl = async (entretienId: string) => {
+    if (jitsiLinks[entretienId]) return;
+    try {
+      const { data } = await axios.get(`http://localhost:3004/api/entretiens/entretiens/${entretienId}`);
+      if (data && data.jitsiUrl) {
+        setJitsiLinks(prev => ({ ...prev, [entretienId]: data.jitsiUrl }));
+      }
+    } catch (err) {
+    }
+  };
+
   return (
     <RecruteurLayout>
       <div className="min-h-screen bg-gradient-to-br from-blue-100 via-white to-blue-50 flex flex-col">
@@ -116,12 +161,11 @@ const PlannedInterviewsPage = () => {
               <select
                 value={statusFilter}
                 onChange={e => { setStatusFilter(e.target.value); setCurrentPage(1); }}
-                className="w-full px-3 py-2 border border-blue-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
-              >
+                className="w-full px-3 py-2 border border-blue-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400">
                 <option value="">All</option>
                 <option value="PLANIFIE">Planned</option>
-                <option value="REALISE">Completed</option>
-                <option value="ANNULE">Cancelled</option>
+                <option value="Termine">Completed</option>
+                <option value="Annule">Cancelled</option>
               </select>
             </div>
             <div>
@@ -160,10 +204,27 @@ const PlannedInterviewsPage = () => {
                     )}
                     {e.type === 'Visio' ? 'Video' : 'In-person'}
                   </span>
-                  <span className={`inline-flex items-center gap-2 text-xs font-bold px-3 py-1 rounded-full shadow ${e.statut === 'PLANIFIE' ? 'bg-blue-100 text-blue-800' : 'bg-gray-100 text-gray-700'}`}> 
-                    <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" /><path strokeLinecap="round" strokeLinejoin="round" d="M12 6v6l4 2" /></svg>
-                    {e.statut === 'PLANIFIE' ? 'PLANNED' : e.statut}
-                  </span>
+                  {/* Modern status badge */}
+                  {e.statut === 'Annule' ? (
+                    <span className="inline-flex items-center gap-2 text-xs font-bold px-3 py-1 rounded-full shadow bg-red-100 text-red-700 animate-pulse">
+                      <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M12 9v2m0 4h.01M21 12c0 4.97-4.03 9-9 9s-9-4.03-9-9 4.03-9 9-9 9 4.03 9 9z" /></svg>
+                      CANCELLED
+                    </span>
+                  ) : e.statut === 'Termine' ? (
+                    <span className="inline-flex items-center gap-2 text-xs font-bold px-3 py-1 rounded-full shadow bg-green-100 text-green-700">
+                      <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" /></svg>
+                      COMPLETED
+                    </span>
+                  ) : e.statut === 'Planifie' || e.statut === 'PLANIFIE' ? (
+                    <span className="inline-flex items-center gap-2 text-xs font-bold px-3 py-1 rounded-full shadow bg-blue-100 text-blue-800">
+                      <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" /><path strokeLinecap="round" strokeLinejoin="round" d="M12 6v6l4 2" /></svg>
+                      PLANNED
+                    </span>
+                  ) : (
+                    <span className="inline-flex items-center gap-2 text-xs font-bold px-3 py-1 rounded-full shadow bg-gray-100 text-gray-700">
+                      {e.statut}
+                    </span>
+                  )}
                 </div>
                 {/* Date */}
                 <div className="flex items-center text-base text-gray-700 mb-1 gap-2">
@@ -171,12 +232,35 @@ const PlannedInterviewsPage = () => {
                   <span className="font-semibold">Date:</span>
                   <span className="ml-1">{e.date ? new Date(e.date).toLocaleString('en-GB', { year: 'numeric', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' }) : '-'}</span>
                 </div>
-                {/* Location */}
-                <div className="flex items-center text-base text-gray-700 mb-1 gap-2">
-                  <svg className="w-5 h-5 text-green-400" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M12 11c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3z" /><path strokeLinecap="round" strokeLinejoin="round" d="M12 11v10" /></svg>
-                  <span className="font-semibold">Location:</span>
-                  <span className="ml-1">{e.lieu || '-'}</span>
-                </div>
+                {/* Location or Visio link */}
+                {e.type === 'Visio' ? (
+                  <div className="flex items-center text-base text-blue-700 mb-1 gap-2">
+                    <svg className="w-5 h-5 text-blue-400" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M4 6h16M4 18h16M4 6v12" /></svg>
+                    <span className="font-semibold">Video link:</span>
+                    {jitsiLinks[e.id] ? (
+                      <a
+                        href={`/Recruteur/EntretienPlanifie/visio/${e.id}`}
+                        className="ml-1 underline text-blue-600 hover:text-blue-800 break-all"
+                      >
+                        Join video room
+                      </a>
+                    ) : (
+                      <button
+                        className="ml-1 px-3 py-1 rounded bg-blue-100 text-blue-700 text-sm font-semibold hover:bg-blue-200 transition"
+                        onClick={() => fetchJitsiUrl(e.id)}
+                        type="button"
+                      >
+                        Show link
+                      </button>
+                    )}
+                  </div>
+                ) : (
+                  <div className="flex items-center text-base text-gray-700 mb-1 gap-2">
+                    <svg className="w-5 h-5 text-green-400" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M12 11c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3z" /><path strokeLinecap="round" strokeLinejoin="round" d="M12 11v10" /></svg>
+                    <span className="font-semibold">Location:</span>
+                    <span className="ml-1">{e.lieu || '-'}</span>
+                  </div>
+                )}
                 {/* Candidate info */}
                 {e.candidate && (
                   <div className="flex items-center text-base text-gray-700 mb-1 gap-2">
@@ -191,28 +275,138 @@ const PlannedInterviewsPage = () => {
                   <span className="font-semibold">Offer:</span>
                   <span className="ml-1">{getOfferTitle(e.offer_id ?? "") || '-'}</span>
                 </div>
+                {/* Buttons Cancel and Complete if interview is planned */}
+                {(e.statut === 'Planifie' || e.statut === 'PLANIFIE') && (
+                  <div className="flex gap-2 mt-2">
+                    <button
+                      className="px-4 py-2 rounded-lg bg-gradient-to-r from-red-400 to-red-600 text-white font-semibold flex items-center gap-2 shadow hover:from-red-500 hover:to-red-700 transition disabled:opacity-60 disabled:cursor-not-allowed"
+                      onClick={() => openCancelModal(e.id)}
+                      disabled={loading}
+                    >
+                      <svg className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" /></svg>
+                      Cancel
+                    </button>
+                    <button
+                      className="px-4 py-2 rounded-lg bg-gradient-to-r from-green-400 to-green-600 text-white font-semibold flex items-center gap-2 shadow hover:from-green-500 hover:to-green-700 transition disabled:opacity-60 disabled:cursor-not-allowed"
+                      onClick={() => setEntretienToComplete(e.id)}
+                      disabled={loading}
+                    >
+                      <svg className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" /></svg>
+                      Complete
+                    </button>
+                  </div>
+                )}
                 {/* Decorative gradient blob */}
                 <div className="absolute -top-10 -right-10 w-32 h-32 bg-gradient-to-br from-blue-200 via-blue-100 to-transparent rounded-full opacity-30 group-hover:opacity-50 transition" />
               </div>
             ))}
           </div>
-          {/* Pagination controls */}
+          {/* Modal de confirmation d'annulation */}
+          {showCancelModal && (
+            <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40">
+          <div className="bg-white rounded-2xl shadow-2xl p-8 max-w-sm w-full flex flex-col items-center border-2 border-red-200 animate-fadeIn">
+            <svg className='mb-4 text-red-500' width='48' height='48' fill='none' viewBox='0 0 24 24' stroke='currentColor'><path strokeLinecap='round' strokeLinejoin='round' strokeWidth='2' d='M12 9v2m0 4h.01M21 12c0 4.97-4.03 9-9 9s-9-4.03-9-9 4.03-9 9-9 9 4.03 9 9z' /></svg>
+                  <span className="text-lg font-bold text-gray-800 mb-1">Confirm cancellation</span>
+                  <span className="text-gray-500 text-center">Do you really want to cancel this interview?</span>
+                <div className="flex gap-4 mt-6 w-full">
+                  <button
+                    className="flex-1 px-4 py-2 rounded-lg bg-gray-100 text-gray-700 font-semibold hover:bg-gray-200 transition"
+                    onClick={closeCancelModal}
+                    disabled={loading}
+                  >
+                    Back
+                  </button>
+                  <button
+                    className="flex-1 px-4 py-2 rounded-lg bg-gradient-to-r from-red-500 to-red-700 text-white font-semibold hover:from-red-600 hover:to-red-800 transition disabled:opacity-60 disabled:cursor-not-allowed"
+                    onClick={handleCancel}
+                    disabled={loading}
+                  >
+                    Confirm
+                  </button>
+                </div>
+              </div>
+            </div>
+          )}
+          {/* Modal de choix Accept/Refuse après Complete */}
+          {entretienToComplete && (
+            <div className="fixed inset-0 z-50 flex items-center justify-center backdrop-blur-sm bg-white/30">
+              <div className="bg-white rounded-2xl shadow-2xl p-8 max-w-md w-full flex flex-col items-center animate-fade-in">
+                <div className="mb-4 flex flex-col items-center">
+                  <svg className="w-16 h-12 text-blue-500 mb-2" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" /><path strokeLinecap="round" strokeLinejoin="round" d="M12 8v4m0 4h.01" /></svg>
+                  <span className="text-lg font-bold text-gray-800 mb-1">Finalize Application</span>
+                  <span className="text-gray-500 text-center">Choose an action for the application associated with this interview:</span>
+                </div>
+                <div className="flex gap-4 mt-6 w-full">
+                  <button
+                    className="flex-1 min-w-[170px] px-6 py-2 rounded-lg bg-gradient-to-r from-red-500 to-red-700 text-white font-semibold hover:from-red-600 hover:to-red-800 flex items-center gap-2 transition disabled:opacity-60 disabled:cursor-not-allowed"
+                    onClick={async () => {
+                      setLoading(true);
+                      setError(null);
+                      try {
+                        const entretien = entretiens.find(ent => ent.id === entretienToComplete);
+                        if (!entretien) throw new Error('Entretien introuvable');
+                        await axios.patch(`http://localhost:8082/api/candidatures/update/${entretien.candidatureId}`, { status: 'refusee' });
+                        setEntretiens(prev => prev.map(ent => ent.id === entretienToComplete ? { ...ent, statut: "Termine" } : ent));
+                        setEntretienToComplete(null);
+                      } catch (err) {
+                        setError("Error while refusing the application.");
+                      } finally {
+                        setLoading(false);
+                      }
+                    }}
+                    disabled={loading}
+                  >
+                    <span className="text-xl">🔴</span> Refuse Application
+                  </button>
+                  <button
+                    className="flex-1 min-w-[170px] px-6 py-2 rounded-lg bg-gradient-to-r from-green-500 to-green-700 text-white font-semibold hover:from-green-600 hover:to-green-800 flex items-center gap-2 transition disabled:opacity-60 disabled:cursor-not-allowed"
+                    onClick={async () => {
+                      setLoading(true);
+                      setError(null);
+                      try {
+                        const entretien = entretiens.find(ent => ent.id === entretienToComplete);
+                        if (!entretien) throw new Error('Entretien introuvable');
+                        await axios.patch(`http://localhost:8082/api/candidatures/update/${entretien.candidatureId}`, { status: 'acceptee' });
+                        setEntretiens(prev => prev.map(ent => ent.id === entretienToComplete ? { ...ent, statut: "Termine" } : ent));
+                        setEntretienToComplete(null);
+                      } catch (err) {
+                        setError("Error while accepting the application.");
+                      } finally {
+                        setLoading(false);
+                      }
+                    }}
+                    disabled={loading}
+                  >
+                    <span className="text-xl">🟢</span> Accept Application
+                  </button>
+                </div>
+                <button
+                  className="mt-6 px-6 py-2 rounded-lg bg-gray-100 text-gray-700 font-semibold hover:bg-gray-200 transition min-w-[170px]"
+                  onClick={() => setEntretienToComplete(null)}
+                  disabled={loading}
+                >
+                  Cancel
+                </button>
+              </div>
+            </div>
+          )}
+          {/* Pagination controls modernisés */}
           {totalPages > 1 && (
-            <div className="flex justify-center items-center gap-4 mt-8">
+            <div className="flex justify-center items-center gap-4 mt-10">
               <button
-                className="px-4 py-2 rounded-lg bg-blue-100 text-blue-700 font-semibold disabled:opacity-50 disabled:cursor-not-allowed transition"
+                className="px-5 py-2 rounded-full bg-gradient-to-r from-blue-200 to-blue-400 text-blue-900 font-bold shadow hover:from-blue-300 hover:to-blue-500 transition disabled:opacity-50 disabled:cursor-not-allowed"
                 onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
                 disabled={currentPage === 1}
               >
-                Previous
+                <span className="text-lg">⟨</span> Pre
               </button>
-              <span className="font-bold text-blue-900">Page {currentPage} / {totalPages}</span>
+              <span className="font-bold text-blue-900 text-lg bg-white/80 px-4 py-2 rounded-full shadow border border-blue-100">Page {currentPage} / {totalPages}</span>
               <button
-                className="px-4 py-2 rounded-lg bg-blue-100 text-blue-700 font-semibold disabled:opacity-50 disabled:cursor-not-allowed transition"
+                className="px-5 py-2 rounded-full bg-gradient-to-r from-blue-200 to-blue-400 text-blue-900 font-bold shadow hover:from-blue-300 hover:to-blue-500 transition disabled:opacity-50 disabled:cursor-not-allowed"
                 onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
                 disabled={currentPage === totalPages}
               >
-                Next
+                Next <span className="text-lg">⟩</span>
               </button>
             </div>
           )}

@@ -117,22 +117,6 @@ export default function Sidebar({ isSidebarOpen, onToggle }: SidebarRecruteurPro
           <FaCalendarCheck size={18} /> {isSidebarOpen && <span>Planned Interviews</span>}
         </Link>
 
-        {/* Departments */}
-        <Link
-          href="/Recruteur/Departments/List"
-          className="flex items-center gap-3 px-3 py-2 rounded-lg text-gray-700 hover:bg-blue-100 hover:text-blue-700 transition-colors"
-        >
-          <Building size={18} /> {isSidebarOpen && <span>Departments</span>}
-        </Link>
-
-        {/* Recruitment Management */}
-        <Link
-          href="/Recruteur/Recruitment-management"
-          className="flex items-center gap-3 px-3 py-2 rounded-lg text-gray-700 hover:bg-blue-100 hover:text-blue-700 transition-colors"
-        >
-          <Briefcase size={18} /> {isSidebarOpen && <span>Recruitment Management</span>}
-        </Link>
-
      {/* Mon Profil */}
         <Link
           href="/Recruteur/Profile"

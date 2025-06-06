@@ -113,7 +113,7 @@ const CreateJobPage = () => {
     switch (step) {
       case 1:
         return (
-          <div className="space-y-4">
+          <div className="space-y-4 mb-4">
             <h2 className="text-xl font-bold text-blue-700 flex items-center gap-2">
               <FontAwesomeIcon icon={faBriefcase} className="text-blue-600" /> General Information
             </h2>

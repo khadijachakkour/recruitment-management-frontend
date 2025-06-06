@@ -17,6 +17,7 @@ interface Candidate {
   candidate_id?: string;
   id?: string;
   hasInterview?: boolean;
+  interviewStatus?: string; 
 }
 
 interface Offer {
@@ -40,6 +41,7 @@ const PreselectedApplicationPage = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const locationInputRef = useRef<HTMLInputElement>(null);
   const [recruteurName, setRecruteurName] = useState<string>("");
+  const [companyName, setCompanyName] = useState<string>("");
 
   const fetchCandidates = async () => {
     if (!offerId) return;
@@ -73,10 +75,14 @@ const PreselectedApplicationPage = () => {
         }
         // Vérifier si un entretien existe déjà pour cette candidature
         let hasInterview = false;
+        let interviewStatus = undefined;
         try {
           if (item.id || item.candidatureId) {
             const entretienRes = await axios.get(`http://localhost:3004/api/entretiens/candidature/${item.id || item.candidatureId}`);
             hasInterview = !!entretienRes.data && Object.keys(entretienRes.data).length > 0;
+            if (hasInterview && entretienRes.data.statut) {
+              interviewStatus = entretienRes.data.statut;
+            }
           }
         } catch {}
         return {
@@ -89,6 +95,7 @@ const PreselectedApplicationPage = () => {
           status,
           submittedAt,
           hasInterview,
+          interviewStatus,
         };
       }));
     const sorted = enriched.sort((a, b) => b.score - a.score);
@@ -112,7 +119,27 @@ const PreselectedApplicationPage = () => {
           setRecruteurId(data.userId);
           const userRes = await axios.get(`http://localhost:4000/api/users/userbyId/${data.userId}`);
         setRecruteurName(`${userRes.data.firstName || ""} ${userRes.data.lastName || ""}`.trim());
-          const offersRes = await axios.get(`http://localhost:8081/api/offers/by-recruiter/${data.userId}`);
+         // Récupérer l'id de la company depuis les infos du recruteur
+          const companyId = userRes.data.IdCompany;
+          console.log("companyId récupéré:", companyId);         
+          try {
+          if (companyId) {
+            // Utiliser la route /company/:id pour récupérer le nom de la company
+            const companyRes = await axios.get(`http://localhost:5000/api/companies/company/${companyId}`);
+            setCompanyName(companyRes.data?.name);
+            if (companyRes.data?.name) {
+              console.log("Nom de la company récupéré:", companyRes.data.name);
+            }
+          } else {
+            setCompanyName("");
+            console.log("Aucune companyId trouvée pour ce recruteur.");
+          }
+        } catch (err) {
+          console.error("Erreur lors de la récupération du nom de la company :", err, "companyId:", companyId);
+          setCompanyName("");
+        }
+          
+        const offersRes = await axios.get(`http://localhost:8081/api/offers/by-recruiter/${data.userId}`);
           setOffers(offersRes.data);
         }
       } catch (err) {
@@ -138,6 +165,7 @@ const PreselectedApplicationPage = () => {
         type: interviewType === "visio" ? "Visio" : "Presentiel",
         recruteurId: recruteurId,
         recruteurName: recruteurName,
+        companyName: companyName,
         candidatureId: showModal.candidate.id, 
         candidatId: showModal.candidate.candidate_id,
         statut: "PLANIFIE"
@@ -146,6 +174,8 @@ const PreselectedApplicationPage = () => {
       if (interviewType === "presentiel") {
         entretienPayload = { ...entretienPayload, lieu: interviewLocation };
       }
+
+      console.log("Payload envoyé à entretien-service:", entretienPayload);
       // Pour visio, ne pas inclure le champ lieu du tout
 await axios.post(
   "http://localhost:3004/api/entretiens/CreateEntretien",
@@ -194,8 +224,7 @@ await axios.post(
           <button
             onClick={fetchCandidates}
             className="bg-gradient-to-r from-blue-600 to-blue-500 hover:from-blue-700 hover:to-blue-600 text-white px-10 py-3 rounded-xl shadow-lg font-bold text-lg transition disabled:opacity-60 disabled:cursor-not-allowed border-2 border-blue-600"
-            disabled={loading || !offerId}
-          >
+            disabled={loading || !offerId}>
             {loading ? <span className="animate-pulse">Loading...</span> : "Show applications"}
           </button>
         </div>
@@ -234,7 +263,13 @@ await axios.post(
                   </div>
                   {c.hasInterview && (
                     <div className="mb-2">
-                      <span className="inline-block bg-green-100 text-green-800 text-xs font-bold px-3 py-1 rounded shadow mr-2">Entretien planifié</span>
+                      {c.interviewStatus === 'Termine' || c.interviewStatus === 'TERMINE' ? (
+      <span className="inline-block bg-green-100 text-green-800 text-xs font-bold px-3 py-1 rounded shadow mr-2">Interview completed</span>
+    ) : c.interviewStatus === 'Annule' || c.interviewStatus === 'ANNULE' ? (
+      <span className="inline-block bg-red-100 text-red-800 text-xs font-bold px-3 py-1 rounded shadow mr-2">Interview cancelled</span>
+    ) : (
+      <span className="inline-block bg-blue-100 text-blue-800 text-xs font-bold px-3 py-1 rounded shadow mr-2">Interview scheduled</span>
+    )}
                     </div>
                   )}
                   <div className="mb-2 text-base text-gray-600 flex items-center gap-2">

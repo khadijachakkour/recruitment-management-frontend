@@ -79,18 +79,16 @@ export default function NotificationsPage() {
 <div className="flex-1 min-w-0">
                   <div className={`text-base leading-snug ${!notif.read ? "font-semibold text-blue-900" : "text-gray-700"}`}>
                     {notif.message}
-                    {
+                    {notif.url && (
                       <div className="mt-2">
                         <a
-                          href={notif.url}
-                          target="_blank"
-                          rel="noopener noreferrer"
+                          href={`/Candidat/notification/visio?jitsiUrl=${encodeURIComponent(notif.url)}`}
                           className="text-blue-600 underline hover:text-blue-800 font-medium"
                         >
-                         {notif.url}
+                          Rejoindre l'entretien en visioconférence
                         </a>
                       </div>
-                    }
+                    )}
                   </div>
 
                   <div className="text-xs text-gray-400 mt-2 flex items-center gap-2">
