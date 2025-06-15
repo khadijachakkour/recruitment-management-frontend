@@ -5,11 +5,15 @@ import "./styles/globals.css";
 import { AuthProvider } from "../src/context/authContext";
 import 'react-toastify/dist/ReactToastify.css';
 import { Toaster } from "react-hot-toast";
+import Head from "next/head";
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="fr">
-  <body className="min-h-screen flex flex-col bg-white">
+      <Head>
+        <title>SmartHire</title>
+      </Head>
+      <body className="min-h-screen flex flex-col bg-white">
           <AuthProvider>
           {/* Formes en arrière-plan */}
           <div className="bg-shape bg-shape-1"></div>
