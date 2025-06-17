@@ -45,26 +45,16 @@ jobs:
         run: |
           npx wait-on http://localhost:3000
 
-      - name: Run Selenium admin tests (Mocha + Mochawesome)
+      - name: Run Selenium admin tests
         run: |
-          npx mocha tests/selenium/admin-test.mocha.js --reporter mochawesome --reporter-options reportDir=mochawesome-report,reportFilename=admin-report,quiet=true
+          cd tests/selenium
+          node admin-test.js
         env:
           DISPLAY: :99
 
-      - name: Upload Selenium admin HTML report
-        uses: actions/upload-artifact@v4
-        with:
-          name: selenium-admin-report
-          path: mochawesome-report/admin-report.html
-
-      - name: Run Selenium candidat tests (Mocha + Mochawesome)
+      - name: Run Selenium candidat tests
         run: |
-          npx mocha tests/selenium/candidat-test.mocha.js --reporter mochawesome --reporter-options reportDir=mochawesome-report,reportFilename=candidat-report,quiet=true
+          cd tests/selenium
+          node candidat-test.js
         env:
           DISPLAY: :99
-
-      - name: Upload Selenium candidat HTML report
-        uses: actions/upload-artifact@v4
-        with:
-          name: selenium-candidat-report
-          path: mochawesome-report/candidat-report.html
