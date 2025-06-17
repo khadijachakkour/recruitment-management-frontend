@@ -1,7 +1,15 @@
 const { Builder, By, until } = require('selenium-webdriver');
+const chrome = require('selenium-webdriver/chrome');
+const path = require('path');
+const os = require('os');
+const fs = require('fs');
 
 (async function runAdminTests() {
-  let driver = await new Builder().forBrowser('chrome').build();
+  // Crée un dossier temporaire unique pour le profil Chrome
+  const userDataDir = fs.mkdtempSync(path.join(os.tmpdir(), 'chrome-user-data-'));
+  const options = new chrome.Options();
+  options.addArguments(`--user-data-dir=${userDataDir}`);
+  let driver = await new Builder().forBrowser('chrome').setChromeOptions(options).build();
   try {
     await driver.get('http://localhost:3000/');
     const links = await driver.findElements(By.tagName('a'));

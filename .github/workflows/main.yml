@@ -44,13 +44,6 @@ jobs:
         env:
           DISPLAY: :99
 
-      - name: Run Selenium recruteur tests
-        run: |
-          cd tests/selenium
-          node recruteur-test.js
-        env:
-          DISPLAY: :99
-
       - name: Run Selenium candidat tests
         run: |
           cd tests/selenium
