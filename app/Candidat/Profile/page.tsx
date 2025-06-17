@@ -26,8 +26,7 @@ export default function Profile() {
   const [shouldDeleteAvatar, setShouldDeleteAvatar] = useState(false);
   const [shouldDeleteCv, setShouldDeleteCv] = useState(false);
 
-  const [isSidebarOpen, setIsSidebarOpen] = useState(true);
-  const { isLoggedIn, userRoles, logoutCandidat } = useAuth();
+  const { isLoggedIn, userRoles } = useAuth();
   const router = useRouter();
   const [dataLoaded, setDataLoaded] = useState(false);
   const [isLoading, setIsLoading] = useState(false);

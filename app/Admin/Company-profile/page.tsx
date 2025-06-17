@@ -9,7 +9,7 @@ import { useRouter } from "next/navigation";
 import AdminLayout from "@/AdminLayout";
 import { 
   FiMail, FiPhone, FiGlobe, FiEdit3, FiUsers, FiMapPin, 
-  FiCalendar, FiBriefcase, FiDollarSign, FiInfo, FiUser
+  FiCalendar, FiBriefcase, FiInfo, FiUser
 } from "react-icons/fi";
 
 export default function CompanyProfile() {

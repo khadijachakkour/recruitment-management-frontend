@@ -4,8 +4,15 @@ import { getRecruteurProfile, updateRecruteurProfile } from '@/src/services/prof
 import RecruteurLayout from "@/RecruteurLayout";
 import { Loader2 } from 'lucide-react';
 
+interface RecruteurProfile {
+  firstName?: string;
+  lastName?: string;
+  email?: string;
+  username?: string;
+}
+
 const RecruteurProfilePage = () => {
-  const [profile, setProfile] = useState<any>(null);
+  const [profile, setProfile] = useState<RecruteurProfile | null>(null);
   const [loading, setLoading] = useState(true);
   const [editMode, setEditMode] = useState(false);
   const [form, setForm] = useState({

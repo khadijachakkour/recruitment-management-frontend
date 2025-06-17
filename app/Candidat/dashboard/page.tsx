@@ -1,7 +1,6 @@
 "use client";
 
 import "nprogress/nprogress.css";
-import { useAuth } from "@/src/context/authContext";
 import NavbarCandidat from "@/app/components/NavbarCandidat";
 import Hero from "../../components/Hero";
 import JobList from "../../components/JobList";

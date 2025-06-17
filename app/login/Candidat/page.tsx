@@ -4,7 +4,6 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { FaEnvelope, FaLock, FaRegEye, FaRegEyeSlash } from "react-icons/fa";
-import { motion } from "framer-motion";
 import { login } from "@/src/services/authService";
 import { jwtDecode } from "jwt-decode";
 import NavbarCandidat from "../../components/NavbarCandidat";

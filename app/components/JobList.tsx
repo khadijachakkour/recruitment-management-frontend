@@ -2,9 +2,10 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { Briefcase, MapPin, CalendarDays, FileText } from "lucide-react";
+import {MapPin, CalendarDays, FileText } from "lucide-react";
 import SearchBar from "./SearchBar";
 import { useAuth } from "@/src/context/authContext";
+import Image from "next/image";
 
 interface Offer {
   id: number;
@@ -130,9 +131,11 @@ export default function JobList() {
         >
           <div className="flex items-center gap-4 mb-4">
             {companyDetails[offer.companyId]?.logo && (
-              <img
-                src={companyDetails[offer.companyId].logo}
+              <Image
+                src={companyDetails[offer.companyId].logo || "/images/default-companylogo.png"}
                 alt="Company Logo"
+                width={48}
+                height={48}
                 className="w-12 h-12 rounded-full object-cover border border-gray-300"
               />
             )}

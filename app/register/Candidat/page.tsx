@@ -3,6 +3,7 @@ import { useState } from "react";
 import Link from "next/link";
 import { FaUser, FaEnvelope, FaLock, FaRegEye, FaRegEyeSlash } from "react-icons/fa";
 import NavbarAdmin from "@/app/components/NavbarAdmin";
+import Image from "next/image";
 
 export default function CandidateRegisterPage() {
   const [firstname, setFirstname] = useState("");
@@ -12,37 +13,22 @@ export default function CandidateRegisterPage() {
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [agreeTerms, setAgreeTerms] = useState(false);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState("");
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!agreeTerms) {
-      setError("Please agree to the Terms and Privacy Policy.");
-      return;
-    }
 
-    setLoading(true);
     try {
       const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/register/Candidat`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ firstname, lastname,username, email, password }),
       });
-
-      const data = await response.json();
-
       if (response.ok) {
         window.location.href = "/login/Candidat";
-      } else {
-        setError(data.message || "Registration failed.");
       }
     } catch (error) {
       console.error(error);
-      setError("Registration failed.");
-    } finally {
-      setLoading(false);
-    }
+    } 
   };
 
   return (
@@ -152,7 +138,6 @@ export default function CandidateRegisterPage() {
             </button>
           </form>
 
-          {/* Alternative signup with social media */}
           <div className="text-center mt-6">
             <div className="relative w-full flex items-center justify-center mb-4">
               <div className="absolute w-full h-px bg-gray-300" />
@@ -163,16 +148,20 @@ export default function CandidateRegisterPage() {
 
             <div className="flex justify-center gap-6">
               <button>
-                <img
+                <Image
                   src="/icons/icons8-google.svg"
                   alt="Google"
+                  width={24}
+                  height={24}
                   className="w-6 h-6 hover:scale-110 transition"
                 />
               </button>
               <button>
-                <img
+                <Image
                   src="/icons/icons8-microsoft.svg"
                   alt="Microsoft"
+                  width={24}
+                  height={24}
                   className="w-6 h-6 hover:scale-110 transition"
                 />
               </button>

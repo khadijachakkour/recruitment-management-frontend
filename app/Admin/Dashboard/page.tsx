@@ -6,16 +6,8 @@ import { motion, AnimatePresence } from "framer-motion";
 import { Bell, Users, FileText, Search, PlusCircle, Eye, Trash2 } from "lucide-react";
 import AdminLayout from "@/AdminLayout"; 
 import Swal from 'sweetalert2';
-
-
-const dataLine = [ 
-  { name: "1", value: 2 }, 
-  { name: "2", value: 4 }, 
-  { name: "3", value: 3 }, 
-  { name: "4", value: 6 }, 
-  { name: "5", value: 5 }, 
-  { name: "6", value: 8 } 
-]; 
+import Image from "next/image";
+import type { Company } from "@/app/types/company";
 
 const dataBar = [ 
   { name: "Jan", value: 3 }, 
@@ -39,23 +31,20 @@ interface User {
   username: string;
   email: string;
   role: string[];
-  departments: any[];
+  departments: unknown[];
 }
 export default function AdminDashboard() { 
 
   const [roleCounts, setRoleCounts] = useState<{ [key: string]: number }>({}); 
   const [userId, setUserId] = useState<string | null>(null);
-  const [company, setCompany] = useState<any>(null);
+  const [company, setCompany] = useState<Company | null>(null);
   const [users, setUsers] = useState<User[]>([]);
   const [filteredUsers, setFilteredUsers] = useState<User[]>([]);
   const [searchQuery, setSearchQuery] = useState("");
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
   const [recruitmentDistribution, setRecruitmentDistribution] = useState(dataPie);
   const [loadingDistribution, setLoadingDistribution] = useState(true);
   const [errorDistribution, setErrorDistribution] = useState<string | null>(null);
-  const [showDeleteModal, setShowDeleteModal] = useState(false);
-  const [selectedUserId, setSelectedUserId] = useState<string | null>(null);
 
   useEffect(() => {
     const fetchAdminData = async () => {
@@ -109,7 +98,7 @@ useEffect(() => {
   }, [searchQuery, users]);
 
   const handleRetry = async () => {
-    setError(null);
+    setErrorDistribution(null);
     setLoading(true);
     try {
       const usersRes = await axios.get(`http://localhost:4000/api/users`, {
@@ -119,8 +108,8 @@ useEffect(() => {
       });
       setUsers(usersRes.data);
       setFilteredUsers(usersRes.data);
-    } catch (error) {
-      setError("Erreur lors du chargement des données. Veuillez réessayer.");
+    } catch {
+      setErrorDistribution("Erreur lors du chargement des données. Veuillez réessayer.");
     } finally {
       setLoading(false);
     }
@@ -157,8 +146,8 @@ useEffect(() => {
           popup: "small-swal",
         }
       });
-    } catch (error) {
-      setError("Error occurred while deleting the user.");
+    } catch {
+      setErrorDistribution("Error occurred while deleting the user.");
       Swal.fire({
         title: "Error",
         text: "Failed to delete the user.",
@@ -193,7 +182,7 @@ useEffect(() => {
           },
         });
         setRecruitmentDistribution(data);
-      } catch (error) {
+      } catch {
         setErrorDistribution("Erreur lors du chargement de la répartition des utilisateurs.");
       } finally {
         setLoadingDistribution(false);
@@ -213,9 +202,11 @@ useEffect(() => {
               return (
                 <div className="flex items-center gap-3 bg-white border border-blue-100 rounded-xl shadow-sm px-4 py-2">
                   <div className="w-12 h-12 rounded-full bg-blue-100 flex items-center justify-center text-xl font-bold text-blue-700 border-2 border-blue-200 overflow-hidden">
-                    <img
+                    <Image
                       src={"/images/default-avatar.png"}
                       alt="Avatar Admin"
+                      width={48}
+                      height={48}
                       className="w-full h-full object-cover"
                     />
                   </div>
@@ -247,13 +238,15 @@ useEffect(() => {
     transition={{ duration: 0.4 }}
     className="bg-white p-4 rounded-2xl shadow-xl mb-9 flex flex-col sm:flex-row items-center justify-between gap-6 border border-gray-100">
     <div className="flex items-center gap-6">
-      <img
-        src={company.logo|| "/images/default-companylogo.png"}
+      <Image
+        src={company.companyLogo || "/images/default-companylogo.png"}
         alt="Company Logo"
+        width={80}
+        height={80}
         className="w-20 h-20 rounded-full object-cover border-2 border-blue-200 shadow-md"
       />
       <div>
-        <h3 className="text-2xl font-bold text-gray-900">{company.name}</h3>
+        <h3 className="text-2xl font-bold text-gray-900">{company.companyName}</h3>
         <p className="text-base text-gray-500 mt-1">
           {company.industry === "Other" ? company.otherIndustry : company.industry} • {company.companySize}
         </p>
@@ -340,9 +333,9 @@ useEffect(() => {
                   </div>
                 ))}
               </div>
-            ) : error ? (
+            ) : errorDistribution ? (
               <div className="p-2 bg-red-100 text-red-700 rounded-xl flex items-center justify-between">
-                <span>{error}</span>
+                <span>{errorDistribution}</span>
                 <motion.button
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}

@@ -18,6 +18,14 @@ interface User {
   department?: string;
 }
 
+interface UserFormData {
+  firstname: string;
+  lastname: string;
+  username: string;
+  email: string;
+  role: string;
+}
+
 export default function ManageUsersPage() {
 
   const [selectedUser, setSelectedUser] = useState<User | null>(null);
@@ -46,7 +54,7 @@ export default function ManageUsersPage() {
 
   const [users, setUsers] = useState<User[]>([]);
   const [filteredUsers, setFilteredUsers] = useState<User[]>([]);
-  const [formData, setFormData] = useState({
+  const [formData, setFormData] = useState<UserFormData>({
     firstname: "",
     lastname: "",
     username: "",
@@ -58,8 +66,6 @@ export default function ManageUsersPage() {
   const [deleteUserId, setDeleteUserId] = useState<string | null>(null);
   const [showForm, setShowForm] = useState(false);
   const [filterBy, setFilterBy] = useState<string>("name"); 
-  const [departments, setDepartments] = useState<string[]>([]);
-  const [userId, setUserId] = useState<string | null>(null);
   const [company, setCompany] = useState<Company | null>(null);
   
   
@@ -87,9 +93,10 @@ export default function ManageUsersPage() {
           },
         }
       );
+      const departments: { name: string }[] = response.data;
       setSelectedDepartmentsByUser((prev) => ({
         ...prev,
-        [userId]: response.data.map((dept: { name: string }) => dept.name),
+        [userId]: departments.map((dept) => dept.name),
       }));
     } catch (err) {
       console.error("Erreur lors de la récupération des départements de l'utilisateur :", err);
@@ -259,9 +266,9 @@ export default function ManageUsersPage() {
                   <input
                     key={field}
                     name={field}
-                    type={field === "email" ? "email" : field }
+                    type={field === "email" ? "email" : field}
                     placeholder={field.charAt(0).toUpperCase() + field.slice(1)}
-                    value={(formData as any)[field]}
+                    value={formData[field as keyof UserFormData]}
                     onChange={handleChange}
                     className="border border-gray-300 p-4 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                     required

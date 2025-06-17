@@ -42,7 +42,7 @@ const AgendaEntretienPage = () => {
           const res = await axios.get(`http://localhost:3004/api/entretiens/recruteur/${data.userId}`);
           setEntretiens(res.data);
         }
-      } catch (err: any) {
+      } catch {
         setError("Error loading interviews.");
       } finally {
         setLoading(false);

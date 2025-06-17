@@ -4,8 +4,10 @@ import axios from "axios";
 import { useRouter } from "next/navigation";
 import NavbarAdmin from "@/app/components/NavbarAdmin";
 import { motion, AnimatePresence } from "framer-motion";
-import { Upload, Loader2, X, ChevronLeft, ChevronRight, Briefcase } from "lucide-react";
+import { Upload, Loader2, X, ChevronLeft, ChevronRight } from "lucide-react";
 import { FaSave } from "react-icons/fa";
+import Image from "next/image";
+import type { Department } from "@/app/types/company";
 
 interface FormData {
   companyName: string;
@@ -242,7 +244,7 @@ function FileUploadField({
       <div className="flex items-start gap-3">
         {preview ? (
           <div className="relative w-16 h-16 rounded-lg overflow-hidden shadow-sm">
-            <img src={preview} alt={label} className="w-full h-full object-cover" />
+            <Image src={preview} alt={label} width={64} height={64} className="w-full h-full object-cover" />
             <button
               type="button"
               onClick={onRemove}
@@ -328,13 +330,13 @@ export default function UpdateCompanyProfile() {
           },
         });
         const company = res.data;
-        setFormData({
-          ...formData,
+        setFormData((prev) => ({
+          ...prev,
           ...company,
           companyLogo: null,
           ceoImage: null,
-          departments: company.departments?.map((d: any) => d.name) || [],
-        });
+          departments: company.departments?.map((d: Department) => d.name) || [],
+        }));
         setCompanyLogoPreview(company.companyLogo);
         setCeoImagePreview(company.ceoImage);
       } catch (error) {

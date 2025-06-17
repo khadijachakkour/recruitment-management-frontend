@@ -22,7 +22,6 @@ const PlannedInterviewsPage = () => {
   const [entretiens, setEntretiens] = useState<Entretien[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [recruteurId, setRecruteurId] = useState<string>("");
   const [offers, setOffers] = useState<{id: string, title: string}[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 6;
@@ -50,15 +49,14 @@ const PlannedInterviewsPage = () => {
           },
         });
         if (data.userId) {
-          setRecruteurId(data.userId);
           // Fetch entretiens
           const res = await axios.get(`http://localhost:3004/api/entretiens/recruteur/${data.userId}`);
           setEntretiens(res.data);
           // Fetch all offers for mapping offer title
           const offersRes = await axios.get(`http://localhost:8081/api/offers/by-recruiter/${data.userId}`);
-          setOffers(offersRes.data.map((o: any) => ({ id: String(o.id), title: o.title })));
+          setOffers(offersRes.data.map((o: { id: string, title: string }) => ({ id: String(o.id), title: o.title })));
         }
-      } catch (err: any) {
+      } catch {
         setError("Erreur lors du chargement des entretiens.");
       } finally {
         setLoading(false);
@@ -112,7 +110,7 @@ const PlannedInterviewsPage = () => {
       await axios.put(`http://localhost:3004/api/entretiens/entretiens/${entretienToCancel}`, { statut: "Annule" });
       setEntretiens(prev => prev.map(e => e.id === entretienToCancel ? { ...e, statut: "Annule" } : e));
       closeCancelModal();
-    } catch (err: any) {
+    } catch {
       setError("Erreur lors de l'annulation de l'entretien.");
     } finally {
       setLoading(false);
@@ -127,7 +125,7 @@ const PlannedInterviewsPage = () => {
       if (data && data.jitsiUrl) {
         setJitsiLinks(prev => ({ ...prev, [entretienId]: data.jitsiUrl }));
       }
-    } catch (err) {
+    } catch {
     }
   };
 
@@ -348,7 +346,7 @@ const PlannedInterviewsPage = () => {
                         await axios.patch(`http://localhost:8082/api/candidatures/update/${entretien.candidatureId}`, { status: 'refusee' });
                         setEntretiens(prev => prev.map(ent => ent.id === entretienToComplete ? { ...ent, statut: "Termine" } : ent));
                         setEntretienToComplete(null);
-                      } catch (err) {
+                      } catch {
                         setError("Error while refusing the application.");
                       } finally {
                         setLoading(false);
@@ -369,7 +367,7 @@ const PlannedInterviewsPage = () => {
                         await axios.patch(`http://localhost:8082/api/candidatures/update/${entretien.candidatureId}`, { status: 'acceptee' });
                         setEntretiens(prev => prev.map(ent => ent.id === entretienToComplete ? { ...ent, statut: "Termine" } : ent));
                         setEntretienToComplete(null);
-                      } catch (err) {
+                      } catch {
                         setError("Error while accepting the application.");
                       } finally {
                         setLoading(false);

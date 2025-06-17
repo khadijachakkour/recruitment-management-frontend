@@ -13,7 +13,7 @@ export default function NavbarCandidat() {
   const { isLoggedIn, userRoles,candidatId, logoutCandidat } = useAuth();
   const [unreadCount, setUnreadCount] = useState(0);
   const [showDropdown, setShowDropdown] = useState(false);
-  const [notifications, setNotifications] = useState<any[]>([]);
+  const [notifications, setNotifications] = useState<{ id: string; message: string; url?: string; createdAt: string; read: boolean }[]>([]);
 
 useEffect(() => {
     if (!candidatId) return;

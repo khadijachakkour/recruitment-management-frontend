@@ -1,5 +1,6 @@
 import React from "react";
 import { FaArrowRight } from "react-icons/fa";
+import Image from "next/image";
 
 const HiringBanner: React.FC = () => {
   return (     
@@ -7,9 +8,11 @@ const HiringBanner: React.FC = () => {
       <section className="relative w-full max-w-xl bg-gray-50 border border-gray-200 rounded-2xl px-4 py-8 flex flex-col md:flex-row items-center justify-between shadow-xl overflow-hidden">
 
         <div className="absolute inset-y-0 left-0 w-1/3 ">
-          <img
+          <Image
             src="/images/Hiring.png"
             alt="Hiring Background"
+            width={200}
+            height={200}
             className="h-full w-full object-contain object-left"
           />
         </div>

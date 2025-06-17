@@ -3,13 +3,10 @@
 import { useEffect, useState } from "react";
 import { toast } from "react-hot-toast";
 import { useParams, useRouter } from "next/navigation";
-import { useAuth } from "@/src/context/authContext";
-import Link from "next/link";
-import { LogOut, Menu, X, Home, Search, FileText, Briefcase, User, MessageSquare, Eye } from "lucide-react";
+import { FileText, Eye } from "lucide-react";
 import NavbarCandidat from "@/app/components/NavbarCandidat";
 
 export default function Postulation() {
-  const { isLoggedIn, logoutCandidat } = useAuth();
   const router = useRouter();
   const [cvFile, setCvFile] = useState<File | null>(null);
   const [coverLetterFile, setCoverLetterFile] = useState<File | null>(null);
@@ -18,8 +15,6 @@ export default function Postulation() {
   const [isLoading, setIsLoading] = useState(false);
   const [offerId, setOfferId] = useState("");
   const [offerTitle, setOfferTitle] = useState<string>("");
-  const [isSidebarOpen, setIsSidebarOpen] = useState(true);
-  const [error, setError] = useState<string | null>(null);
 
   const params = useParams();
   const id = Array.isArray(params?.id) ? params.id[0] : params?.id;
@@ -61,7 +56,6 @@ export default function Postulation() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setError(null);
     setIsLoading(true);
 
     // Validate files
@@ -97,11 +91,9 @@ export default function Postulation() {
       } else if (response.status === 409) {
         toast.error("You have already applied for this job.");
       } else {
-        setError(result.message || "An error occurred while submitting the application.");
         toast.error(result.message || "An error occurred while submitting the application.");
       }
-    } catch (error) {
-      setError("Failed to submit application. Please try again.");
+    } catch {
       toast.error("An error occurred while submitting the application.");
     } finally {
       setIsLoading(false);
@@ -228,18 +220,6 @@ export default function Postulation() {
               )}
             </section>
 
-            {error && (
-              <div className="mt-4 text-center">
-                <p className="text-sm text-red-600">{error}</p>
-                <button
-                  onClick={handleSubmit}
-                  className="mt-2 text-sm text-blue-600 hover:underline"
-                >
-                  Retry
-                </button>
-              </div>
-            )}
-
             <div className="flex flex-col sm:flex-row justify-center gap-4 mt-6">
               <button
                 type="submit"
@@ -267,26 +247,5 @@ export default function Postulation() {
         </div>
       </main>
     </div>
-  );
-}
-
-function SidebarLink({
-  href,
-  icon,
-  text,
-  isSidebarOpen,
-}: {
-  href: string;
-  icon: React.ReactNode;
-  text: string;
-  isSidebarOpen: boolean;
-}) {
-  return (
-    <Link href={href}>
-      <div className="flex items-center gap-3 px-4 py-3 rounded-lg text-gray-700 hover:bg-blue-50 hover:text-blue-600 transition-colors">
-        {icon}
-        {isSidebarOpen && <span className="text-sm font-medium">{text}</span>}
-      </div>
-    </Link>
   );
 }

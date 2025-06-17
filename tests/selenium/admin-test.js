@@ -65,15 +65,21 @@ const { Builder, By, until } = require('selenium-webdriver');
       await driver.findElement(By.css('textarea[name="companyDescription"]')).sendKeys('Entreprise de test créée par Selenium.');
       await driver.findElement(By.css('input[placeholder="CEO / Founder"]')).sendKeys('Selenium CEO');
       const nextBtn1b = await driver.wait(until.elementLocated(By.xpath("//button[contains(.,'Next')]")), 5000);
+      // S'assurer que le bouton est visible et activé
       await driver.executeScript('arguments[0].scrollIntoView({block: "center"});', nextBtn1b);
       await driver.wait(until.elementIsVisible(nextBtn1b), 5000);
       await driver.wait(until.elementIsEnabled(nextBtn1b), 5000);
-      const errorsStep1 = await driver.findElements(By.css('.text-red-600'));
-      for (const err of errorsStep1) {
-        const msg = await err.getText();
-        if (msg) console.log('Erreur validation (étape 1):', msg);
+      // Attendre la disparition d'un éventuel overlay/loader
+      try {
+        await driver.wait(until.elementIsNotVisible(await driver.findElement(By.css('.loader, [aria-busy="true"]'))), 2000);
+      } catch (e) {}
+      // Essayer le clic natif puis JS si intercepté
+      try {
+        await nextBtn1b.click();
+      } catch (err) {
+        console.warn('Clic natif échoué, tentative via JS:', err.message);
+        await driver.executeScript('arguments[0].click();', nextBtn1b);
       }
-      await nextBtn1b.click();
       // Étape 2 : Company Address
       await driver.wait(until.elementLocated(By.css('input[placeholder="Company Address"]')), 10000);
       await driver.findElement(By.css('input[placeholder="Company Address"]')).sendKeys('123 Rue de Test');
@@ -109,14 +115,85 @@ const { Builder, By, until } = require('selenium-webdriver');
       await driver.executeScript('window.scrollTo(0, document.body.scrollHeight);');
       await driver.sleep(1000);
     }
-    console.log('Connexion admin testée et dashboard atteint.');
-    await driver.executeScript('window.scrollTo(0, document.body.scrollHeight);');
-    await driver.sleep(1000);
-
+    
     // 5. Accès à la gestion des utilisateurs
     await driver.get('http://localhost:3000/Admin/Manage-users');
     await driver.wait(until.elementLocated(By.xpath("//button[contains(.,'Add User')]")), 5000);
 
+    // Création d'un utilisateur manager
+    const uniqueManagerId = Date.now();
+    const managerEmail = `selenium.manager+${uniqueManagerId}@test.com`;
+    await driver.findElement(By.xpath("//button[contains(.,'Add User')]")).click();
+    // Attendre que le formulaire soit visible (modale ou overlay)
+    await driver.sleep(500);
+    // Scroll pour s'assurer que le champ Firstname est bien visible
+    const firstNameInput = await driver.wait(until.elementLocated(By.css('input[placeholder="Firstname"]')), 5000);
+    await driver.executeScript('arguments[0].scrollIntoView({block: "center"});', firstNameInput);
+    await driver.wait(until.elementIsVisible(firstNameInput), 3000);
+    await firstNameInput.sendKeys('SeleniumManager');
+    const lastNameInput = await driver.findElement(By.css('input[placeholder="Lastname"]'));
+    await lastNameInput.sendKeys('Test');
+    await driver.findElement(By.css('input[placeholder="Username"]')).sendKeys(`manageruser_${uniqueManagerId}`);
+    await driver.findElement(By.css('input[type="email"]')).sendKeys(managerEmail);
+    const roleSelect = await driver.findElement(By.css('select[name="role"]'));
+    await roleSelect.sendKeys('manager');
+    const submitBtn = await driver.findElement(By.css('button[type="submit"]'));
+    await driver.executeScript('arguments[0].scrollIntoView({block: "center"});', submitBtn);
+    await driver.wait(until.elementIsVisible(submitBtn), 2000);
+    await driver.wait(until.elementIsEnabled(submitBtn), 2000);
+    try {
+      await submitBtn.click();
+    } catch (err) {
+      console.warn('Clic natif échoué sur submit, tentative via JS:', err.message);
+      await driver.executeScript('arguments[0].click();', submitBtn);
+    }
+    // Vérifier que l'utilisateur manager apparaît dans la liste
+    await driver.wait(until.elementLocated(By.xpath(`//td[contains(text(),'${managerEmail}')]`)), 10000);
+    console.log('Création utilisateur manager testée.');
+
+    // Suppression de l'utilisateur manager
+    const deleteBtn = await driver.findElement(By.xpath(`//td[contains(text(),'${managerEmail}')]/following-sibling::td//button[contains(.,'Delete')]`));
+    await driver.executeScript('arguments[0].scrollIntoView({block: "center"});', deleteBtn);
+    await driver.wait(until.elementIsVisible(deleteBtn), 2000);
+    await driver.wait(until.elementIsEnabled(deleteBtn), 2000);
+    try {
+      await deleteBtn.click();
+    } catch (err) {
+      console.warn('Clic natif échoué sur Delete, tentative via JS:', err.message);
+      await driver.executeScript('arguments[0].click();', deleteBtn);
+    }
+    // Attendre que la modale soit bien affichée
+    await driver.sleep(700);
+    // Confirmer la suppression si une modal apparaît (adapter le sélecteur si besoin)
+    try {
+      const confirmBtn = await driver.wait(
+        until.elementLocated(By.xpath("//div[contains(@class,'fixed') and contains(@class,'z-50')]//button[contains(.,'Delete')]")),
+        3000
+      );
+      await driver.executeScript('arguments[0].scrollIntoView({block: "center"});', confirmBtn);
+      await driver.wait(until.elementIsVisible(confirmBtn), 2000);
+      await driver.wait(until.elementIsEnabled(confirmBtn), 2000);
+      // Utiliser actions().move() pour cliquer sur le bouton Delete de la modale
+      try {
+        await driver.actions({ bridge: true }).move({ origin: confirmBtn }).click().perform();
+      } catch (err) {
+        console.warn('Clic natif échoué sur Delete (modal), tentative via JS:', err.message);
+        await driver.executeScript('arguments[0].click();', confirmBtn);
+      }
+    } catch (e) {}
+    // Attendre la disparition de l'utilisateur dans la liste
+    await driver.sleep(1000);
+    await driver.wait(async () => {
+      const elements = await driver.findElements(By.xpath(`//td[contains(text(),'${managerEmail}')]`));
+      return elements.length === 0;
+    }, 10000);
+    console.log('Suppression utilisateur manager testée.');
+
+    // Attendre la disparition du toast de succès avant de cliquer sur Logout
+    await driver.wait(async () => {
+      const toasts = await driver.findElements(By.css('.Toastify__toast'));
+      return toasts.length === 0;
+    }, 5000);
     // 9. Test logout admin
     const logoutBtn = await driver.wait(until.elementLocated(By.xpath("//button[contains(.,'Logout')]")), 5000);
     await driver.wait(until.elementIsVisible(logoutBtn), 5000);

@@ -113,19 +113,18 @@ const ViewJobPage = () => {
                 <DetailCard
                   icon={<FontAwesomeIcon icon={faListCheck} className="text-orange-500 text-lg" />}
                   label="Skills Required"
-                  children={
-                    <div className="flex flex-wrap gap-4">
-                      {job.skillsRequired.split(',').map((skill, index) => (
-                        <span
-                          key={index}
-                          className="bg-blue-50 text-blue-600 px-3 py-1 rounded-full text-sm font-medium border border-blue-100 shadow-sm"
-                        >
-                          {skill.trim()}
-                        </span>
-                      ))}
-                    </div>
-                  }
-                />
+                >
+                  <div className="flex flex-wrap gap-4">
+                    {job.skillsRequired.split(',').map((skill, index) => (
+                      <span
+                        key={index}
+                        className="bg-blue-50 text-blue-600 px-3 py-1 rounded-full text-sm font-medium border border-blue-100 shadow-sm"
+                      >
+                        {skill.trim()}
+                      </span>
+                    ))}
+                  </div>
+                </DetailCard>
               </div>
             </div>
 

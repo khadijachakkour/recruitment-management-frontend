@@ -1,20 +1,17 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
 
-// ✅ À adapter selon ton backend
 const API_URL = "http://localhost:5000/api/companies";
 
 interface ProfileUpdateResults {
   logo_url?: string;
 }
 
-// 🔐 Headers avec token pour chaque requête
 const getAuthHeaders = () => {
   const token = sessionStorage.getItem("access_token");
   return token ? { Authorization: `Bearer ${token}` } : {};
 };
 
-// ✅ Hook pour vérifier si le profil de l’entreprise existe déjà
 export const useCompanyProfile = () => {
   const [hasCompanyProfile, setHasCompanyProfile] = useState<boolean | null>(null);
 
@@ -37,14 +34,12 @@ export const useCompanyProfile = () => {
   return hasCompanyProfile;
 };
 
-// ✅ Méthode pour mettre à jour/créer le profil
 export const createProfile = async (formData: FormData): Promise<ProfileUpdateResults> => {
   const results: ProfileUpdateResults = {};
 
   try {
     let logo_url = "";
 
-    // 1. Upload logo si présent AVANT création du profil
     const logo = formData.get("logo") as File | null;
     if (logo && logo instanceof File) {
       const logoFormData = new FormData();
@@ -61,11 +56,11 @@ export const createProfile = async (formData: FormData): Promise<ProfileUpdateRe
       results.logo_url = logo_url;
     }
 
-    const jsonData: any = {};
+    const jsonData: Record<string, string> = {};
 
     formData.forEach((value, key) => {
       if (key !== "logo") {
-        jsonData[key] = value;
+        jsonData[key] = value as string;
       }
     });
 

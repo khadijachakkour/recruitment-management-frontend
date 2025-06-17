@@ -80,8 +80,15 @@ export const getRecruteurProfile = async () => {
 };
 
 // Mettre à jour le profil du recruteur
-export const updateRecruteurProfile = async (profileData: any) => {
-  // Adapter les champs envoyés à l'API backend
+export interface RecruteurProfileUpdate {
+  firstname: string;
+  lastname: string;
+  email: string;
+  username: string;
+  password?: string;
+}
+
+export const updateRecruteurProfile = async (profileData: RecruteurProfileUpdate) => {
   const payload = {
     firstname: profileData.firstname,
     lastname: profileData.lastname,

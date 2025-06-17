@@ -3,14 +3,13 @@
 import { useEffect, useState } from "react";
 import { useAuth } from "@/src/context/authContext";
 import { fetchNotifications, markAllNotificationsAsRead } from "../../lib/notificationApi";
-import Link from "next/link";
 import { IoMdNotificationsOutline, IoMdArrowBack } from "react-icons/io";
 import { HiOutlineDotsHorizontal } from "react-icons/hi";
 import NavbarCandidat from "@/app/components/NavbarCandidat";
 
 export default function NotificationsPage() {
   const { candidatId } = useAuth();
-  const [notifications, setNotifications] = useState<any[]>([]);
+  const [notifications, setNotifications] = useState<{ id: string; message: string; url?: string; read: boolean; createdAt: string }[]>([]);
   const [loading, setLoading] = useState(true);
   const [openMenuId, setOpenMenuId] = useState<string | null>(null);
 
@@ -59,7 +58,7 @@ export default function NotificationsPage() {
         ) : notifications.length === 0 ? (
           <div className="flex flex-col items-center justify-center py-24 text-gray-400">
             <svg width="72" height="72" fill="none" viewBox="0 0 24 24"><path fill="#cbd5e1" d="M12 2a7 7 0 0 0-7 7v3.586l-.707.707A1 1 0 0 0 5 16h14a1 1 0 0 0 .707-1.707L19 12.586V9a7 7 0 0 0-7-7Zm0 20a3 3 0 0 1-2.995-2.824L9 19h6a3 3 0 0 1-2.824 2.995L12 22Z"/></svg>
-            <span className="mt-6 text-lg">No notifications</span>
+            <span className="mt-6 text-lg">Vous n&apos;avez pas de notifications.</span>
           </div>
         ) : (
           <ul className="divide-y divide-blue-100">
@@ -85,7 +84,7 @@ export default function NotificationsPage() {
                           href={`/Candidat/notification/visio?jitsiUrl=${encodeURIComponent(notif.url)}`}
                           className="text-blue-600 underline hover:text-blue-800 font-medium"
                         >
-                          Rejoindre l'entretien en visioconférence
+                          Rejoindre l&apos;entretien en visioconférence
                         </a>
                       </div>
                     )}

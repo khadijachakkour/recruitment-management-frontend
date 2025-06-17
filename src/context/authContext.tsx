@@ -9,7 +9,7 @@
      isLoggedIn: boolean;
      isAuthLoaded: boolean;
      userRoles: string[];
-     candidatId?: string; // Ajout de candidatId
+     candidatId?: string; 
      login: (token: string) => void;
      logoutAdmin: () => Promise<void>;
      logoutCandidat: () => Promise<void>;
@@ -31,7 +31,7 @@
          const decodedToken: DecodedToken = jwtDecode(token);
          return {
            roles: decodedToken?.realm_access?.roles || [],
-           candidatId: decodedToken?.candidatId || decodedToken?.sub, // Utilise sub si candidatId n'existe pas
+           candidatId: decodedToken?.candidatId || decodedToken?.sub, 
          };
        } catch (error) {
          console.error("Erreur de décodage du token:", error);

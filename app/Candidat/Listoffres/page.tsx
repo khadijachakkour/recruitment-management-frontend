@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import axios from 'axios';
 import { Briefcase, MapPin, CalendarDays, Coins, Search } from 'lucide-react';
 import Link from 'next/link';
@@ -44,7 +44,7 @@ const AllOffersPage = () => {
     fetchOffers();
   }, []);
 
-  const filterOffers = () => {
+  const filterOffers = useCallback(() => {
     let filtered = offers;
 
     if (searchQuery) {
@@ -58,12 +58,12 @@ const AllOffersPage = () => {
     }
 
     setFilteredOffers(filtered);
-  };
+  }, [offers, searchQuery, contractTypeFilter]);
 
   useEffect(() => {
     filterOffers();
     setCurrentPage(1); // reset page when filter/search changes
-  }, [searchQuery, contractTypeFilter, offers]);
+  }, [filterOffers]);
 
   // Pagination logic
   const totalPages = Math.ceil(filteredOffers.length / offersPerPage);

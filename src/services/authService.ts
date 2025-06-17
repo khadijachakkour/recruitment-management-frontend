@@ -7,8 +7,7 @@ export const login = async (email: string, password: string) => {
     const response = await axios.post(API_URL, { email, password }, { withCredentials: true });
     const { access_token } = response.data;
 
-    sessionStorage.setItem("access_token", access_token); // ✅ Stockage en mémoire
-
+    sessionStorage.setItem("access_token", access_token); 
     return access_token;
   } catch (error) {
     console.error("Erreur lors de la connexion:", error);
@@ -21,7 +20,7 @@ export const refreshToken = async () => {
     const response = await axios.post(
       "http://localhost:4000/api/users/refresh-token",
       {},
-      { withCredentials: true } // ✅ Important pour envoyer automatiquement le cookie
+      { withCredentials: true } 
     );
     const { access_token } = response.data;
 

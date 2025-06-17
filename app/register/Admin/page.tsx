@@ -3,6 +3,7 @@ import { useState } from "react";
 import { FaUser, FaEnvelope, FaLock, FaRegEye, FaRegEyeSlash} from "react-icons/fa";
 import NavbarAdmin from "@/app/components/NavbarAdmin";
 import Link from "next/link";
+import Image from "next/image";
 
 export default function RegisterPage() {
   const [firstname, setFirstname] = useState("");
@@ -160,10 +161,10 @@ export default function RegisterPage() {
 
   <div className="flex justify-center gap-6">
     <button>
-      <img src="/icons/icons8-google.svg" alt="Google" className="w-6 h-6 hover:scale-110 transition" />
+      <Image src="/icons/icons8-google.svg" alt="Google" width={24} height={24} className="w-6 h-6 hover:scale-110 transition" />
     </button>
     <button>
-      <img src="/icons/icons8-microsoft.svg" alt="LinkedIn" className="w-6 h-6 hover:scale-110 transition" />
+      <Image src="/icons/icons8-microsoft.svg" alt="LinkedIn" width={24} height={24} className="w-6 h-6 hover:scale-110 transition" />
     </button>
   </div>
 

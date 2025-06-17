@@ -19,7 +19,7 @@ export default function Footer() {
         <div>
           <h2 className="text-xl font-bold">SmartHire</h2>
           <p className="mt-2 text-gray-400 text-sm">
-            Find your dream job or recruit top talent quickly and efficiently with JobBox.
+            Find your dream job or recruit top talent quickly and efficiently with SmartHire.
           </p>
         </div>
 
@@ -67,7 +67,7 @@ export default function Footer() {
       </div>
 
       <div className="border-t border-gray-700 pt-3 text-center text-white text-xs mt-6">
-        © {new Date().getFullYear()} JobBox. All rights reserved.
+        © {new Date().getFullYear()} SmartHire. All rights reserved.
       </div>
     </footer>
   );

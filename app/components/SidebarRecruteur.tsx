@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Home, Users, Settings, Bell, Building, Menu, X, Briefcase } from "lucide-react";
+import { Home, Users, Settings, Bell, Building, Menu, X} from "lucide-react";
 import { FaUser, FaCalendarCheck } from "react-icons/fa";
 import Link from "next/link";
 

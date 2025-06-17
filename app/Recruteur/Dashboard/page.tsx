@@ -17,7 +17,6 @@ import { useRouter } from 'next/navigation';
 import { BarChart, Bar, Cell } from 'recharts';
 import Select from 'react-select';
 import { ApplicationModesIcons } from "../../components/ApplicationModesIcons";
-import { useAuth } from "@/src/context/authContext";
 
 interface  Department {
   id: number;
@@ -25,19 +24,13 @@ interface  Department {
 }
 
 const RecruteurPage = () => {
-  const [search, setSearch] = useState('');
-  const [selectedFilter, setSelectedFilter] = useState('All');
   const [departments, setDepartments] = useState<Department[]>([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+  const [error] = useState(null)
   const [jobOffers, setJobOffers] = useState([]);
   const [userId, setUserId] = useState<string | null>(null);
-  const [recruiterProfile, setRecruiterProfile] = useState<{ firstName?: string; lastName?: string } | null>(null);
   const [offersWithCounts, setOffersWithCounts] = useState<any[]>([]);
-  const [expandedOfferId, setExpandedOfferId] = useState<number | null>(null);
-  const [candidaturesByOffer, setCandidaturesByOffer] = useState<{ [key: number]: any[] }>({});
   const [selectedOffers, setSelectedOffers] = useState<any[]>([]);
-  // Tasks state with localStorage persistence
   const migrateTasks = (oldTasks: any[]): { text: string; done: boolean; createdAt: string }[] =>
   oldTasks.map(task => ({
     text: task.text,
@@ -60,9 +53,7 @@ const RecruteurPage = () => {
   });
   const [newTask, setNewTask] = useState('');
   const router = useRouter();
-  const { logoutAdmin } = useAuth();
 
-  const filterOptions = ['All', 'Applications', 'Postings', 'Interviews'];
 
   const data = [
     { month: 'Jan', candidates: 40 },
@@ -79,7 +70,6 @@ const RecruteurPage = () => {
 
   // Agenda widget state
   const [agendaInterviews, setAgendaInterviews] = useState<any[]>([]);
-  const [agendaLoading, setAgendaLoading] = useState(false);
   const [selectedAgendaDay, setSelectedAgendaDay] = useState<string | null>(null);
 
   useEffect(() => {
@@ -101,22 +91,6 @@ const RecruteurPage = () => {
         console.error('Error fetching departments:', err);
       } finally {
         setLoading(false);
-      }
-    };
-
-    const fetchRecruiterProfile = async () => {
-      try {
-        const { data } = await axios.get("http://localhost:4000/api/users/profileAdmin", {
-          headers: {
-            Authorization: `Bearer ${sessionStorage.getItem("access_token")}`,
-          },
-        });
-        setRecruiterProfile({
-          firstName: data.firstName || data.first_name || '',
-          lastName: data.lastName || data.last_name || '',
-        });
-      } catch (err) {
-        setRecruiterProfile(null);
       }
     };
 
@@ -152,7 +126,6 @@ const RecruteurPage = () => {
     };
 
     const fetchAgendaInterviews = async () => {
-      setAgendaLoading(true);
       try {
         const { data } = await axios.get("http://localhost:4000/api/users/userId", {
           headers: {
@@ -165,35 +138,16 @@ const RecruteurPage = () => {
         }
       } catch {
         setAgendaInterviews([]);
-      } finally {
-        setAgendaLoading(false);
-      }
+      } 
     };
 
     fetchDepartments();
-    fetchRecruiterProfile();
     if (userId) {
       fetchOffersWithCounts();
       fetchOffersCount();
       fetchAgendaInterviews();
     }
   }, [userId]);
-
-  const handleToggleOffer = async (offerId: number) => {
-    if (expandedOfferId === offerId) {
-      setExpandedOfferId(null);
-      return;
-    }
-    setExpandedOfferId(offerId);
-    if (!candidaturesByOffer[offerId]) {
-      try {
-        const res = await axios.get(`http://localhost:8082/api/candidatures/by-offer/${offerId}`);
-        setCandidaturesByOffer((prev) => ({ ...prev, [offerId]: res.data }));
-      } catch {
-        setCandidaturesByOffer((prev) => ({ ...prev, [offerId]: [] }));
-      }
-    }
-  };
 
   const stats = [
     { icon: Users, title: 'Candidatures', value: '2', color: 'from-[#007bff] to-[#00b4d8]' },

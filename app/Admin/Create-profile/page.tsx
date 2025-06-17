@@ -5,6 +5,7 @@ import { AnimatePresence, motion } from "framer-motion";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { FaBuilding, FaMapMarkerAlt, FaHistory, FaUsersCog, FaEnvelope, FaCheckCircle, FaIndustry, FaHome, FaCalendar, FaUsers, FaPhone, FaGlobe, FaLink, FaFileAlt, FaFile, FaTrashAlt, FaPlus, FaTimes, FaSave } from "react-icons/fa";
+import Image from "next/image";
 
 const steps = [
   { id: 1, title: "Tell us about your company", icon: <FaBuilding /> },
@@ -19,7 +20,6 @@ export default function CreateCompanyProfile() {
   const [companyLogoPreview, setCompanyLogoPreview] = useState<string | null>(null);
   const [ceoImagePreview, setCeoImagePreview] = useState<string | null>(null);
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
-  const [submissionError, setSubmissionError] = useState<string | null>(null);
   const router = useRouter();
   const [formData, setFormData] = useState({
     companyName: "",
@@ -114,7 +114,6 @@ export default function CreateCompanyProfile() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (currentStep !== 5) {
-      setSubmissionError("Veuillez compléter toutes les étapes avant de soumettre.");
       return;
     }
     try {
@@ -262,9 +261,11 @@ export default function CreateCompanyProfile() {
             animate={{ opacity: 1, scale: 1 }}
             transition={{ duration: 0.3 }}
           >
-            <img
+            <Image
               src={companyLogoPreview}
               alt="Company Logo Preview"
+              width={80}
+              height={80}
               className="w-20 h-20 rounded-full object-cover border shadow-md cursor-pointer hover:opacity-90 transition"
               onClick={() => setShowPreviewModal(true)}
               title="Cliquer pour agrandir"
@@ -296,9 +297,11 @@ export default function CreateCompanyProfile() {
                   >
                     <FaTimes />
                   </button>
-                  <img
+                  <Image
                     src={companyLogoPreview}
                     alt="Preview grand format"
+                    width={400}
+                    height={400}
                     className="max-w-[90vw] max-h-[80vh] object-contain rounded-lg shadow-xl border"
                   />
                 </div>
@@ -368,8 +371,7 @@ export default function CreateCompanyProfile() {
                     {/* Affichage du champ "Autre secteur" si l'option "Autre" est sélectionnée */}
                     {formData.industry === "Other" && (
                       <div className="mb-4">
-                        <label className="block text-sm font-medium text-gray-700 mb-1">Specify your industry"
-                        </label>
+                        <label className="block text-sm font-medium text-gray-700 mb-1">Specify your industry&nbsp;&quot;</label>
                         <input
                           type="text"
                           name="otherIndustry"
@@ -404,10 +406,12 @@ export default function CreateCompanyProfile() {
             initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
             transition={{ duration: 0.3 }}>
-              <img
-                              src={ceoImagePreview}
-                              alt="Photo du PDG"
-                              className="w-20 h-20 rounded-full object-cover border shadow-md cursor-pointer hover:opacity-90 transition"
+              <Image
+                src={ceoImagePreview}
+                alt="Photo du PDG"
+                width={80}
+                height={80}
+                className="w-20 h-20 rounded-full object-cover border shadow-md cursor-pointer hover:opacity-90 transition"
               onClick={() => setShowPreviewCeoImage(true)}/>
                             <button
                               type="button"
@@ -432,9 +436,11 @@ export default function CreateCompanyProfile() {
                     aria-label="Close" >
                     <FaTimes />
                   </button>
-                  <img
+                  <Image
                     src={ceoImagePreview}
                     alt="Preview grand format"
+                    width={300}
+                    height={300}
                     className="max-w-[50vw] max-h-[50vh] object-contain rounded-lg shadow-xl border"
                   />
                 </div>

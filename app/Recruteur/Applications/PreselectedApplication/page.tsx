@@ -51,7 +51,7 @@ const PreselectedApplicationPage = () => {
       //Récupérer la liste des candidatures pré-sélectionnées pour une offre
       const res = await axios.get(`http://localhost:8082/api/candidatures/match-cvs/${offerId}`);
       
-      const enriched = await Promise.all(res.data.map(async (item: any) => {
+      const enriched = await Promise.all(res.data.map(async (item: Candidate) => {
         let cvUrl = item.cv;
         if (typeof cvUrl === 'string' && cvUrl.trim().startsWith('[')) {
           try {
@@ -77,17 +77,19 @@ const PreselectedApplicationPage = () => {
         let hasInterview = false;
         let interviewStatus = undefined;
         try {
-          if (item.id || item.candidatureId) {
-            const entretienRes = await axios.get(`http://localhost:3004/api/entretiens/candidature/${item.id || item.candidatureId}`);
+          if (item.id || item.candidate_id) {
+            const entretienRes = await axios.get(`http://localhost:3004/api/entretiens/candidature/${item.id || item.candidate_id}`);
             hasInterview = !!entretienRes.data && Object.keys(entretienRes.data).length > 0;
             if (hasInterview && entretienRes.data.statut) {
               interviewStatus = entretienRes.data.statut;
             }
           }
-        } catch {}
+        } catch {
+          // error intentionally ignored
+        }
         return {
           ...item,
-          id: item.id || item.candidatureId, 
+          id: item.id || item.candidate_id, 
           cv: cvUrl,
           firstName,
           lastName,
@@ -100,7 +102,7 @@ const PreselectedApplicationPage = () => {
       }));
     const sorted = enriched.sort((a, b) => b.score - a.score);
     setCandidates(sorted);
-    } catch (err: any) {
+    } catch {
       setError("Erreur lors du chargement des candidatures.");
     } finally {
       setLoading(false);
@@ -109,7 +111,6 @@ const PreselectedApplicationPage = () => {
 
   useEffect(() => {
     const fetchOffers = async () => {
-      try {
         const { data } = await axios.get("http://localhost:4000/api/users/userId", {
           headers: {
             Authorization: `Bearer ${sessionStorage.getItem("access_token")}`,
@@ -122,7 +123,6 @@ const PreselectedApplicationPage = () => {
          // Récupérer l'id de la company depuis les infos du recruteur
           const companyId = userRes.data.IdCompany;
           console.log("companyId récupéré:", companyId);         
-          try {
           if (companyId) {
             // Utiliser la route /company/:id pour récupérer le nom de la company
             const companyRes = await axios.get(`http://localhost:5000/api/companies/company/${companyId}`);
@@ -134,16 +134,12 @@ const PreselectedApplicationPage = () => {
             setCompanyName("");
             console.log("Aucune companyId trouvée pour ce recruteur.");
           }
-        } catch (err) {
-          console.error("Erreur lors de la récupération du nom de la company :", err, "companyId:", companyId);
-          setCompanyName("");
-        }
+        
           
         const offersRes = await axios.get(`http://localhost:8081/api/offers/by-recruiter/${data.userId}`);
           setOffers(offersRes.data);
         }
-      } catch (err) {
-      }
+      
     };
     fetchOffers();
   }, []);
@@ -160,13 +156,23 @@ const PreselectedApplicationPage = () => {
     if (!showModal.candidate || !recruteurId) return;
     try {
      const dateTime = `${interviewDate}T${interviewTime}:00`;
-      let entretienPayload: any = {
+      let entretienPayload: {
+        date: string;
+        type: string;
+        recruteurId: string;
+        recruteurName: string;
+        companyName: string;
+        candidatureId: string | undefined;
+        candidatId: string | undefined;
+        statut: string;
+        lieu?: string;
+      } = {
         date: dateTime,
         type: interviewType === "visio" ? "Visio" : "Presentiel",
         recruteurId: recruteurId,
         recruteurName: recruteurName,
         companyName: companyName,
-        candidatureId: showModal.candidate.id, 
+        candidatureId: showModal.candidate.id,
         candidatId: showModal.candidate.candidate_id,
         statut: "PLANIFIE"
       };
@@ -192,7 +198,7 @@ await axios.post(
       }
       setShowModal({open: false});
       fetchCandidates();
-    } catch (err) {
+    } catch {
       alert("Erreur lors de la planification de l'entretien.");
     }
   };

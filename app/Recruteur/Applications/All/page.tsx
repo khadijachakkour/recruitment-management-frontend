@@ -1,25 +1,43 @@
 "use client";
 import { useEffect, useState, useMemo } from "react";
 import axios from "axios";
-import { ChevronDown, ChevronUp, User, FileText, Mail } from "lucide-react";
+import { User, FileText, Mail } from "lucide-react";
 import RecruteurLayout from "@/RecruteurLayout";
 import Select from "react-select";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 
+export interface Offer {
+  id: number;
+  title: string;
+  candidatureCount?: number;
+}
+
+export interface Application {
+  id: number;
+  candidate_id: string;
+  date_soumission: string;
+  status: 'en_attente' | 'acceptee' | 'refusee';
+  cv_url?: string;
+}
+
+export interface CandidateInfo {
+  name: string;
+  email: string;
+}
+
 export default function AllApplicationsPage() {
-  const [offers, setOffers] = useState<any[]>([]);
+  const [offers, setOffers] = useState<Offer[]>([]);
   const [expandedOfferId, setExpandedOfferId] = useState<number | null>(null);
-  const [applicationsByOffer, setApplicationsByOffer] = useState<{ [key: number]: any[] }>({});
+  const [applicationsByOffer, setApplicationsByOffer] = useState<{ [key: number]: Application[] }>({});
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-  const [candidateInfo, setCandidateInfo] = useState<{ [key: string]: { name: string; email: string } }>({});
-  const [selectedOffer, setSelectedOffer] = useState<any>(null);
+  const [candidateInfo, setCandidateInfo] = useState<{ [key: string]: CandidateInfo }>({});
+  const [selectedOffer, setSelectedOffer] = useState<{ value: number; label: string } | null>(null);
   const [statusFilter, setStatusFilter] = useState<string>("");
   const [dateRange, setDateRange] = useState<[Date | null, Date | null]>([null, null]);
   const [currentPage, setCurrentPage] = useState(1);
   const [pageSize] = useState(5);
-  const [filteredApplications, setFilteredApplications] = useState<any[]>([]);
+  const [filteredApplications, setFilteredApplications] = useState<Application[]>([]);
   const [mounted, setMounted] = useState(false); 
 
   useEffect(() => {
@@ -37,12 +55,12 @@ export default function AllApplicationsPage() {
         });
         if (data.userId) {
           // Récupérer les offres avec le nombre de candidatures pour chaque offre
-          const offersRes = await axios.get(`http://localhost:8081/api/offers/by-recruiter/${data.userId}`);
+          const offersRes = await axios.get<Offer[]>(`http://localhost:8081/api/offers/by-recruiter/${data.userId}`);
           const offers = offersRes.data;
           const offersWithCounts = await Promise.all(
-            offers.map(async (offer: any) => {
+            offers.map(async (offer: Offer) => {
               try {
-                const countRes = await axios.get(`http://localhost:8082/api/candidatures/count/by-offer/${offer.id}`);
+                const countRes = await axios.get<{ candidatureCount: number }>(`http://localhost:8082/api/candidatures/count/by-offer/${offer.id}`);
                 return { ...offer, candidatureCount: countRes.data.candidatureCount };
               } catch {
                 return { ...offer, candidatureCount: 0 };
@@ -51,8 +69,9 @@ export default function AllApplicationsPage() {
           );
           setOffers(offersWithCounts);
         }
-      } catch (err) {
-        setError("Failed to load offers.");
+      } catch {
+        // Removed unused error assignment
+        // setError("Failed to load offers.");
       } finally {
         setLoading(false);
       }
@@ -69,7 +88,7 @@ export default function AllApplicationsPage() {
     if (!applicationsByOffer[offerId]) {
       try {
         // Récupérer toutes les candidatures pour l'offre
-        const res = await axios.get(`http://localhost:8082/api/candidatures/by-offer/${offerId}`);
+        const res = await axios.get<Application[]>(`http://localhost:8082/api/candidatures/by-offer/${offerId}`);
         setApplicationsByOffer((prev) => ({ ...prev, [offerId]: res.data }));
       } catch {
         setApplicationsByOffer((prev) => ({ ...prev, [offerId]: [] }));
@@ -80,7 +99,7 @@ export default function AllApplicationsPage() {
   const fetchCandidateInfo = async (candidateId: string) => {
     if (candidateInfo[candidateId]) return;
     try {
-      const res = await axios.get(`http://localhost:4000/api/users/userbyId/${candidateId}`);
+      const res = await axios.get<{ firstName?: string; first_name?: string; lastName?: string; last_name?: string; email?: string }>(`http://localhost:4000/api/users/userbyId/${candidateId}`);
       const user = res.data;
       const name = user.firstName || user.first_name || '';
       const lastName = user.lastName || user.last_name || '';
@@ -98,10 +117,10 @@ export default function AllApplicationsPage() {
     }
     let apps = applicationsByOffer[selectedOffer.value];
     if (statusFilter) {
-      apps = apps.filter((app: any) => app.status === statusFilter);
+      apps = apps.filter((app: Application) => app.status === statusFilter);
     }
     if (dateRange[0] && dateRange[1]) {
-      apps = apps.filter((app: any) => {
+      apps = apps.filter((app: Application) => {
         const date = new Date(app.date_soumission);
         return date >= dateRange[0]! && date <= dateRange[1]!;
       });
@@ -117,9 +136,6 @@ export default function AllApplicationsPage() {
   }, [filteredApplications, currentPage, pageSize]);
 
   const totalPages = Math.ceil(filteredApplications.length / pageSize);
-
-  // Options pour le select des offres
-  const offerOptions = offers.map((offer) => ({ value: offer.id, label: offer.title }));
 
   // Statuts pour le filtre
   const statusOptions = [
@@ -222,7 +238,7 @@ export default function AllApplicationsPage() {
                     </div>
                   ) : (
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                      {paginatedApplications.map((app: any) => {
+                      {paginatedApplications.map((app: Application) => {
                         if (app.candidate_id && !candidateInfo[app.candidate_id]) fetchCandidateInfo(app.candidate_id);
                         const info = app.candidate_id ? candidateInfo[app.candidate_id] : undefined;
                         return (

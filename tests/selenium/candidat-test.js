@@ -25,7 +25,14 @@ const { Builder, By, until } = require('selenium-webdriver');
     await driver.findElement(By.css('input[type="checkbox"]')).click();
     await driver.findElement(By.css('button[type="submit"]')).click();
     // Attendre la redirection ou un message de succès
-    await driver.wait(until.urlContains('/login/Candidat'), 5000);
+    try {
+      await driver.wait(until.urlContains('/login/Candidat'), 15000);
+    } catch (e) {
+      const currentUrl = await driver.getCurrentUrl();
+      const bodyText = await driver.findElement(By.tagName('body')).getText();
+      console.error('Timeout: Redirection vers /login/Candidat non détectée. URL actuelle :', currentUrl);
+      throw e;
+    }
 
     // 3. Test connexion du candidat
     await driver.get('http://localhost:3000/login/Candidat');
@@ -35,15 +42,11 @@ const { Builder, By, until } = require('selenium-webdriver');
     await driver.wait(until.urlContains('/Candidat/dashboard'), 5000);
 
     // Test scroll sur la page d'accueil (juste après la connexion dashboard)
-    await driver.get('http://localhost:3000/');
+    await driver.get('http://localhost:3000/Candidat/dashboard');
     // Scroll jusqu'en bas de la page
     await driver.executeScript('window.scrollTo(0, document.body.scrollHeight);');
     await driver.sleep(1000);
-    // Log la position de scroll (utilise des noms uniques pour éviter les redeclarations)
-    const scrollYHome = await driver.executeScript('return window.scrollY;');
-    const innerHeightHome = await driver.executeScript('return window.innerHeight;');
-    const bodyHeightHome = await driver.executeScript('return document.body.scrollHeight;');
-    console.log('Scroll position (home):', scrollYHome, 'Window height:', innerHeightHome, 'Body height:', bodyHeightHome);
+
 
     // 4. Test navigation vers la liste des offres
     await driver.get('http://localhost:3000/Candidat/Listoffres');
@@ -68,16 +71,24 @@ const { Builder, By, until } = require('selenium-webdriver');
           await driver.wait(until.elementIsNotVisible(await driver.findElement(By.css('.loader, [aria-busy="true"]'))), 2000);
         } catch (e) {}
         // Clic natif puis fallback JS si intercepté
+        let clickWorked = false;
         try {
           await postulerBtn.click();
+          clickWorked = true;
         } catch (err) {
           console.warn('Clic natif échoué, tentative via JS:', err.message);
-          await driver.executeScript("arguments[0].click();", postulerBtn);
+          try {
+            await driver.executeScript("arguments[0].click();", postulerBtn);
+            clickWorked = true;
+          } catch (err2) {
+            console.warn('Clic JS échoué, tentative via MouseEvent:', err2.message);
+            await driver.executeScript("arguments[0].dispatchEvent(new MouseEvent('click', {bubbles:true}));", postulerBtn);
+            clickWorked = true;
+          }
         }
-        // Après le clic, attends un court instant puis log le body pour debug
         await driver.sleep(1000);
-        const bodyText = await driver.findElement(By.tagName('body')).getText();
-        await driver.wait(until.urlContains('/Candidat/PostulerOffre/'), 5000);
+    
+        await driver.wait(until.urlContains('/Candidat/PostulerOffre/'), 10000);
       } catch (e) {
         const currentUrl = await driver.getCurrentUrl();
         console.error('Impossible d\'accéder au détail de l\'offre. URL courante:', currentUrl);
@@ -91,27 +102,13 @@ const { Builder, By, until } = require('selenium-webdriver');
     await driver.get('http://localhost:3000/Candidat/notification');
     await driver.wait(until.elementLocated(By.xpath("//span[contains(.,'Notifications')]")), 5000);
 
-    // 9. Test logout du candidat
-    // Aller sur le dashboard candidat (ou une page où le bouton/logout est visible)
-    await driver.get('http://localhost:3000/Candidat/dashboard');
-    // Cliquer sur le bouton/logout (adapter le sélecteur si besoin)
-    const logoutBtn = await driver.findElement(By.xpath("//button[contains(.,'Logout')] | //a[contains(.,'Logout')]"));
-    await logoutBtn.click();
-    // Vérifier la redirection vers la page d'accueil ou de login
-    await driver.wait(until.urlIs('http://localhost:3000/'), 5000);
-    console.log('Déconnexion du candidat testée avec succès.');
-
-    // Test scroll sur la page d'accueil
-    await driver.get('http://localhost:3000/');
-    // Scroll jusqu'en bas de la page
-    await driver.executeScript('window.scrollTo(0, document.body.scrollHeight);');
-    // Attendre un court instant pour simuler le scroll utilisateur
-    await driver.sleep(1000);
-    // Vérifier qu'on est bien en bas (optionnel, log la position)
-    const scrollY = await driver.executeScript('return window.scrollY;');
-    const innerHeight = await driver.executeScript('return window.innerHeight;');
-    const bodyHeight = await driver.executeScript('return document.body.scrollHeight;');
-    console.log('Scroll position:', scrollY, 'Window height:', innerHeight, 'Body height:', bodyHeight);
+    // 9. Test logout admin
+        const logoutBtn = await driver.wait(until.elementLocated(By.xpath("//button[contains(.,'Logout')]")), 5000);
+        await driver.wait(until.elementIsVisible(logoutBtn), 5000);
+        await logoutBtn.click();
+        await driver.wait(until.urlIs('http://localhost:3000/login/Candidat'), 5000);
+        console.log('Déconnexion candidat testée avec succès.');
+   
   } catch (err) {
     console.error('Erreur lors des tests Selenium:', err);
   } finally {

@@ -1,4 +1,4 @@
-import { FaRobot, FaUserCheck, FaClipboardList, FaChartBar, FaUsersCog, FaFileSignature, FaSearch, FaBell } from "react-icons/fa";
+import {FaClipboardList, FaChartBar, FaUsersCog, FaFileSignature, FaSearch, FaBell } from "react-icons/fa";
 
 export default function FeaturesAndMotivationSection() {
   const candidateFeatures = [
@@ -44,7 +44,7 @@ export default function FeaturesAndMotivationSection() {
       Easy Steps to Find Top Talent or Your Dream Job with Our Platform
       </h2>
         <p className="text-sm text-gray-600 mb-8 max-w-xl mx-auto"> {/* Réduction de la taille du texte */}
-          Whether you're a job seeker or a hiring manager, our platform uses Artificial Intelligence to simplify, accelerate, and personalize the recruitment experience.
+          Whether you&apos;re a job seeker or a hiring manager, our platform uses Artificial Intelligence to simplify, accelerate, and personalize the recruitment experience.
         </p>
 
         {/* Candidate Features */}
@@ -90,7 +90,7 @@ export default function FeaturesAndMotivationSection() {
           Revolutionize the Way You Recruit or Get Hired
         </h2>
         <p className="text-sm text-gray-700 mb-6 max-w-xl mx-auto"> {/* Réduction de la taille du texte */}
-          Unlock the power of automation and intelligence in recruitment. Whether you're finding a job or the perfect hire, our platform is built for your success.
+          Unlock the power of automation and intelligence in recruitment. Whether you&apos;re finding a job or the perfect hire, our platform is built for your success.
         </p>
         <a
           href="#get-started"
