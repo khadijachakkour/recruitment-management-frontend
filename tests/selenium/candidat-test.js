@@ -9,6 +9,7 @@ const fs = require('fs');
   const userDataDir = fs.mkdtempSync(path.join(os.tmpdir(), 'chrome-user-data-'));
   const options = new chrome.Options();
   options.addArguments(`--user-data-dir=${userDataDir}`);
+  options.addArguments('--headless=new');
   let driver = await new Builder().forBrowser('chrome').setChromeOptions(options).build();
   try {
 
