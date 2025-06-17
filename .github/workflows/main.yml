@@ -2,9 +2,9 @@ name: CI - Frontend Selenium Tests
 
 on:
   push:
-    branches: [ "main" ]
+    branches: ["main"]
   pull_request:
-    branches: [ "main" ]
+    branches: ["main"]
 
 jobs:
   selenium-tests:
@@ -23,6 +23,14 @@ jobs:
         with:
           node-version: 20
 
+      - name: Restore Next.js build cache
+        uses: actions/cache@v4
+        with:
+          path: .next/cache
+          key: nextjs-${{ runner.os }}-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: |
+            nextjs-${{ runner.os }}-
+
       - name: Install dependencies
         run: npm ci
 
@@ -37,16 +45,26 @@ jobs:
         run: |
           npx wait-on http://localhost:3000
 
-      - name: Run Selenium admin tests
+      - name: Run Selenium admin tests (Mocha + Mochawesome)
         run: |
-          cd tests/selenium
-          node admin-test.js
+          npx mocha tests/selenium/admin-test.mocha.js --reporter mochawesome --reporter-options reportDir=mochawesome-report,reportFilename=admin-report,quiet=true
         env:
           DISPLAY: :99
 
-      - name: Run Selenium candidat tests
+      - name: Upload Selenium admin HTML report
+        uses: actions/upload-artifact@v4
+        with:
+          name: selenium-admin-report
+          path: mochawesome-report/admin-report.html
+
+      - name: Run Selenium candidat tests (Mocha + Mochawesome)
         run: |
-          cd tests/selenium
-          node candidat-test.js
+          npx mocha tests/selenium/candidat-test.mocha.js --reporter mochawesome --reporter-options reportDir=mochawesome-report,reportFilename=candidat-report,quiet=true
         env:
           DISPLAY: :99
+
+      - name: Upload Selenium candidat HTML report
+        uses: actions/upload-artifact@v4
+        with:
+          name: selenium-candidat-report
+          path: mochawesome-report/candidat-report.html
