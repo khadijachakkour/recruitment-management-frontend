@@ -7,6 +7,9 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import NavbarCandidat from '@/app/components/NavbarCandidat';
 
+// Configuration de l'API Gateway
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
+
 interface Offer {
   id: number;
   title: string;
@@ -31,7 +34,7 @@ const AllOffersPage = () => {
   useEffect(() => {
     const fetchOffers = async () => {
       try {
-        const res = await axios.get<Offer[]>('http://localhost:8081/api/offers/all');
+        const res = await axios.get<Offer[]>(`${API_BASE_URL}/api/offers/all`);
         setOffers(res.data);
         setFilteredOffers(res.data);
       } catch (err) {
@@ -62,10 +65,9 @@ const AllOffersPage = () => {
 
   useEffect(() => {
     filterOffers();
-    setCurrentPage(1); // reset page when filter/search changes
+    setCurrentPage(1); 
   }, [filterOffers]);
 
-  // Pagination logic
   const totalPages = Math.ceil(filteredOffers.length / offersPerPage);
   const startIdx = (currentPage - 1) * offersPerPage;
   const endIdx = startIdx + offersPerPage;

@@ -8,6 +8,9 @@ import { faBriefcase, faCalendarDays, faPlus, faChevronDown, faChevronUp } from 
 import * as Select from '@radix-ui/react-select';
 import RecruteurLayout from '@/RecruteurLayout';
 
+// Configuration de l'API Gateway
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
+
 interface Department {
   id: number;
   name: string;
@@ -35,13 +38,13 @@ const CreateJobPage = () => {
   useEffect(() => {
     const fetchDepartments = async () => {
       try {
-        const { data } = await axios.get('http://localhost:4000/api/users/userId', {
+        const { data } = await axios.get(`${API_BASE_URL}/api/users/userId`, {
           headers: {
             Authorization: `Bearer ${sessionStorage.getItem('access_token')}`,
           },
         });
 
-        const response = await axios.get(`http://localhost:5000/api/companies/user-departments/${data.userId}`);
+        const response = await axios.get(`${API_BASE_URL}/api/companies/user-departments/${data.userId}`);
         setDepartments(response.data);
       } catch (err) {
         console.error('Error fetching departments:', err);
@@ -75,7 +78,7 @@ const CreateJobPage = () => {
     };
 
     try {
-      const res = await axios.post('http://localhost:8081/api/offers/CreateOffer', jobData, {
+      const res = await axios.post(`${API_BASE_URL}/api/offers/CreateOffer`, jobData, {
         headers: {
           Authorization: `Bearer ${sessionStorage.getItem('access_token')}`,
         },

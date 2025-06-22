@@ -1,5 +1,8 @@
 "use client";
 
+// Configuration de l'API Gateway
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
+
 import { useEffect, useState } from "react";
 import { Trash2, Pencil, Eye } from "lucide-react";
 import { motion } from "framer-motion";
@@ -7,7 +10,6 @@ import axios from "axios";
 import RecruteurLayout from "@/RecruteurLayout";
 import { useRouter } from "next/navigation";
 import { Search, MapPin, X } from "lucide-react";
-
 
 type Offer = {
   id: string;
@@ -29,14 +31,14 @@ export default function ManageOffersPage() {
   useEffect(() => {
     const fetchOffers = async () => {
       try {
-        const { data } = await axios.get("http://localhost:4000/api/users/userId", {
+        const { data } = await axios.get(`${API_BASE_URL}/api/users/userId`, {
           headers: {
             Authorization: `Bearer ${sessionStorage.getItem("access_token")}`,
           },
         });
         const userId = data.userId;
         if (userId) {
-          const res = await axios.get(`http://localhost:8081/api/offers/by-recruiter/${userId}`);
+          const res = await axios.get(`${API_BASE_URL}/api/offers/by-recruiter/${userId}`);
           setOffers(res.data);
           setFilteredOffers(res.data);
         }
@@ -76,7 +78,7 @@ export default function ManageOffersPage() {
   const handleConfirmDelete = async () => {
     if (!offerToDelete) return;
     try {
-      await axios.delete(`http://localhost:8081/api/offers/delete/${offerToDelete}`);
+      await axios.delete(`${API_BASE_URL}/api/offers/delete/${offerToDelete}`);
       const updatedOffers = offers.filter((offer) => offer.id !== offerToDelete);
       setOffers(updatedOffers);
     } catch (error) {
@@ -133,9 +135,8 @@ export default function ManageOffersPage() {
   </div>
 </div>
 
-
         {filteredOffers.length === 0 ? (
-          <p className="text-gray-500">No offers found.</p>
+          <p className="text-gray-500">No offers found</p>
         ) : (
           <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
             {filteredOffers.map((offer) => (

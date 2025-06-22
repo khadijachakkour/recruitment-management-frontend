@@ -1,5 +1,4 @@
 "use client";
-
 import { useRouter } from 'next/navigation';
 import { User, Bot } from 'lucide-react';
 import RecruteurLayout from '@/RecruteurLayout';

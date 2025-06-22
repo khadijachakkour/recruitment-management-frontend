@@ -4,6 +4,9 @@ import axios from "axios";
 import RecruteurLayout from '@/RecruteurLayout';
 import { CalendarDaysIcon, VideoCameraIcon, UserGroupIcon, MapPinIcon, ArrowLeftIcon, ArrowRightIcon, ExclamationCircleIcon } from '@heroicons/react/24/outline';
 
+// Configuration de l'API Gateway
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
+
 interface Entretien {
   id: string;
   date: string;
@@ -33,13 +36,13 @@ const AgendaEntretienPage = () => {
       setLoading(true);
       setError(null);
       try {
-        const { data } = await axios.get("http://localhost:4000/api/users/userId", {
+        const { data } = await axios.get(`${API_BASE_URL}/api/users/userId`, {
           headers: {
             Authorization: `Bearer ${sessionStorage.getItem("access_token")}`,
           },
         });
         if (data.userId) {
-          const res = await axios.get(`http://localhost:3004/api/entretiens/recruteur/${data.userId}`);
+          const res = await axios.get(`${API_BASE_URL}/api/entretiens/recruteur/${data.userId}`);
           setEntretiens(res.data);
         }
       } catch {

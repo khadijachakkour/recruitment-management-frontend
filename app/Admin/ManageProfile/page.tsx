@@ -9,6 +9,9 @@ import { Loader2, Lock } from "lucide-react";
 import NavbarAdmin from "@/app/components/NavbarAdmin";
 import { useRouter } from "next/navigation";
 
+// Configuration de l'API Gateway
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
+
 export default function ManageProfile() {
   const { isLoggedIn, userRoles } = useAuth();
   const [userData, setUserData] = useState({
@@ -23,12 +26,11 @@ export default function ManageProfile() {
   const [error, setError] = useState<string | null>(null);
    const router = useRouter();
 
-  // Fetch user data when component mounts
-  useEffect(() => {
+   useEffect(() => {
     
     const fetchProfile = async () => {
       try {
-        const response = await axios.get("http://localhost:4000/api/users/UserProfile", {
+        const response = await axios.get(`${API_BASE_URL}/api/users/UserProfile`, {
           headers: {
             Authorization: `Bearer ${sessionStorage.getItem("access_token")}`,
           },
@@ -94,7 +96,7 @@ export default function ManageProfile() {
       };
 
       await axios.put(
-        "http://localhost:4000/api/admin/updateprofile",
+        `${API_BASE_URL}/api/admin/updateprofile`,
         payload,
         {
           headers: {
@@ -242,8 +244,7 @@ export default function ManageProfile() {
               passwordError
                 ? "bg-gray-400 cursor-not-allowed text-gray-700"
                 : "bg-blue-600 text-white hover:bg-blue-700"
-            }`}
-          >
+            }`} >
             Update Profile
           </motion.button>
         </form>

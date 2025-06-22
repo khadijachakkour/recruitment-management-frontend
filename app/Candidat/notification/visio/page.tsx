@@ -6,6 +6,9 @@ import axios from 'axios';
 import NavbarCandidat from '@/app/components/NavbarCandidat';
 import Notification from '@/app/components/Notification';
 
+// Configuration de l'API Gateway
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
+
 // Composant principal de la page
 const VisioPage = () => {
   return (
@@ -39,7 +42,7 @@ const VisioContent = () => {
     const fetchEntretienId = async () => {
       if (!jitsiUrlParam) return;
       try {
-        const { data } = await axios.get(`http://localhost:3004/api/entretiens/by-jitsi-url`, {
+        const { data } = await axios.get(`${API_BASE_URL}/api/entretiens/by-jitsi-url`, {
           params: { url: jitsiUrlParam },
         });
         setEntretienId(data.id);
@@ -58,7 +61,7 @@ const VisioContent = () => {
       setError(null);
       setInfo(null);
       try {
-        const { data } = await axios.get(`http://localhost:3004/api/entretiens/entretiens/${entretienId}`);
+        const { data } = await axios.get(`${API_BASE_URL}/api/entretiens/entretiens/${entretienId}`);
         if (data && data.jitsiUrl) {
           if (data.statut === 'Termine' || data.statut === 'TERMINE') {
             setError('MEETING_ENDED');

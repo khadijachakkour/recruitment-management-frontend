@@ -10,6 +10,9 @@ import {
 } from 'lucide-react';
 import { motion } from 'framer-motion';
 
+// Configuration de l'API Gateway
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
+
 interface Offer {
   id: number;
   title: string;
@@ -33,7 +36,7 @@ const ViewJobPage = () => {
   useEffect(() => {
     const fetchJob = async () => {
       try {
-        const res = await axios.get<Offer>(`http://localhost:8081/api/offers/offerById/${id}`);
+        const res = await axios.get<Offer>(`${API_BASE_URL}/offers/offerById/${id}`);
         setJob(res.data);
       } catch (err) {
         console.error('Error fetching job:', err);

@@ -91,10 +91,10 @@ export default function Categories() {
                   </div>
 
                   {/* Text */}
-                  <h3 className="font-semibold text-gray-800 text-md group-hover:text-indigo-700 transition"> {/* Réduction de la taille du texte */}
+                  <h3 className="font-semibold text-gray-800 text-md group-hover:text-indigo-700 transition"> 
                     {cat.name}
                   </h3>
-                  <p className="text-xs text-gray-500">+100 Jobs Available</p> {/* Réduction de la taille du texte */}
+                  <p className="text-xs text-gray-500">+100 Jobs Available</p> 
                 </div>
               </div>
             ))}

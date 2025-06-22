@@ -7,6 +7,9 @@ import Select from "react-select";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 
+// Configuration de l'API Gateway
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
+
 export interface Offer {
   id: number;
   title: string;
@@ -48,19 +51,19 @@ export default function AllApplicationsPage() {
     const fetchOffers = async () => {
       setLoading(true);
       try {
-        const { data } = await axios.get("http://localhost:4000/api/users/userId", {
+        const { data } = await axios.get(`${API_BASE_URL}/api/users/userId`, {
           headers: {
             Authorization: `Bearer ${sessionStorage.getItem("access_token")}`,
           },
         });
         if (data.userId) {
           // Récupérer les offres avec le nombre de candidatures pour chaque offre
-          const offersRes = await axios.get<Offer[]>(`http://localhost:8081/api/offers/by-recruiter/${data.userId}`);
+          const offersRes = await axios.get<Offer[]>(`${API_BASE_URL}/api/offers/by-recruiter/${data.userId}`);
           const offers = offersRes.data;
           const offersWithCounts = await Promise.all(
             offers.map(async (offer: Offer) => {
               try {
-                const countRes = await axios.get<{ candidatureCount: number }>(`http://localhost:8082/api/candidatures/count/by-offer/${offer.id}`);
+                const countRes = await axios.get<{ candidatureCount: number }>(`${API_BASE_URL}/api/candidatures/count/by-offer/${offer.id}`);
                 return { ...offer, candidatureCount: countRes.data.candidatureCount };
               } catch {
                 return { ...offer, candidatureCount: 0 };
@@ -88,7 +91,7 @@ export default function AllApplicationsPage() {
     if (!applicationsByOffer[offerId]) {
       try {
         // Récupérer toutes les candidatures pour l'offre
-        const res = await axios.get<Application[]>(`http://localhost:8082/api/candidatures/by-offer/${offerId}`);
+        const res = await axios.get<Application[]>(`${API_BASE_URL}/api/candidatures/by-offer/${offerId}`);
         setApplicationsByOffer((prev) => ({ ...prev, [offerId]: res.data }));
       } catch {
         setApplicationsByOffer((prev) => ({ ...prev, [offerId]: [] }));
@@ -99,7 +102,7 @@ export default function AllApplicationsPage() {
   const fetchCandidateInfo = async (candidateId: string) => {
     if (candidateInfo[candidateId]) return;
     try {
-      const res = await axios.get<{ firstName?: string; first_name?: string; lastName?: string; last_name?: string; email?: string }>(`http://localhost:4000/api/users/userbyId/${candidateId}`);
+      const res = await axios.get<{ firstName?: string; first_name?: string; lastName?: string; last_name?: string; email?: string }>(`${API_BASE_URL}/api/users/userbyId/${candidateId}`);
       const user = res.data;
       const name = user.firstName || user.first_name || '';
       const lastName = user.lastName || user.last_name || '';

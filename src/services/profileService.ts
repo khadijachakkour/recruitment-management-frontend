@@ -5,7 +5,8 @@ interface ProfileUpdateResults {
 
 import axios from "axios";
 
-const API_URL = "http://localhost:4000/api/users";
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
+const API_URL = `${API_BASE_URL}/api/users`;
 
 const getAuthHeaders = () => {
   const token = sessionStorage.getItem("access_token");
@@ -73,9 +74,9 @@ export const deleteCv = async () => {
   return axios.delete(`${API_URL}/delete-cv`, { headers: getAuthHeaders() });
 };
 
-// Récupérer le profil utilisateur (API: /UserProfile)
+// Récupérer le profil utilisateur
 export const getRecruteurProfile = async () => {
-  const response = await axios.get('http://localhost:4000/api/users/UserProfile', { headers: getAuthHeaders() });
+  const response = await axios.get(`${API_URL}/UserProfile`, { headers: getAuthHeaders() });
   return response.data;
 };
 
@@ -96,7 +97,7 @@ export const updateRecruteurProfile = async (profileData: RecruteurProfileUpdate
     username: profileData.username,
     ...(profileData.password && { password: profileData.password }),
   };
-  const response = await axios.put('http://localhost:4000/api/users/updateProfileCurrentUser', payload, {
+  const response = await axios.put(`${API_URL}/updateProfileCurrentUser`, payload, {
     headers: {
       "Content-Type": "application/json",
       ...getAuthHeaders(),

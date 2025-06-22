@@ -16,6 +16,7 @@
      isLoggingOut: boolean;
    }
 
+   const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
    const AuthContext = createContext<AuthContextType | null>(null);
 
    export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
@@ -77,7 +78,7 @@
      const logoutAdmin = async () => {
        try {
          setIsLoggingOut(true);
-         const response = await fetch("http://localhost:4000/logout", {
+          const response = await fetch(`${API_BASE_URL}/api/users/logout`, {
            method: "POST",
            credentials: "include",
          });
@@ -98,7 +99,7 @@
      const logoutCandidat = async () => {
        try {
          setIsLoggingOut(true);
-         const response = await fetch("http://localhost:4000/logout", {
+         const response = await fetch(`${API_BASE_URL}/api/users/logout`, {
            method: "POST",
            credentials: "include",
          });

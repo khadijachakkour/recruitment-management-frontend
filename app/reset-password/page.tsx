@@ -6,6 +6,9 @@ import { Eye, EyeOff } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { Suspense } from 'react'; 
 
+// Configuration de l'API Gateway
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
+
 // Composant principal de la page
 const ResetPasswordPage = () => {
   return (
@@ -74,7 +77,7 @@ const ResetPasswordContent = () => {
     setLoading(true);
     setError('');
     try {
-      await axios.post('http://localhost:4000/api/users/reset-password', {
+      await axios.post(`${API_BASE_URL}/api/users/reset-password`, {
         token,
         password: newPassword,
       });

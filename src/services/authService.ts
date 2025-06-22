@@ -1,12 +1,12 @@
 import axios from "axios";
 
-const API_URL = `${process.env.NEXT_PUBLIC_API_URL}/login`;
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
 
 export const login = async (email: string, password: string) => {
   try {
-    const response = await axios.post(API_URL, { email, password }, { withCredentials: true });
+    const response = await axios.post(`${API_BASE_URL}/api/users/login`, { email, password }, { withCredentials: true });
     const { access_token } = response.data;
-
+    console.log("Token d'accès reçu:", access_token);
     sessionStorage.setItem("access_token", access_token); 
     return access_token;
   } catch (error) {
@@ -18,7 +18,7 @@ export const login = async (email: string, password: string) => {
 export const refreshToken = async () => {
   try {
     const response = await axios.post(
-      "http://localhost:4000/api/users/refresh-token",
+      `${API_BASE_URL}/api/users/refresh-token`,
       {},
       { withCredentials: true } 
     );

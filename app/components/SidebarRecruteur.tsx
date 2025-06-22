@@ -9,7 +9,7 @@ interface SidebarRecruteurProps {
 }
 
 export default function Sidebar({ isSidebarOpen, onToggle }: SidebarRecruteurProps) {
-  const [openDropdown, setOpenDropdown] = useState<string | null>(null); // Track which dropdown is open
+  const [openDropdown, setOpenDropdown] = useState<string | null>(null); 
 
   const toggleSidebar = () => {
     onToggle(!isSidebarOpen);

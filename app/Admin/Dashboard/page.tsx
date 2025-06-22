@@ -9,6 +9,9 @@ import Swal from 'sweetalert2';
 import Image from "next/image";
 import type { Company } from "@/app/types/company";
 
+// Configuration de l'API Gateway
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
+
 const dataBar = [ 
   { name: "Jan", value: 3 }, 
   { name: "Feb", value: 6 }, 
@@ -49,28 +52,28 @@ export default function AdminDashboard() {
   useEffect(() => {
     const fetchAdminData = async () => {
       try {
-        const { data } = await axios.get("http://localhost:4000/api/users/userId", {
+        const { data } = await axios.get(`${API_BASE_URL}/api/users/userId`, {
           headers: {
             Authorization: `Bearer ${sessionStorage.getItem("access_token")}`,
           },
         });
         setUserId(data.userId);
 
-        const roleRes = await axios.get(`http://localhost:4000/api/users/count-by-role/${data.userId}`, {
+        const roleRes = await axios.get(`${API_BASE_URL}/api/users/count-by-role/${data.userId}`, {
           headers: {
             Authorization: `Bearer ${sessionStorage.getItem("access_token")}`,
           },
         });
         setRoleCounts(roleRes.data);
   
-        const companyRes = await axios.get(`http://localhost:5000/api/companies/by-admin/${data.userId}`, {
+        const companyRes = await axios.get(`${API_BASE_URL}/api/companies/by-admin/${data.userId}`, {
           headers: {
             Authorization: `Bearer ${sessionStorage.getItem("access_token")}`,
           },
         });
         setCompany(companyRes.data);
         
-        const usersRes = await axios.get(`http://localhost:4000/api/users/users`, {
+        const usersRes = await axios.get(`${API_BASE_URL}/api/users/users`, {
           headers: {
             Authorization: `Bearer ${sessionStorage.getItem("access_token")}`,
           },
@@ -101,7 +104,7 @@ useEffect(() => {
     setErrorDistribution(null);
     setLoading(true);
     try {
-      const usersRes = await axios.get(`http://localhost:4000/api/users`, {
+      const usersRes = await axios.get(`${API_BASE_URL}/api/users`, {
         headers: {
           Authorization: `Bearer ${sessionStorage.getItem("access_token")}`,
         },
@@ -131,7 +134,7 @@ useEffect(() => {
 
   if (result.isConfirmed) {
     try {
-      await axios.delete(`http://localhost:4000/api/users/users/${userId}`, {
+      await axios.delete(`${API_BASE_URL}/api/users/users/${userId}`, {
         headers: {
           Authorization: `Bearer ${sessionStorage.getItem("access_token")}`,
         },
@@ -176,7 +179,7 @@ useEffect(() => {
       setLoadingDistribution(true);
       setErrorDistribution(null);
       try {
-        const { data } = await axios.get("http://localhost:4000/api/users/statistics/recruitment-distribution", {
+        const { data } = await axios.get(`${API_BASE_URL}/api/users/statistics/recruitment-distribution`, {
           headers: {
             Authorization: `Bearer ${sessionStorage.getItem("access_token")}`,
           },

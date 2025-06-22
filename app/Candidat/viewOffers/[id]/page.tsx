@@ -9,6 +9,9 @@ import { motion } from 'framer-motion';
 import { useRouter } from 'next/navigation';
 import NavbarCandidat from '@/app/components/NavbarCandidat';
 
+// Configuration de l'API Gateway
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
+
 interface Offer {
   id: number;
   title: string;
@@ -33,7 +36,7 @@ const ViewJobPage = () => {
   useEffect(() => {
     const fetchJob = async () => {
       try {
-        const res = await axios.get<Offer>(`http://localhost:8081/api/offers/offerById/${id}`);
+        const res = await axios.get<Offer>(`${API_BASE_URL}/api/offers/offerById/${id}`);
         setJob(res.data);
       } catch (err) {
         console.error('Error fetching job:', err);
@@ -72,8 +75,7 @@ const ViewJobPage = () => {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6 }}
-          className="max-w-5xl mx-auto px-2 sm:px-4 lg:px-6 py-6"
-        >
+          className="max-w-5xl mx-auto px-2 sm:px-4 lg:px-6 py-6">
           <div className="bg-white/90 shadow-2xl rounded-2xl p-6 space-y-8 border border-blue-100 backdrop-blur-md">
             {/* Header Section */}
             <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
@@ -112,14 +114,12 @@ const ViewJobPage = () => {
               <div className="space-y-6">
                 <DetailCard
                   icon={<FontAwesomeIcon icon={faListCheck} className="text-orange-500 text-lg" />}
-                  label="Skills Required"
-                >
+                  label="Skills Required">
                   <div className="flex flex-wrap gap-4">
                     {job.skillsRequired.split(',').map((skill, index) => (
                       <span
                         key={index}
-                        className="bg-blue-50 text-blue-600 px-3 py-1 rounded-full text-sm font-medium border border-blue-100 shadow-sm"
-                      >
+                        className="bg-blue-50 text-blue-600 px-3 py-1 rounded-full text-sm font-medium border border-blue-100 shadow-sm">
                         {skill.trim()}
                       </span>
                     ))}
@@ -150,8 +150,7 @@ const ViewJobPage = () => {
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.6, duration: 0.5 }}
-              className="text-center"
-            >
+              className="text-center">
               <button
                 onClick={handlePostulerClick}
                 className="inline-flex items-center gap-2 bg-gradient-to-r from-blue-600 to-blue-400 hover:from-blue-700 hover:to-blue-500 text-white px-6 py-2 rounded-lg text-base font-semibold shadow-lg hover:shadow-xl transition-all duration-200"

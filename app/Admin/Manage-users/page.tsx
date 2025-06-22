@@ -8,6 +8,9 @@ import { Zoom } from "react-toastify";
 import AdminLayout from "@/AdminLayout";
 import { Company } from "@/app/types/company";
 
+// Configuration de l'API Gateway
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
+
 interface User {
   id: string;
   username: string;
@@ -35,7 +38,7 @@ export default function ManageUsersPage() {
     if (!selectedUser || !selectedDepartmentsByUser[selectedUser.id]?.length) return;
     try {
       await axios.put(
-        `http://localhost:5000/api/companies/users/${selectedUser.id}/departments`,
+        `${API_BASE_URL}/api/companies/users/${selectedUser.id}/departments`,
         { departments: selectedDepartmentsByUser[selectedUser.id] },
         {
           headers: {
@@ -72,7 +75,7 @@ export default function ManageUsersPage() {
 
   const fetchUsers = async () => {
     try {
-      const res = await axios.get("http://localhost:4000/api/admin/users", {
+      const res = await axios.get(`${API_BASE_URL}/api/admin/users`, {
         headers: {
           Authorization: `Bearer ${sessionStorage.getItem('access_token')}`,
         },
@@ -86,7 +89,7 @@ export default function ManageUsersPage() {
   const fetchUserDepartments = async (userId: string) => {
     try {
       const response = await axios.get(
-        `http://localhost:5000/api/companies/user-departments/${userId}`,
+        `${API_BASE_URL}/api/companies/user-departments/${userId}`,
         {
           headers: {
             Authorization: `Bearer ${sessionStorage.getItem("access_token")}`,
@@ -105,7 +108,7 @@ export default function ManageUsersPage() {
   const handleDelete = async () => {
     if (deleteUserId) {
       try {
-        await axios.delete(`http://localhost:4000/api/admin/users/${deleteUserId}`, {
+        await axios.delete(`${API_BASE_URL}/api/admin/users/${deleteUserId}`, {
           headers: {
             Authorization: `Bearer ${sessionStorage.getItem('access_token')}`,
           },
@@ -127,7 +130,7 @@ export default function ManageUsersPage() {
     e.preventDefault();
     setShowForm(false);
     try {
-      await axios.post("http://localhost:4000/api/admin/users", formData, {
+      await axios.post(`${API_BASE_URL}/api/admin/users`, formData, {
         headers: {
           Authorization: `Bearer ${sessionStorage.getItem('access_token')}`,
         },
@@ -176,13 +179,13 @@ export default function ManageUsersPage() {
   };
   const handleOpenDepartmentModal = async (user: User) => {
     setSelectedUser(user);
-    await fetchUserDepartments(user.id); // Récupérer les départements affectés
+    await fetchUserDepartments(user.id); 
     setShowDepartmentModal(true);
   };
   useEffect(() => {
     const fetchCompanyDepartments = async () => {
       try {
-        const response = await axios.get("http://localhost:5000/api/companies/profile", {
+        const response = await axios.get(`${API_BASE_URL}/api/companies/profile`, {
           headers: {
             Authorization: `Bearer ${sessionStorage.getItem("access_token")}`,
           },
@@ -242,8 +245,7 @@ export default function ManageUsersPage() {
         <div className="flex justify-end">
           <button
             onClick={() => setShowForm(!showForm)}
-            className="flex items-center gap-2 bg-blue-600 text-white py-3 px-6 rounded-lg hover:bg-blue-700 transition"
-          >
+      className="flex items-center gap-2 bg-blue-600 text-white py-3 px-6 rounded-lg hover:bg-blue-700 transition">
             <PlusCircle size={20} />
             {showForm ? "Close" : "Add User"}
           </button>

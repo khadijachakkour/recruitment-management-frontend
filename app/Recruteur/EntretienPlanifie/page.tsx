@@ -3,6 +3,9 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import RecruteurLayout from '@/RecruteurLayout';
 
+// Configuration de l'API Gateway
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
+
 interface Entretien {
   id: string;
   date: string;
@@ -42,18 +45,16 @@ const PlannedInterviewsPage = () => {
       setLoading(true);
       setError(null);
       try {
-        // Get recruiter ID from session
-        const { data } = await axios.get("http://localhost:4000/api/users/userId", {
+        const { data } = await axios.get(`${API_BASE_URL}/api/users/userId`, {
           headers: {
             Authorization: `Bearer ${sessionStorage.getItem("access_token")}`,
           },
         });
         if (data.userId) {
-          // Fetch entretiens
-          const res = await axios.get(`http://localhost:3004/api/entretiens/recruteur/${data.userId}`);
+          const res = await axios.get(`${API_BASE_URL}/api/entretiens/recruteur/${data.userId}`);
           setEntretiens(res.data);
           // Fetch all offers for mapping offer title
-          const offersRes = await axios.get(`http://localhost:8081/api/offers/by-recruiter/${data.userId}`);
+          const offersRes = await axios.get(`${API_BASE_URL}/api/offers/by-recruiter/${data.userId}`);
           setOffers(offersRes.data.map((o: { id: string, title: string }) => ({ id: String(o.id), title: o.title })));
         }
       } catch {
@@ -65,7 +66,6 @@ const PlannedInterviewsPage = () => {
     fetchRecruteurIdAndEntretiens();
   }, []);
 
-  // Helper to get offer title by offerId (from candidature)
   const getOfferTitle = (offerId: string) => {
     return offers.find(o => o.id === offerId)?.title || '';
   };
@@ -107,7 +107,7 @@ const PlannedInterviewsPage = () => {
     setLoading(true);
     setError(null);
     try {
-      await axios.put(`http://localhost:3004/api/entretiens/entretiens/${entretienToCancel}`, { statut: "Annule" });
+      await axios.put(`${API_BASE_URL}/api/entretiens/entretiens/${entretienToCancel}`, { statut: "Annule" });
       setEntretiens(prev => prev.map(e => e.id === entretienToCancel ? { ...e, statut: "Annule" } : e));
       closeCancelModal();
     } catch {
@@ -121,7 +121,7 @@ const PlannedInterviewsPage = () => {
   const fetchJitsiUrl = async (entretienId: string) => {
     if (jitsiLinks[entretienId]) return;
     try {
-      const { data } = await axios.get(`http://localhost:3004/api/entretiens/entretiens/${entretienId}`);
+      const { data } = await axios.get(`${API_BASE_URL}/api/entretiens/entretiens/${entretienId}`);
       if (data && data.jitsiUrl) {
         setJitsiLinks(prev => ({ ...prev, [entretienId]: data.jitsiUrl }));
       }
@@ -310,15 +310,13 @@ const PlannedInterviewsPage = () => {
                   <button
                     className="flex-1 px-4 py-2 rounded-lg bg-gray-100 text-gray-700 font-semibold hover:bg-gray-200 transition"
                     onClick={closeCancelModal}
-                    disabled={loading}
-                  >
+                    disabled={loading}>
                     Back
                   </button>
                   <button
                     className="flex-1 px-4 py-2 rounded-lg bg-gradient-to-r from-red-500 to-red-700 text-white font-semibold hover:from-red-600 hover:to-red-800 transition disabled:opacity-60 disabled:cursor-not-allowed"
                     onClick={handleCancel}
-                    disabled={loading}
-                  >
+                    disabled={loading}>
                     Confirm
                   </button>
                 </div>
@@ -343,7 +341,7 @@ const PlannedInterviewsPage = () => {
                       try {
                         const entretien = entretiens.find(ent => ent.id === entretienToComplete);
                         if (!entretien) throw new Error('Entretien introuvable');
-                        await axios.patch(`http://localhost:8082/api/candidatures/update/${entretien.candidatureId}`, { status: 'refusee' });
+                        await axios.patch(`${API_BASE_URL}/api/candidatures/update/${entretien.candidatureId}`, { status: 'refusee' });
                         setEntretiens(prev => prev.map(ent => ent.id === entretienToComplete ? { ...ent, statut: "Termine" } : ent));
                         setEntretienToComplete(null);
                       } catch {
@@ -364,7 +362,7 @@ const PlannedInterviewsPage = () => {
                       try {
                         const entretien = entretiens.find(ent => ent.id === entretienToComplete);
                         if (!entretien) throw new Error('Entretien introuvable');
-                        await axios.patch(`http://localhost:8082/api/candidatures/update/${entretien.candidatureId}`, { status: 'acceptee' });
+                        await axios.patch(`${API_BASE_URL}/api/candidatures/update/${entretien.candidatureId}`, { status: 'acceptee' });
                         setEntretiens(prev => prev.map(ent => ent.id === entretienToComplete ? { ...ent, statut: "Termine" } : ent));
                         setEntretienToComplete(null);
                       } catch {

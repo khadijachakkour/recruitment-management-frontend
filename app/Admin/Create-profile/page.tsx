@@ -7,6 +7,7 @@ import { useState } from "react";
 import { FaBuilding, FaMapMarkerAlt, FaHistory, FaUsersCog, FaEnvelope, FaCheckCircle, FaIndustry, FaHome, FaCalendar, FaUsers, FaPhone, FaGlobe, FaLink, FaFileAlt, FaFile, FaTrashAlt, FaPlus, FaTimes, FaSave } from "react-icons/fa";
 import Image from "next/image";
 
+
 const steps = [
   { id: 1, title: "Tell us about your company", icon: <FaBuilding /> },
   { id: 2, title: "Tell us about your location", icon: <FaMapMarkerAlt /> },
@@ -48,6 +49,8 @@ export default function CreateCompanyProfile() {
   const [showPreviewModal, setShowPreviewModal] = useState(false);
   const [showPreviewCeoImage, setShowPreviewCeoImage] = useState(false);
 
+  // Configuration de l'API Gateway
+   const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
 
   const validateStep = () => {
     const newErrors: { [key: string]: string } = {};
@@ -155,8 +158,7 @@ export default function CreateCompanyProfile() {
         ceoImage: ceoImageUrl,
       };
       
-  
-      await axios.post('http://localhost:5000/api/companies/createCompany', payload, {
+      await axios.post(`${API_BASE_URL}/api/companies/createCompany`, payload, {
         headers: {
           Authorization: `Bearer ${sessionStorage.getItem('access_token')}`,
         },

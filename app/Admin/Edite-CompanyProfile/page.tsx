@@ -9,6 +9,9 @@ import { FaSave } from "react-icons/fa";
 import Image from "next/image";
 import type { Department } from "@/app/types/company";
 
+// Configuration de l'API Gateway
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
+
 interface FormData {
   companyName: string;
   companyLogo: File | null;
@@ -324,7 +327,7 @@ export default function UpdateCompanyProfile() {
   useEffect(() => {
     const fetchCompany = async () => {
       try {
-        const res = await axios.get("http://localhost:5000/api/companies/profile", {
+        const res = await axios.get(`${API_BASE_URL}/api/companies/profile`, {
           headers: {
             Authorization: `Bearer ${sessionStorage.getItem("access_token")}`,
           },
@@ -434,7 +437,7 @@ export default function UpdateCompanyProfile() {
         ceoImage: ceoImageUrl,
       };
 
-      await axios.put("http://localhost:5000/api/companies/updateProfile", payload, {
+      await axios.put(`${API_BASE_URL}/api/companies/updateProfile`, payload, {
         headers: {
           Authorization: `Bearer ${sessionStorage.getItem("access_token")}`,
         },

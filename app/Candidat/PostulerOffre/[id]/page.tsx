@@ -1,5 +1,8 @@
 'use client';
 
+// Configuration de l'API Gateway
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
+
 import { useEffect, useState } from "react";
 import { toast } from "react-hot-toast";
 import { useParams, useRouter } from "next/navigation";
@@ -19,7 +22,6 @@ export default function Postulation() {
   const params = useParams();
   const id = Array.isArray(params?.id) ? params.id[0] : params?.id;
 
-  // Clean up URL objects to prevent memory leaks
   useEffect(() => {
     return () => {
       if (cvPreviewUrl) URL.revokeObjectURL(cvPreviewUrl);
@@ -30,7 +32,7 @@ export default function Postulation() {
   useEffect(() => {
     if (id) {
       setOfferId(id);
-      fetch(`http://localhost:8081/api/offers/offerById/${id}`)
+      fetch(`${API_BASE_URL}/api/offers/offerById/${id}`)
         .then((res) => res.json())
         .then((data) => {
           if (data && data.title) setOfferTitle(data.title);
@@ -40,9 +42,9 @@ export default function Postulation() {
   }, [id]);
 
   const validateFile = (file: File | null, field: string): boolean => {
-    if (!file) return true; // Optional for cover letter
+    if (!file) return true; 
     const allowedTypes = ['application/pdf', 'application/msword', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'];
-    const maxSize = 5 * 1024 * 1024; // 5MB
+    const maxSize = 5 * 1024 * 1024; 
     if (!allowedTypes.includes(file.type)) {
       toast.error(`${field} must be a PDF, DOC, or DOCX file.`);
       return false;
@@ -75,7 +77,7 @@ export default function Postulation() {
     if (coverLetterFile) formData.append("cover_letter", coverLetterFile);
 
     try {
-      const response = await fetch("http://localhost:8082/api/candidatures/postuler", {
+      const response = await fetch(`${API_BASE_URL}/api/candidatures/postuler`, {
         method: "POST",
         headers: {
           Authorization: `Bearer ${sessionStorage.getItem('access_token')}`,

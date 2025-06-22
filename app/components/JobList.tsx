@@ -38,6 +38,8 @@ export default function JobList() {
 
   const [expandedOfferIds, setExpandedOfferIds] = useState<number[]>([]);
 
+  const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
+
   const toggleDescription = (id: number) => {
     setExpandedOfferIds((prev) =>
       prev.includes(id) ? prev.filter((offerId) => offerId !== id) : [...prev, id]
@@ -47,7 +49,7 @@ export default function JobList() {
   useEffect(() => {
     const fetchOffers = async () => {
       try {
-        const res = await axios.get("http://localhost:8081/api/offers/all");
+        const res = await axios.get(`${API_BASE_URL}/api/offers/all`);
         const data = res.data;
         setOffers(data);
         setFilteredOffers(data);
@@ -58,7 +60,7 @@ export default function JobList() {
         await Promise.all(
           uniqueCompanyIds.map(async (id) => {
             try {
-              const companyRes = await axios.get(`http://localhost:5000/api/companies/company/${id}`);
+              const companyRes = await axios.get(`${API_BASE_URL}/api/companies/company/${id}`);
               details[String(id)] = {
                 name: companyRes.data.name,
                 logo: companyRes.data.logo,
@@ -188,8 +190,8 @@ export default function JobList() {
       </span>
     )}
   </span>
-</div>
-          </div>
+ </div>
+ </div>
 
           <p className={`text-sm text-gray-700 mb-2 ${expandedOfferIds.includes(offer.id) ? '' : 'line-clamp-3'}`}>
   {offer.description}
@@ -198,8 +200,7 @@ export default function JobList() {
 {offer.description.length > 150 && (
   <button
     onClick={() => toggleDescription(offer.id)}
-    className="text-blue-600 hover:underline text-sm mb-4"
-  >
+    className="text-blue-600 hover:underline text-sm mb-4">
       {expandedOfferIds.includes(offer.id) ? "Show less" : "Read more"}
       </button>
 )}
@@ -218,8 +219,7 @@ export default function JobList() {
     Apply Now
   </button>
 </div>
-
-        </div>
+</div>
       );
     })}
   </div>
@@ -242,8 +242,7 @@ export default function JobList() {
           currentPage === index + 1
             ? "bg-blue-600 text-white"
             : "bg-gray-100 hover:bg-gray-200 text-gray-800"
-        }`}
-      >
+        }`} >
         {index + 1}
       </button>
     ))}

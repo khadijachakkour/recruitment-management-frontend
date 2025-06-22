@@ -40,7 +40,6 @@ export default function NotificationsPage() {
       <NavbarCandidat />
       <div className="max-w-2xl mx-auto bg-white rounded-2xl shadow-2xl p-0 mt-12 border border-blue-100 overflow-hidden">
         <div className="relative flex items-center justify-center px-8 py-6 border-b bg-gradient-to-r from-blue-100/60 to-white">
-          {/* Back arrow absolute left */}
           <button
             className="absolute left-6 top-1/2 -translate-y-1/2 p-2 rounded-full hover:bg-blue-100 focus:outline-none focus:ring-2 focus:ring-blue-200"
             onClick={() => window.history.back()}
@@ -48,7 +47,6 @@ export default function NotificationsPage() {
             type="button">
             <IoMdArrowBack className="text-blue-600" size={24} />
           </button>
-          {/* Centered title with icon */}
           <span className="flex items-center gap-2 text-2xl font-bold text-blue-700">
             <IoMdNotificationsOutline className="text-blue-500" size={28} /> Notifications
           </span>

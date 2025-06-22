@@ -23,7 +23,6 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           {/* Contenu principal */}
       <main className="flex-grow pt-16 bg-white">{children}</main>
           <Toaster position="top-right" />
-          {/* Footer */}
           <Footer />
         </AuthProvider>
       </body>

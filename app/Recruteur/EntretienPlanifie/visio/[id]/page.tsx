@@ -3,8 +3,10 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import RecruteurLayout from '@/RecruteurLayout';
 
+// Configuration de l'API Gateway
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
+
 const JitsiMeetPage = ({ params }: { params: Promise<{ id: string }> }) => {
-  // Unwrap params with React.use()
   const { id: entretienId } = React.use(params);
   const [jitsiUrl, setJitsiUrl] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
@@ -15,7 +17,7 @@ const JitsiMeetPage = ({ params }: { params: Promise<{ id: string }> }) => {
       setLoading(true);
       setError(null);
       try {
-        const { data } = await axios.get(`http://localhost:3004/api/entretiens/entretiens/${entretienId}`);
+        const { data } = await axios.get(`${API_BASE_URL}/entretiens/entretiens/${entretienId}`);
         if (data && data.jitsiUrl) {
           // Si la réunion est terminée côté backend (statut = 'Termine'), afficher le message de fin
           if (data.statut === 'Termine' || data.statut === 'TERMINE') {

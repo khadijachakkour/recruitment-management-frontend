@@ -11,10 +11,13 @@ export default function RecruteurLayout({ children, noSidebarMargin = false }: {
   const [recruiterProfile, setRecruiterProfile] = useState<{ firstName?: string; lastName?: string } | null>(null);
   const { logoutAdmin } = useAuth ? useAuth() : { logoutAdmin: () => {} };
 
+  // Configuration de l'API Gateway
+  const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
+
   useEffect(() => {
     async function fetchProfile() {
       try {
-        const { data } = await axios.get("http://localhost:4000/api/users/UserProfile", {
+        const { data } = await axios.get(`${API_BASE_URL}/api/users/UserProfile`, {
           headers: {
             Authorization: `Bearer ${sessionStorage.getItem("access_token")}`,
           },
@@ -75,8 +78,7 @@ export default function RecruteurLayout({ children, noSidebarMargin = false }: {
             <div
               className="bg-gradient-to-br from-[#007bff] to-[#00b4d8] text-white font-bold rounded-full w-12 h-12 flex items-center justify-center text-xl uppercase shadow-md cursor-pointer"
               onClick={() => window.location.href = '/Recruteur/Profile'}
-              title="Voir le profil"
-            >
+              title="Voir le profil">
               {recruiterProfile ? `${recruiterProfile.firstName?.[0] || ''}${recruiterProfile.lastName?.[0] || ''}` : 'RR'}
             </div>
             <button

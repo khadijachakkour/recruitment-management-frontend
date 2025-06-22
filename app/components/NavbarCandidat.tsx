@@ -64,7 +64,6 @@ useEffect(() => {
         )}
 
         <div className="navbar__button-container">
-          {/* Display user profile and logout button if the user is logged in */}
           {isLoggedIn && userRoles.includes("Candidat") ? (
             <>
               <div className="hidden md:flex space-x-4 mr-4">
@@ -86,7 +85,6 @@ useEffect(() => {
                           </span>
                         )}
                       </button>
-                      {/* Dropdown notifications - affiche SEULEMENT les non lues */}
                       {showDropdown && (
                         <div className="absolute right-0 top-full mt-2 w-96 bg-white border border-blue-200 rounded-xl shadow-2xl z-50 max-h-96 overflow-y-auto animate-fade-in">
                           <div className="flex items-center justify-between p-4 border-b font-bold text-blue-700 bg-blue-50 rounded-t-xl">
@@ -126,8 +124,7 @@ useEffect(() => {
                                           href={notif.url}
                                           target="_blank"
                                           rel="noopener noreferrer"
-                                          className="text-blue-600 underline hover:text-blue-800 font-medium text-xs"
-                                        >
+                                          className="text-blue-600 underline hover:text-blue-800 font-medium text-xs">
                                           {notif.url}
                                         </a>
                                       </div>
@@ -147,7 +144,6 @@ useEffect(() => {
               <button onClick={logoutCandidat} className="navbar__connexion text-sm">Logout</button>
             </>
           ) : (
-            /* Display sign-in and post job buttons if the user is not logged in */
             <div className="hidden md:flex space-x-4">
               <Link href="/login/Candidat" className="navbar__connexion text-sm">Sign In</Link>
               <Link href="/login" className="navbar__entreprises text-sm">Employers / Post Job</Link>

@@ -10,7 +10,6 @@ import NavbarCandidat from "../../components/NavbarCandidat";
 import { DecodedToken } from "@/app/types/DecodedToken";
 import Image from "next/image";
 
-
 export default function LoginPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");

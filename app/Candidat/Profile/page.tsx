@@ -159,8 +159,7 @@ export default function Profile() {
                     setAvatarFile(null);
                     setShouldDeleteAvatar(true);
                   }}
-                  className="text-red-600 underline text-sm hover:text-red-700"
-                >
+                  className="text-red-600 underline text-sm hover:text-red-700">
                   Remove profile image
                 </button>
               )}
@@ -177,16 +176,14 @@ export default function Profile() {
                     value={profile.phone_number}
                     onChange={handleChange}
                     className="w-full border border-gray-300 p-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-base placeholder-gray-500"
-                    placeholder="Phone Number"
-                  />
+                    placeholder="Phone Number"/>
                   <input
                     type="text"
                     name="address"
                     value={profile.address}
                     onChange={handleChange}
                     className="w-full border border-gray-300 p-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-base placeholder-gray-500"
-                    placeholder="Address"
-                  />
+                    placeholder="Address"/>
                 </div>
               </div>
               <div>

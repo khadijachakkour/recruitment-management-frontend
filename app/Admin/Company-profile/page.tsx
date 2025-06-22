@@ -1,5 +1,4 @@
 "use client";
-
 import { useEffect, useState } from "react";
 import axios from "axios";
 import { Company } from "@/app/types/company";
@@ -19,6 +18,9 @@ export default function CompanyProfile() {
   const { isLoggedIn, isAuthLoaded } = useAuth();
   const router = useRouter();
 
+  // Configuration de l'API Gateway
+  const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
+
   useEffect(() => {
     if (isAuthLoaded && !isLoggedIn) {
       router.push("/login");
@@ -27,7 +29,7 @@ export default function CompanyProfile() {
     
     const fetchCompanyProfile = async () => {
       try {
-        const response = await axios.get("http://localhost:5000/api/companies/profile", {
+        const response = await axios.get(`${API_BASE_URL}/api/companies/profile`, {
           headers: {
             Authorization: `Bearer ${sessionStorage.getItem("access_token")}`,
           },

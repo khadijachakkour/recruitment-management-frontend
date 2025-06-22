@@ -5,6 +5,9 @@ import Select from "react-select";
 import RecruteurLayout from '@/RecruteurLayout';
 import { Mail } from 'lucide-react';
 
+// Configuration de l'API Gateway
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
+
 interface Candidate {
   rank: number;
   cv: string;
@@ -49,7 +52,7 @@ const PreselectedApplicationPage = () => {
     setError(null);
     try {
       //Récupérer la liste des candidatures pré-sélectionnées pour une offre
-      const res = await axios.get(`http://localhost:8082/api/candidatures/match-cvs/${offerId}`);
+      const res = await axios.get(`${API_BASE_URL}/api/candidatures/match-cvs/${offerId}`);
       
       const enriched = await Promise.all(res.data.map(async (item: Candidate) => {
         let cvUrl = item.cv;
@@ -65,7 +68,7 @@ const PreselectedApplicationPage = () => {
         let firstName = '', lastName = '', email = '', status = '', submittedAt = '';
         if (item.candidate_id) {
           try {
-            const userRes = await axios.get(`http://localhost:4000/api/users/userbyId/${item.candidate_id}`);
+            const userRes = await axios.get(`${API_BASE_URL}/api/users/userbyId/${item.candidate_id}`);
             firstName = userRes.data.firstName || '';
             lastName = userRes.data.lastName || '';
             email = userRes.data.email || '';
@@ -78,7 +81,7 @@ const PreselectedApplicationPage = () => {
         let interviewStatus = undefined;
         try {
           if (item.id || item.candidate_id) {
-            const entretienRes = await axios.get(`http://localhost:3004/api/entretiens/candidature/${item.id || item.candidate_id}`);
+            const entretienRes = await axios.get(`${API_BASE_URL}/api/entretiens/candidature/${item.id || item.candidate_id}`);
             hasInterview = !!entretienRes.data && Object.keys(entretienRes.data).length > 0;
             if (hasInterview && entretienRes.data.statut) {
               interviewStatus = entretienRes.data.statut;
@@ -111,21 +114,21 @@ const PreselectedApplicationPage = () => {
 
   useEffect(() => {
     const fetchOffers = async () => {
-        const { data } = await axios.get("http://localhost:4000/api/users/userId", {
+        const { data } = await axios.get(`${API_BASE_URL}/api/users/userId`, {
           headers: {
             Authorization: `Bearer ${sessionStorage.getItem("access_token")}`,
           },
         });
         if (data.userId) {
           setRecruteurId(data.userId);
-          const userRes = await axios.get(`http://localhost:4000/api/users/userbyId/${data.userId}`);
+          const userRes = await axios.get(`${API_BASE_URL}/api/users/userbyId/${data.userId}`);
         setRecruteurName(`${userRes.data.firstName || ""} ${userRes.data.lastName || ""}`.trim());
          // Récupérer l'id de la company depuis les infos du recruteur
           const companyId = userRes.data.IdCompany;
           console.log("companyId récupéré:", companyId);         
           if (companyId) {
             // Utiliser la route /company/:id pour récupérer le nom de la company
-            const companyRes = await axios.get(`http://localhost:5000/api/companies/company/${companyId}`);
+            const companyRes = await axios.get(`${API_BASE_URL}/api/companies/company/${companyId}`);
             setCompanyName(companyRes.data?.name);
             if (companyRes.data?.name) {
               console.log("Nom de la company récupéré:", companyRes.data.name);
@@ -136,7 +139,7 @@ const PreselectedApplicationPage = () => {
           }
         
           
-        const offersRes = await axios.get(`http://localhost:8081/api/offers/by-recruiter/${data.userId}`);
+        const offersRes = await axios.get(`${API_BASE_URL}/api/offers/by-recruiter/${data.userId}`);
           setOffers(offersRes.data);
         }
       
@@ -182,19 +185,18 @@ const PreselectedApplicationPage = () => {
       }
 
       console.log("Payload envoyé à entretien-service:", entretienPayload);
-      // Pour visio, ne pas inclure le champ lieu du tout
-await axios.post(
-  "http://localhost:3004/api/entretiens/CreateEntretien",
-  entretienPayload,
-  {
-    headers: {
-      Authorization: `Bearer ${sessionStorage.getItem("access_token")}`,
-    },
-  }
-);      // Mise à jour du statut de la candidature associée
+      await axios.post(
+        `${API_BASE_URL}/api/entretiens/CreateEntretien`,
+        entretienPayload,
+        {
+          headers: {
+            Authorization: `Bearer ${sessionStorage.getItem("access_token")}`,
+          },
+        }
+      );      
       const candidatureId = showModal.candidate.id;
       if (candidatureId) {
-        await axios.patch(`http://localhost:8082/api/candidatures/update/${candidatureId}`, { status: "selectionnee_entretien" });
+        await axios.patch(`${API_BASE_URL}/api/candidatures/update/${candidatureId}`, { status: "selectionnee_entretien" });
       }
       setShowModal({open: false});
       fetchCandidates();
@@ -431,7 +433,7 @@ await axios.post(
                 className='flex-1 py-2 rounded-lg bg-red-600 hover:bg-red-700 text-white font-semibold transition'
                 onClick={async () => {
                   try {
-                    await axios.patch(`http://localhost:8082/api/candidatures/update/${confirmRefuse.candidateId}`, { status: "refusee" });
+                    await axios.patch(`${API_BASE_URL}/api/candidatures/update/${confirmRefuse.candidateId}`, { status: "refusee" });
                     setConfirmRefuse({open: false});
                     fetchCandidates();
                   } catch {

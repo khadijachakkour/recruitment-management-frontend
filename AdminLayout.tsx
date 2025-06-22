@@ -1,6 +1,5 @@
 "use client";
 import { useState } from "react";
-import { Menu } from "lucide-react";
 import NavbarAdmin from "./app/components/NavbarAdmin";
 import Sidebar from "./app/components/SidebarAdmin";
 
@@ -10,7 +9,7 @@ interface AdminLayoutProps {
 }
 
 export default function AdminLayout({ children, noSidebarMargin = false }: AdminLayoutProps) {
-  const [isSidebarOpen, setIsSidebarOpen] = useState(false); // sidebar fermée par défaut
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false); 
 
   return (
     <div className="flex min-h-screen w-full">

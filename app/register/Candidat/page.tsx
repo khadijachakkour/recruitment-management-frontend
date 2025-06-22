@@ -5,6 +5,9 @@ import { FaUser, FaEnvelope, FaLock, FaRegEye, FaRegEyeSlash } from "react-icons
 import NavbarAdmin from "@/app/components/NavbarAdmin";
 import Image from "next/image";
 
+// Configuration de l'API Gateway
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
+
 export default function CandidateRegisterPage() {
   const [firstname, setFirstname] = useState("");
   const [lastname, setLastname] = useState("");
@@ -18,7 +21,7 @@ export default function CandidateRegisterPage() {
     e.preventDefault();
 
     try {
-      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/register/Candidat`, {
+      const response = await fetch(`${API_BASE_URL}/api/users/register/Candidat`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ firstname, lastname,username, email, password }),

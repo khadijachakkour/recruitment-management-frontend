@@ -6,8 +6,6 @@ import Hero from "../../components/Hero";
 import JobList from "../../components/JobList";
 import Categories from "../../components/Categories";
 
-
-
 const customStyle = `
 #nprogress {
   pointer-events: none;
@@ -25,7 +23,6 @@ const customStyle = `
 `;
 
 export default function DashboardCandidat() {
-
   return (
     <>
       <style>{customStyle}</style>

@@ -1,6 +1,9 @@
 //Login Page "Admin" "Manager" "Recruteur" "RH"
 "use client";
 
+// Configuration de l'API Gateway
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
+
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
@@ -20,7 +23,6 @@ export default function LoginPage() {
   const [showPassword, setShowPassword] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
   const [isLoading, setIsLoading] = useState(false);
-  
 
   const {
     register,
@@ -38,7 +40,7 @@ export default function LoginPage() {
         const roles = decodedToken?.realm_access?.roles || [];
 
         if (roles.includes("Admin")) {
-          const response = await fetch("http://localhost:5000/api/companies/profile", {
+          const response = await fetch(`${API_BASE_URL}/api/companies/profile`, {
             headers: {
               Authorization: `Bearer ${accessToken}`,
             },
