@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import { useRouter } from "next/navigation";
 import NavbarAdmin from "@/app/components/NavbarAdmin";
+import SidebarAdmin from "@/app/components/SidebarAdmin";
 import { motion, AnimatePresence } from "framer-motion";
 import { Upload, Loader2, X, ChevronLeft, ChevronRight } from "lucide-react";
 import { FaSave } from "react-icons/fa";
@@ -290,6 +291,7 @@ export default function UpdateCompanyProfile() {
   const [companyLogoPreview, setCompanyLogoPreview] = useState<string | null>(null);
   const [ceoImagePreview, setCeoImagePreview] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
   const [formData, setFormData] = useState<FormData>({
     companyName: "",
@@ -734,78 +736,86 @@ export default function UpdateCompanyProfile() {
   };
 
   return (
-    <div className="min-h-screen bg-white">
-      <NavbarAdmin />
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.5 }}
-        className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8"
+    <div className="min-h-screen bg-white flex w-full">
+      <SidebarAdmin isSidebarOpen={isSidebarOpen} onToggle={setIsSidebarOpen} />
+      <div
+        className="flex-1 min-h-screen w-full bg-white"
+        style={{ marginLeft: isSidebarOpen ? "16rem" : "4rem" }}
       >
-        <div className="bg-white rounded-xl shadow-lg overflow-hidden">
-          <div className="px-6 py-3 bg-gradient-to-r from-sky-100 to-sky-200 rounded-t-sm">
-            <h2 className="text-sky-900 mt-1 text-base opacity-90">Complete the steps to update your company details</h2>
-          </div>
+        <NavbarAdmin isSidebarOpen={isSidebarOpen} />
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5 }}
+          className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8"
+        >
+          <div className="bg-white rounded-xl shadow-lg overflow-hidden">
+            <div className="px-6 py-3 bg-gradient-to-r from-sky-100 to-sky-200 rounded-t-sm">
+              <h2 className="text-sky-900 mt-1 text-base opacity-90">
+                Complete the steps to update your company details
+              </h2>
+            </div>
 
-          <div className="px-6 pt-3 pb-6">
-            <ProgressBar currentStep={currentStep} setStep={setCurrentStep} isSubmitting={isSubmitting} />
-            <form onSubmit={handleSubmit} className="space-y-2">
-              <AnimatePresence mode="wait">{renderStep()}</AnimatePresence>
+            <div className="px-6 pt-3 pb-6">
+              <ProgressBar currentStep={currentStep} setStep={setCurrentStep} isSubmitting={isSubmitting} />
+              <form onSubmit={handleSubmit} className="space-y-2">
+                <AnimatePresence mode="wait">{renderStep()}</AnimatePresence>
 
-              <div className="flex justify-between pt-4 gap-6">
-                <div className="flex gap-6">
-                  <button
-                    type="button"
-                    onClick={prevStep}
-                    disabled={currentStep === 1}
-                    className="inline-flex items-center px-4 py-2 bg-gray-100 text-gray-700 rounded-lg text-base font-medium hover:bg-gray-200 disabled:bg-gray-50 disabled:text-gray-400 transition-all shadow-sm"
-                  >
-                    <ChevronLeft className="w-4 h-4 mr-1" />
-                    Previous
-                  </button>
-                  <button
-                    type="button"
-                    onClick={handleCancel}
-                    className="inline-flex items-center px-4 py-2 bg-red-100 text-red-700 rounded-lg text-base font-medium hover:bg-red-200 transition-all shadow-sm"
-                  >
-                    <X className="w-4 h-4 mr-1" />
-                    Cancel
-                  </button>
+                <div className="flex justify-between pt-4 gap-6">
+                  <div className="flex gap-6">
+                    <button
+                      type="button"
+                      onClick={prevStep}
+                      disabled={currentStep === 1}
+                      className="inline-flex items-center px-4 py-2 bg-gray-100 text-gray-700 rounded-lg text-base font-medium hover:bg-gray-200 disabled:bg-gray-50 disabled:text-gray-400 transition-all shadow-sm"
+                    >
+                      <ChevronLeft className="w-4 h-4 mr-1" />
+                      Previous
+                    </button>
+                    <button
+                      type="button"
+                      onClick={handleCancel}
+                      className="inline-flex items-center px-4 py-2 bg-red-100 text-red-700 rounded-lg text-base font-medium hover:bg-red-200 transition-all shadow-sm"
+                    >
+                      <X className="w-4 h-4 mr-1" />
+                      Cancel
+                    </button>
+                  </div>
+                  {currentStep < steps.length ? (
+                    <button
+                      type="button"
+                      onClick={nextStep}
+                      className="inline-flex items-center px-4 py-2 bg-sky-500 text-white rounded-lg text-base font-medium hover:bg-sky-600 transition-all shadow-sm"
+                    >
+                      Next
+                      <ChevronRight className="w-4 h-4 ml-1" />
+                    </button>
+                  ) : (
+                    <button
+                      type="button"
+                      onClick={handleSubmitClick}
+                      disabled={isSubmitting}
+                      className="inline-flex items-center px-4 py-2 bg-sky-500 text-white rounded-lg text-base font-medium hover:bg-sky-600 disabled:bg-sky-300 transition-all shadow-sm"
+                    >
+                      {isSubmitting ? (
+                        <>
+                          <Loader2 className="w-4 h-4 mr-1 animate-spin" />
+                          Saving...
+                        </>
+                      ) : (
+                        <>
+                          <FaSave className="w-4 h-4 mr-1" />
+                          Save Changes
+                        </>
+                      )}
+                    </button>
+                  )}
                 </div>
-                {currentStep < steps.length ? (
-                  <button
-                    type="button"
-                    onClick={nextStep}
-                    className="inline-flex items-center px-4 py-2 bg-sky-500 text-white rounded-lg text-base font-medium hover:bg-sky-600 transition-all shadow-sm"
-                  >
-                    Next
-                    <ChevronRight className="w-4 h-4 ml-1" />
-                  </button>
-                ) : (
-                  <button
-                    type="button"
-                    onClick={handleSubmitClick}
-                    disabled={isSubmitting}
-                    className="inline-flex items-center px-4 py-2 bg-sky-500 text-white rounded-lg text-base font-medium hover:bg-sky-600 disabled:bg-sky-300 transition-all shadow-sm"
-                  >
-                    {isSubmitting ? (
-                      <>
-                        <Loader2 className="w-4 h-4 mr-1 animate-spin" />
-                        Saving...
-                      </>
-                    ) : (
-                      <>
-                        <FaSave className="w-4 h-4 mr-1" />
-                        Save Changes
-                      </>
-                    )}
-                  </button>
-                )}
-              </div>
-            </form>
+              </form>
+            </div>
           </div>
-        </div>
-      </motion.div>
+        </motion.div>
+      </div>
     </div>
   );
 }

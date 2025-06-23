@@ -35,25 +35,25 @@ export default function ManageUsersPage() {
   const [selectedDepartmentsByUser, setSelectedDepartmentsByUser] = useState<{ [userId: string]: string[] }>({});  
   const [showDepartmentModal, setShowDepartmentModal] = useState(false);  
   const handleAssignDepartment = async () => {
-    if (!selectedUser || !selectedDepartmentsByUser[selectedUser.id]?.length) return;
-    try {
-      await axios.put(
-        `${API_BASE_URL}/api/companies/users/${selectedUser.id}/departments`,
-        { departments: selectedDepartmentsByUser[selectedUser.id] },
-        {
-          headers: {
-            Authorization: `Bearer ${sessionStorage.getItem("access_token")}`,
-          },
-        }
-      );
-      toast.success("Départements affectés avec succès !");
-      setShowDepartmentModal(false);
-      fetchUsers();
-    } catch (err) {
-      console.error("Erreur lors de l'affectation des départements", err);
-      toast.error("Erreur lors de l'affectation.");
-    }
-  };
+  if (!selectedUser || !selectedDepartmentsByUser[selectedUser.id]?.length) return;
+  try {
+    await axios.put(
+      `${API_BASE_URL}/api/companies/users/${selectedUser.id}/departments`,
+      { departments: selectedDepartmentsByUser[selectedUser.id] },
+      {
+        headers: {
+          Authorization: `Bearer ${sessionStorage.getItem("access_token")}`,
+        },
+      }
+    );
+    toast.success("Departments assigned successfully!");
+    setShowDepartmentModal(false);
+    fetchUsers();
+  } catch (err) {
+    console.error("Error assigning departments", err);
+    toast.error("Error assigning departments.");
+  }
+};
 
   const [users, setUsers] = useState<User[]>([]);
   const [filteredUsers, setFilteredUsers] = useState<User[]>([]);
@@ -87,24 +87,24 @@ export default function ManageUsersPage() {
     }
   };
   const fetchUserDepartments = async (userId: string) => {
-    try {
-      const response = await axios.get(
-        `${API_BASE_URL}/api/companies/user-departments/${userId}`,
-        {
-          headers: {
-            Authorization: `Bearer ${sessionStorage.getItem("access_token")}`,
-          },
-        }
-      );
-      const departments: { name: string }[] = response.data;
-      setSelectedDepartmentsByUser((prev) => ({
-        ...prev,
-        [userId]: departments.map((dept) => dept.name),
-      }));
-    } catch (err) {
-      console.error("Erreur lors de la récupération des départements de l'utilisateur :", err);
-    }
-  };
+  try {
+    const response = await axios.get(
+      `${API_BASE_URL}/api/companies/user-departments/${userId}`,
+      {
+        headers: {
+          Authorization: `Bearer ${sessionStorage.getItem("access_token")}`,
+        },
+      }
+    );
+    const departments: { name: string }[] = response.data;
+    setSelectedDepartmentsByUser((prev) => ({
+      ...prev,
+      [userId]: departments.map((dept) => dept.name),
+    }));
+  } catch (err) {
+    console.error("Error fetching user departments:", err);
+  }
+};
   const handleDelete = async () => {
     if (deleteUserId) {
       try {
@@ -216,36 +216,38 @@ export default function ManageUsersPage() {
       <div className="p-6 max-w-6xl mx-auto space-y-10">
 
         {/* Filter Options */}
-        <div className="flex space-x-4 mb-4">
-          <select
-            value={filterBy}
-            onChange={(e) => setFilterBy(e.target.value)}
-            className="border border-gray-300 p-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-          >
-            <option value="name">By Name</option>
-            <option value="username">By Username</option>
-            <option value="email">By Email</option>
-            <option value="role">By Role</option>
-          </select>
-
-          {/* Search Bar with Icon */}
-          <div className="flex items-center border border-gray-300 p-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 w-2/3">
-            <Search size={20} className="text-gray-500 mr-2" />
-            <input
-              type="text"
-              placeholder="Search..."
-              value={searchTerm}
-              onChange={handleSearchChange}
-              className="w-full focus:outline-none"
-            />
-          </div>
-        </div>
+        <div className="flex flex-col md:flex-row gap-4 mb-6 items-stretch md:items-center">
+      <div className="flex items-center bg-white shadow-md rounded-xl px-3 py-2 border border-gray-200 focus-within:ring-2 focus-within:ring-blue-400 transition w-full md:w-1/3">
+        <span className="text-blue-500 mr-2 font-semibold">Filter by:</span>
+        <select
+          value={filterBy}
+          onChange={(e) => setFilterBy(e.target.value)}
+          className="bg-transparent border-none outline-none text-gray-700 font-medium focus:ring-0 focus:outline-none cursor-pointer"
+        >
+          <option value="name">Name</option>
+          <option value="username">Username</option>
+          <option value="email">Email</option>
+          <option value="role">Role</option>
+        </select>
+      </div>
+      <div className="flex items-center bg-white shadow-md rounded-xl px-3 py-2 border border-gray-200 focus-within:ring-2 focus-within:ring-blue-400 transition w-full md:w-2/3">
+        <Search size={20} className="text-blue-400 mr-2" />
+        <input
+          type="text"
+          placeholder="Search for a user..."
+          value={searchTerm}
+          onChange={handleSearchChange}
+          className="w-full bg-transparent border-none outline-none text-gray-700 placeholder-gray-400 focus:ring-0 focus:outline-none"
+        />
+      </div>
+    </div>
 
         {/* Add User Button */}
         <div className="flex justify-end">
           <button
             onClick={() => setShowForm(!showForm)}
-      className="flex items-center gap-2 bg-blue-600 text-white py-3 px-6 rounded-lg hover:bg-blue-700 transition">
+      className="flex items-center gap-2 bg-blue-600 text-white py-3 px-6 rounded-lg hover:bg-blue-700 transition"
+          >
             <PlusCircle size={20} />
             {showForm ? "Close" : "Add User"}
           </button>
@@ -260,9 +262,7 @@ export default function ManageUsersPage() {
               exit={{ opacity: 0, y: -10 }}
               transition={{ duration: 0.3 }}
               onSubmit={handleCreate}
-              className="bg-white p-8 rounded-xl shadow-lg space-y-6"
-            >
-              <h2 className="text-2xl font-semibold text-gray-800">Create User</h2>
+              className="bg-white p-6 rounded-xl shadow-lg space-y-4">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 {["firstname", "lastname", "username", "email"].map((field) => (
                   <input
@@ -272,7 +272,7 @@ export default function ManageUsersPage() {
                     placeholder={field.charAt(0).toUpperCase() + field.slice(1)}
                     value={formData[field as keyof UserFormData]}
                     onChange={handleChange}
-                    className="border border-gray-300 p-4 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    className="border border-gray-300 p-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                     required
                   />
                 ))}
@@ -280,18 +280,17 @@ export default function ManageUsersPage() {
                   name="role"
                   value={formData.role}
                   onChange={handleChange}
-                  className="border border-gray-300 p-4 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="border border-gray-300 p-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                   required
                 >
-                  <option value="">Choose a Role</option>
+                  <option value="">Select a Role</option>
                   <option value="Recruteur">Recruiter</option>
-                  <option value="Manager">Manager</option>
                   <option value="RH">HR</option>
                 </select>
               </div>
               <button
                 type="submit"
-                className="bg-green-600 text-white w-full py-3 rounded-lg hover:bg-green-700 transition"
+                className="bg-green-600 text-white px-8 py-3 rounded-lg hover:bg-green-700 transition ml-auto block"
               >
                 Create User
               </button>
@@ -300,76 +299,110 @@ export default function ManageUsersPage() {
         </AnimatePresence>
 
         {/* Users Table */}
-        <div className="bg-white rounded-xl shadow-lg overflow-hidden">
-          <table className="min-w-full text-sm text-left text-gray-700">
-            <thead className="bg-gray-100 text-gray-700 uppercase">
-              <tr>
-                <th className="p-4">Name</th>
-                <th className="p-4">Email</th>
-                <th className="p-4">Username</th>
-                <th className="p-4">Role</th>
-                <th className="p-4 text-center">Actions</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-gray-200">
-              {filteredUsers.length > 0 ? (
-                filteredUsers.map((user) => (
-                  <tr key={user.id} className="hover:bg-gray-50">
-                    <td className="p-4">{user.firstName} {user.lastName}</td>
-                    <td className="p-4">{user.email}</td>
-                    <td className="p-4">{user.username}</td>
-                    <td className="p-4">
-                    <span
-  className={`inline-block px-3 py-1 text-sm font-medium rounded-full
-    ${
-      String(user.role).toLowerCase() === "manager"
-        ? "bg-purple-100 text-purple-700"
-        : String(user.role).toLowerCase() === "recruteur"
-        ? "bg-blue-100 text-blue-700"
-        : String(user.role).toLowerCase() === "rh"
-        ? "bg-green-100 text-green-700"
-        : "bg-gray-100 text-gray-700"
-    }`}
->
-  {user.role}
-</span>
-              </td>
-              <td className="p-4 text-center">
-              {/* Actions */}
-              <div className="flex justify-center gap-4">
-                {/* Delete Action */}
-                <button
-                  onClick={() => {
-                    setDeleteUserId(user.id);
-                    setShowModal(true);
-                  }}
-                  className="text-red-600 hover:text-red-800 flex items-center gap-1"
-                >
-                  <Trash2 size={16} />
-                  Delete
-                </button>
-                {/* Assign Department Action */}
-                <button
-  onClick={() => handleOpenDepartmentModal(user)}
-  className="text-blue-600 hover:text-blue-800 flex items-center gap-1"
->
-  <PlusCircle size={16} />
-  Assign Department
-</button>
+        <div className="bg-white rounded-2xl shadow-2xl overflow-x-auto border border-blue-100 mt-8">
+      <table className="min-w-full text-sm text-left text-gray-800 font-sans">
+        <thead className="bg-gradient-to-r from-blue-50 to-blue-100 text-blue-800 uppercase sticky top-0 z-10">
+          <tr>
+            <th className="p-4 font-semibold">
+              <div className="flex items-center gap-2">
+                <span>
+                  <svg className="inline w-4 h-4 text-blue-400" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M5.121 17.804A13.937 13.937 0 0112 16c2.5 0 4.847.655 6.879 1.804M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                  </svg>
+                </span>
+                Name
               </div>
-            </td>
+            </th>
+            <th className="p-4 font-semibold">
+              <div className="flex items-center gap-2">
+                <span>
+                  <svg className="inline w-4 h-4 text-blue-400" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+                    <rect x="3" y="5" width="18" height="14" rx="2" />
+                    <path d="M3 7l9 6 9-6" />
+                  </svg>
+                </span>
+                Email
+              </div>
+            </th>
+            <th className="p-4 font-semibold">
+              <div className="flex items-center gap-2">
+                <span>
+                  <svg className="inline w-4 h-4 text-blue-400" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M5.121 17.804A13.937 13.937 0 0112 16c2.5 0 4.847.655 6.879 1.804M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                  </svg>
+                </span>
+                Username
+              </div>
+            </th>
+            <th className="p-4 font-semibold">
+              <div className="flex items-center gap-2">
+                <span>
+                  <svg className="inline w-4 h-4 text-blue-400" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M8 17l4 4 4-4m-4-5v9" />
+                  </svg>
+                </span>
+                Role
+              </div>
+            </th>
+            <th className="p-4 text-center font-semibold">Actions</th>
           </tr>
-        ))
-              ) : (
-                <tr>
-                  <td colSpan={5} className="text-center p-6 text-gray-500">
-                    No users found.
-                  </td>
-                </tr>
-              )}
-            </tbody>
-          </table>
-        </div>
+        </thead>
+        <tbody className="divide-y divide-blue-100">
+          {filteredUsers.length > 0 ? (
+            filteredUsers.map((user) => (
+              <tr key={user.id} className="hover:bg-blue-50 transition-colors group">
+                <td className="p-4 whitespace-nowrap font-medium">{user.firstName} {user.lastName}</td>
+                <td className="p-4 whitespace-nowrap">{user.email}</td>
+                <td className="p-4 whitespace-nowrap">{user.username}</td>
+                <td className="p-4 whitespace-nowrap">
+                  <span
+                    className={`inline-block px-3 py-1 text-xs font-semibold rounded-full shadow-sm
+                      ${
+                        String(user.role).toLowerCase() === "manager"
+                          ? "bg-purple-100 text-purple-700"
+                          : String(user.role).toLowerCase() === "recruteur"
+                          ? "bg-blue-100 text-blue-700"
+                          : String(user.role).toLowerCase() === "rh"
+                          ? "bg-green-100 text-green-700"
+                          : "bg-gray-100 text-gray-700"
+                      }`}
+                  >
+                    {user.role}
+                  </span>
+                </td>
+                <td className="p-4 text-center">
+                  <div className="flex justify-center gap-2 md:gap-4">
+                    <button
+                      onClick={() => {
+                        setDeleteUserId(user.id);
+                        setShowModal(true);
+                      }}
+                      className="bg-red-50 text-red-600 hover:bg-red-100 hover:text-red-800 flex items-center justify-center gap-1 rounded-full p-2 shadow-sm transition-all duration-150 focus:outline-none focus:ring-2 focus:ring-red-300 opacity-80 group-hover:opacity-100"
+                      aria-label="Delete user"
+                    >
+                      <Trash2 size={18} />
+                    </button>
+                    <button
+                      onClick={() => handleOpenDepartmentModal(user)}
+                      className="bg-blue-50 text-blue-600 hover:bg-blue-100 hover:text-blue-800 flex items-center justify-center gap-1 rounded-full p-2 shadow-sm transition-all duration-150 focus:outline-none focus:ring-2 focus:ring-blue-300 opacity-80 group-hover:opacity-100"
+                      aria-label="Assign department"
+                    >
+                      <PlusCircle size={18} />
+                    </button>
+                  </div>
+                </td>
+              </tr>
+            ))
+          ) : (
+            <tr>
+              <td colSpan={5} className="text-center p-6 text-gray-500">
+                No users found.
+              </td>
+            </tr>
+          )}
+        </tbody>
+      </table>
+    </div>
 
         {/* Delete Confirmation Modal */}
         {showModal && (
@@ -400,46 +433,53 @@ export default function ManageUsersPage() {
       {showDepartmentModal && selectedUser && (
   <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
     <motion.div
-      initial={{ opacity: 0, y: -20 }}
-      animate={{ opacity: 1, y: 0 }}
-      exit={{ opacity: 0, y: 20 }}
-      transition={{ duration: 0.3 }}
-      className="bg-white p-8 rounded-lg w-full max-w-md"
+      initial={{ opacity: 0, scale: 0.95, y: 40 }}
+      animate={{ opacity: 1, scale: 1, y: 0 }}
+      exit={{ opacity: 0, scale: 0.95, y: 40 }}
+      transition={{ duration: 0.3, ease: 'easeOut' }}
+      className="bg-white p-8 rounded-2xl shadow-2xl w-full max-w-md border border-blue-100"
     >
-      <h2 className="text-xl font-semibold mb-4">Assign Departments</h2>
-      <p className="mb-4">
-        User : <strong>{selectedUser.firstName} {selectedUser.lastName}</strong>
-      </p>
-      <div className="space-y-2">
-      {company?.departments?.map((dept) => (
-  <label key={dept.id} className="flex items-center gap-2">
-    <input
-      type="checkbox"
-      value={dept.name}
-      checked={selectedDepartmentsByUser[selectedUser?.id]?.includes(dept.name) || false}
-      onChange={(e) => handleDepartmentChange(selectedUser!.id, dept.name, e.target.checked)}
-      className="form-checkbox"
-    />
-    {dept.name}
-  </label>
-))}
+      <div className="flex flex-col items-center mb-6">
+        <div className="flex items-center gap-3 mb-2">
+          <svg className="w-7 h-7 text-blue-500" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" d="M5.121 17.804A13.937 13.937 0 0112 16c2.5 0 4.847.655 6.879 1.804M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+          </svg>
+          <h2 className="text-xl font-extrabold text-blue-700 tracking-tight">Assign Departments</h2>
+        </div>
+        <div className="bg-blue-50 rounded-lg px-4 py-2 flex items-center gap-2">
+          <span className="font-semibold text-blue-600 text-lg">{selectedUser.firstName} {selectedUser.lastName}</span>
+        </div>
       </div>
-      <div className="flex justify-end gap-2 mt-6">
+      <div className="space-y-3 max-h-56 overflow-y-auto pr-2 mb-6">
+        {company?.departments?.map((dept) => (
+          <label key={dept.id} className="flex items-center gap-3 cursor-pointer px-2 py-1 rounded-lg hover:bg-blue-50 transition">
+            <input
+              type="checkbox"
+              value={dept.name}
+              checked={selectedDepartmentsByUser[selectedUser?.id]?.includes(dept.name) || false}
+              onChange={(e) => handleDepartmentChange(selectedUser!.id, dept.name, e.target.checked)}
+              className="accent-blue-600 h-5 w-5 rounded border-gray-300 focus:ring-2 focus:ring-blue-400 transition"
+            />
+            <span className="text-gray-800 text-base font-medium select-none">{dept.name}</span>
+          </label>
+        ))}
+      </div>
+      <div className="flex justify-end gap-3 mt-4">
         <button
           onClick={() => setShowDepartmentModal(false)}
-          className="px-4 py-2 rounded-lg bg-gray-300 hover:bg-gray-400"
+          className="px-5 py-2 rounded-lg bg-gray-200 hover:bg-gray-300 text-gray-700 font-semibold transition"
         >
           Cancel
         </button>
         <button
           onClick={handleAssignDepartment}
-          className="px-4 py-2 rounded-lg bg-blue-600 text-white hover:bg-blue-700"
+          className="px-5 py-2 rounded-lg bg-blue-600 text-white hover:bg-blue-700 font-semibold shadow transition"
         >
           Confirm
         </button>
       </div>
     </motion.div>
-    </div>
+  </div>
 )}
 
 <ToastContainer

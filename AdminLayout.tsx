@@ -23,7 +23,7 @@ export default function AdminLayout({ children, noSidebarMargin = false }: Admin
         }}
       >
         {/* Navbar */}
-        <NavbarAdmin />
+        <NavbarAdmin isSidebarOpen={isSidebarOpen} />
         {/* Page Content */}
         <div className="pt-16">{children}</div>
       </div>

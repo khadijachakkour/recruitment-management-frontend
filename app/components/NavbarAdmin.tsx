@@ -3,13 +3,21 @@ import Link from "next/link";
 import "../styles/NavbarAdmin.css";
 import { useAuth } from "@/src/context/authContext";
 
-export default function NavbarAdmin() {
+interface NavbarAdminProps {
+  isSidebarOpen?: boolean;
+}
+
+export default function NavbarAdmin({ isSidebarOpen = false }: NavbarAdminProps) {
   const { isLoggedIn, userRoles, logoutAdmin } = useAuth();
   const isAdmin = isLoggedIn && userRoles.includes("Admin");
   const isRecruteur = isLoggedIn && userRoles.includes("Recruteur");
 
+  // Décalage dynamique selon la sidebar
+  // Si l'utilisateur N'EST PAS connecté, pas de décalage !
+  const sidebarWidth = isLoggedIn ? (isSidebarOpen ? "16rem" : "4rem") : "0";
+
   return (
-    <nav className="navbar">
+    <nav className="navbar" style={{ marginLeft: sidebarWidth, width: `calc(100% - ${sidebarWidth})` }}>
       <div className="container mx-auto flex justify-between items-center p-2 navbar__nav-container">
         <Link href={isAdmin ? "/Admin/Dashboard" : isRecruteur ? "/Recruteur/Dashboard" : "/"} className="navbar__logo">
           SmartHire
