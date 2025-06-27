@@ -6,6 +6,7 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { FaBuilding, FaMapMarkerAlt, FaHistory, FaUsersCog, FaEnvelope, FaCheckCircle, FaIndustry, FaHome, FaCalendar, FaUsers, FaPhone, FaGlobe, FaLink, FaFileAlt, FaFile, FaTrashAlt, FaPlus, FaTimes, FaSave } from "react-icons/fa";
 import Image from "next/image";
+import AdminLayout from "@/AdminLayout";
 
 
 const steps = [
@@ -177,9 +178,9 @@ export default function CreateCompanyProfile() {
   
   return (
     <>
-      <NavbarAdmin />
+    <AdminLayout>
       <div className="min-h-screen p-3">
-      <div className="max-w-5xl mx-auto">
+      <div className="max-w-5xl mx-auto" style={{ zoom: 0.87 }}>
         {/* Barre de progression */}
         <div className="bg-white rounded-lg shadow-lg overflow-hidden flex flex-col sm:flex-row">
         <div className="w-full md:w-1/4 bg-gray-50 p-3 border-r border-gray-200">
@@ -808,6 +809,8 @@ export default function CreateCompanyProfile() {
         </div>
         </div>
         </div>
+      
+      </AdminLayout>
         </>
   );
 }

@@ -36,7 +36,7 @@ const ViewJobPage = () => {
   useEffect(() => {
     const fetchJob = async () => {
       try {
-        const res = await axios.get<Offer>(`${API_BASE_URL}/offers/offerById/${id}`);
+        const res = await axios.get<Offer>(`${API_BASE_URL}/api/offers/offerById/${id}`);
         setJob(res.data);
       } catch (err) {
         console.error('Error fetching job:', err);

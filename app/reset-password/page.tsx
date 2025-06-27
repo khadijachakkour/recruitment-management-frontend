@@ -25,7 +25,7 @@ const ResetPasswordPage = () => {
               <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
               <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8z"></path>
             </svg>
-            <span className="text-blue-600 font-semibold mt-2">Loading...</span>
+            <span className="text-blue-600 font-semibold mt-2">Loading, please wait...</span>
           </div>
         </div>
       }
@@ -52,7 +52,7 @@ const ResetPasswordContent = () => {
 
   useEffect(() => {
     if (!token) {
-      setError('Reset token is missing.');
+      setError('A reset token is required to set your password. Please check your email link.');
     }
   }, [token]);
 
@@ -63,15 +63,15 @@ const ResetPasswordContent = () => {
 
   const handlePasswordReset = async () => {
     if (!token) {
-      setError('Token is missing in the URL.');
+      setError('A reset token is required. Please use the link sent to your email.');
       return;
     }
     if (newPassword !== confirmPassword) {
-      setError('Passwords do not match.');
+      setError('Passwords do not match. Please ensure both fields are identical.');
       return;
     }
     if (validationErrors.length > 0) {
-      setError('Password does not meet security requirements.');
+      setError('Your password does not meet the security requirements below.');
       return;
     }
     setLoading(true);
@@ -84,9 +84,9 @@ const ResetPasswordContent = () => {
       setShowSuccessModal(true);
     } catch (error) {
       if (axios.isAxiosError(error)) {
-        setError(error.response?.data?.message || 'An error occurred.');
+        setError(error.response?.data?.message || 'An unexpected error occurred. Please try again.');
       } else {
-        setError('An error occurred.');
+        setError('An unexpected error occurred. Please try again.');
       }
     } finally {
       setLoading(false);
@@ -104,10 +104,10 @@ const ResetPasswordContent = () => {
 
   const getPasswordValidationErrors = (password: string): string[] => {
     const errors = [];
-    if (password.length < 8) errors.push('At least 8 characters');
-    if (!/[A-Z]/.test(password)) errors.push('At least one uppercase letter');
-    if (!/[0-9]/.test(password)) errors.push('At least one number');
-    if (!/[^A-Za-z0-9]/.test(password)) errors.push('At least one special character');
+    if (password.length < 8) errors.push('Must be at least 8 characters long');
+    if (!/[A-Z]/.test(password)) errors.push('Must contain at least one uppercase letter');
+    if (!/[0-9]/.test(password)) errors.push('Must include at least one number');
+    if (!/[^A-Za-z0-9]/.test(password)) errors.push('Must include at least one special character');
     return errors;
   };
 
@@ -141,15 +141,14 @@ const ResetPasswordContent = () => {
               </div>
               <span className="font-extrabold text-2xl text-blue-700 tracking-tight mb-1">SmartHire</span>
             </div>
-            <h3 className="text-xl font-bold text-gray-800 mb-2 text-center">Password set successfully!</h3>
+            <h3 className="text-xl font-bold text-gray-800 mb-2 text-center">Your password has been set!</h3>
             <p className="text-gray-500 text-center mb-6 text-sm">
-              Your password has been saved. You can now log in to your recruiter space.
+              Your password was updated successfully. You can now log in to your account.
             </p>
             <button
               className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded-lg transition text-base shadow"
-              onClick={() => router.push('/login')}
-            >
-              Log in
+              onClick={() => router.push('/login')}>
+              Go to Login
             </button>
           </motion.div>
         </div>
@@ -157,6 +156,7 @@ const ResetPasswordContent = () => {
       {/* Main Card */}
       <motion.div
         className="bg-white w-full max-w-lg rounded-2xl shadow-2xl p-10 flex flex-col items-center"
+        style={{ zoom: 0.94 }}
         initial={{ opacity: 0, y: 30 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5, ease: 'easeOut' }}
@@ -164,9 +164,9 @@ const ResetPasswordContent = () => {
         <div className="flex flex-col items-center mb-6">
           <span className="font-extrabold text-2xl text-blue-700 tracking-tight">SmartHire</span>
         </div>
-        <h2 className="text-xl font-bold text-center text-gray-800 mb-2">Set your password</h2>
+        <h2 className="text-xl font-bold text-center text-gray-800 mb-2">Create a New Password</h2>
         <p className="text-gray-500 text-center mb-6 text-sm">
-          Please choose a secure password to activate your recruiter account.
+          Please enter a strong password to secure your account. Follow the requirements below for best security.
         </p>
         {error && (
           <div className="bg-red-50 border border-red-300 text-red-700 px-4 py-3 rounded mb-4 text-sm w-full text-center animate-shake">
@@ -175,12 +175,12 @@ const ResetPasswordContent = () => {
         )}
         <form className="space-y-6 w-full" onSubmit={(e) => { e.preventDefault(); handlePasswordReset(); }}>
           <div className="relative">
-            <label className="text-sm font-semibold text-gray-700 block mb-2">New password</label>
+            <label className="text-sm font-semibold text-gray-700 block mb-2">New Password</label>
             <input
               type={showPassword ? 'text' : 'password'}
               name="newPassword"
               autoComplete="new-password"
-              placeholder="Enter a password"
+              placeholder="Enter your new password"
               value={newPassword}
               onChange={(e) => setNewPassword(e.target.value)}
               className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none transition ${
@@ -205,7 +205,7 @@ const ResetPasswordContent = () => {
                     ></div>
                   </div>
                   <p className="text-xs text-gray-600 mt-1">
-                    Strength: <strong>{strengthLabels[strength]}</strong>
+                    Password strength: <strong>{strengthLabels[strength]}</strong>
                   </p>
                 </div>
                 {validationErrors.length > 0 && (
@@ -219,12 +219,12 @@ const ResetPasswordContent = () => {
             )}
           </div>
           <div className="relative">
-            <label className="text-sm font-semibold text-gray-700 block mb-2">Confirm password</label>
+            <label className="text-sm font-semibold text-gray-700 block mb-2">Confirm New Password</label>
             <input
               type={showPassword ? 'text' : 'password'}
               name="confirmPassword"
               autoComplete="new-password"
-              placeholder="Confirm your password"
+              placeholder="Re-enter your new password"
               value={confirmPassword}
               onChange={(e) => setConfirmPassword(e.target.value)}
               className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none transition"
@@ -255,9 +255,9 @@ const ResetPasswordContent = () => {
                   <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
                   <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8z"></path>
                 </svg>
-                Setting...
+                Setting password...
               </span>
-            ) : 'Set my password'}
+            ) : 'Set Password'}
           </button>
         </form>
       </motion.div>

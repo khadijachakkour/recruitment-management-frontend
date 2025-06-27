@@ -212,35 +212,34 @@ export default function ManageUsersPage() {
   return (
     <>
      <AdminLayout>
-      <main className="p-6 pt-24">
-      <div className="p-6 max-w-6xl mx-auto space-y-10">
-
-        {/* Filter Options */}
-        <div className="flex flex-col md:flex-row gap-4 mb-6 items-stretch md:items-center">
-      <div className="flex items-center bg-white shadow-md rounded-xl px-3 py-2 border border-gray-200 focus-within:ring-2 focus-within:ring-blue-400 transition w-full md:w-1/3">
-        <span className="text-blue-500 mr-2 font-semibold">Filter by:</span>
-        <select
-          value={filterBy}
-          onChange={(e) => setFilterBy(e.target.value)}
-          className="bg-transparent border-none outline-none text-gray-700 font-medium focus:ring-0 focus:outline-none cursor-pointer"
-        >
-          <option value="name">Name</option>
-          <option value="username">Username</option>
-          <option value="email">Email</option>
-          <option value="role">Role</option>
-        </select>
+      {/* Filter Options - move outside and above <main> for absolute top position */}
+      <div className="w-full flex flex-col md:flex-row gap-3 mb-2 items-stretch md:items-center px-4 pt-4 max-w-6xl mx-auto">
+        <div className="flex items-center bg-white shadow-md rounded-xl px-3 py-2 border border-gray-200 focus-within:ring-2 focus-within:ring-blue-400 transition w-full md:w-1/3">
+          <span className="text-blue-500 mr-2 font-semibold">Filter by:</span>
+          <select
+            value={filterBy}
+            onChange={(e) => setFilterBy(e.target.value)}
+            className="bg-transparent border-none outline-none text-gray-700 font-medium focus:ring-0 focus:outline-none cursor-pointer"
+          >
+            <option value="name">Name</option>
+            <option value="username">Username</option>
+            <option value="email">Email</option>
+            <option value="role">Role</option>
+          </select>
+        </div>
+        <div className="flex items-center bg-white shadow-md rounded-xl px-3 py-2 border border-gray-200 focus-within:ring-2 focus-within:ring-blue-400 transition w-full md:w-2/3">
+          <Search size={20} className="text-blue-400 mr-2" />
+          <input
+            type="text"
+            placeholder="Search for a user..."
+            value={searchTerm}
+            onChange={handleSearchChange}
+            className="w-full bg-transparent border-none outline-none text-gray-700 placeholder-gray-400 focus:ring-0 focus:outline-none"
+          />
+        </div>
       </div>
-      <div className="flex items-center bg-white shadow-md rounded-xl px-3 py-2 border border-gray-200 focus-within:ring-2 focus-within:ring-blue-400 transition w-full md:w-2/3">
-        <Search size={20} className="text-blue-400 mr-2" />
-        <input
-          type="text"
-          placeholder="Search for a user..."
-          value={searchTerm}
-          onChange={handleSearchChange}
-          className="w-full bg-transparent border-none outline-none text-gray-700 placeholder-gray-400 focus:ring-0 focus:outline-none"
-        />
-      </div>
-    </div>
+      <main className="p-4 pt-2">
+      <div className="p-4 max-w-6xl mx-auto space-y-10"> {/* p-6 -> p-4 for less vertical space */}
 
         {/* Add User Button */}
         <div className="flex justify-end">
@@ -262,7 +261,9 @@ export default function ManageUsersPage() {
               exit={{ opacity: 0, y: -10 }}
               transition={{ duration: 0.3 }}
               onSubmit={handleCreate}
-              className="bg-white p-6 rounded-xl shadow-lg space-y-4">
+              className="bg-white p-6 rounded-xl shadow-lg space-y-4"
+              style={{ zoom: 0.9 }} 
+            >
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 {["firstname", "lastname", "username", "email"].map((field) => (
                   <input
@@ -406,81 +407,90 @@ export default function ManageUsersPage() {
 
         {/* Delete Confirmation Modal */}
         {showModal && (
-          <div className="fixed inset-0 flex justify-center items-center z-50 bg-black bg-opacity-50">
-            <div className="bg-white p-6 rounded-xl shadow-lg max-w-sm w-full space-y-4">
-              <h2 className="text-xl font-semibold text-gray-800">Confirmation</h2>
-              <p className="text-gray-600">Do you really want to delete this user?</p>
-              <div className="flex justify-end gap-3">
+          <div className="fixed inset-0 flex justify-center items-center z-50 bg-black/40">
+            <motion.div
+              initial={{ opacity: 0, scale: 0.96, y: 32 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.96, y: 32 }}
+              transition={{ duration: 0.28, ease: 'easeOut' }}
+              className="relative bg-gradient-to-br from-white via-blue-50 to-gray-50 p-0 rounded-3xl shadow-2xl max-w-xs w-full border border-blue-100 overflow-hidden"
+              style={{ minWidth: 230, zoom: 1.1 }}
+            >
+              <div className="flex flex-col items-center px-4 pt-6 pb-4"> {/* less padding */}
+                <div className="bg-red-200/80 rounded-full p-2 mb-2 flex items-center justify-center shadow-lg">
+                  <Trash2 size={26} className="text-red-600" />
+                </div>
+                <h2 className="text-lg font-bold text-gray-900 text-center mb-2 tracking-tight">Confirm Deletion</h2>
+                <p className="text-gray-600 text-center text-xs mb-1">Are you sure you want to delete this user? <span className='font-semibold text-red-600'>This action is irreversible.</span></p>
+              </div>
+              <div className="flex justify-center gap-3 px-4 pb-4"> {/* less padding */}
                 <button
                   onClick={() => setShowModal(false)}
-                  className="bg-gray-300 text-gray-800 px-4 py-2 rounded hover:bg-gray-400"
+                  className="px-4 py-2 rounded-lg bg-white hover:bg-gray-100 text-gray-700 font-semibold border border-gray-200 shadow-sm transition focus:outline-none focus:ring-2 focus:ring-blue-200 text-xs"
                 >
                   Cancel
                 </button>
                 <button
                   onClick={handleDelete}
-                  className="bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700"
+                  className="px-4 py-2 rounded-lg bg-gradient-to-r from-red-500 to-red-700 text-white font-semibold shadow-md border border-red-200 hover:from-red-600 hover:to-red-800 transition focus:outline-none focus:ring-2 focus:ring-red-200 text-xs"
                 >
                   Delete
                 </button>
               </div>
-            </div>
+            </motion.div>
           </div>
         )}
       </div>
       </main>
       </AdminLayout>
       {showDepartmentModal && selectedUser && (
-  <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
-    <motion.div
-      initial={{ opacity: 0, scale: 0.95, y: 40 }}
-      animate={{ opacity: 1, scale: 1, y: 0 }}
-      exit={{ opacity: 0, scale: 0.95, y: 40 }}
-      transition={{ duration: 0.3, ease: 'easeOut' }}
-      className="bg-white p-8 rounded-2xl shadow-2xl w-full max-w-md border border-blue-100"
-    >
-      <div className="flex flex-col items-center mb-6">
-        <div className="flex items-center gap-3 mb-2">
-          <svg className="w-7 h-7 text-blue-500" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" d="M5.121 17.804A13.937 13.937 0 0112 16c2.5 0 4.847.655 6.879 1.804M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
-          </svg>
-          <h2 className="text-xl font-extrabold text-blue-700 tracking-tight">Assign Departments</h2>
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm">
+          <motion.div
+            initial={{ opacity: 0, scale: 0.96, y: 32 }}
+            animate={{ opacity: 1, scale: 1, y: 0 }}
+            exit={{ opacity: 0, scale: 0.96, y: 32 }}
+            transition={{ duration: 0.28, ease: 'easeOut' }}
+            className="relative bg-gradient-to-br from-white via-blue-50 to-blue-100 p-0 rounded-3xl shadow-2xl max-w-sm w-full border border-blue-200 overflow-hidden"
+            style={{ minWidth: 280, zoom: 0.97 }}>
+            <div className="flex flex-col items-center px-6 pt-8 pb-4">
+              <h2 className="text-xl font-extrabold text-blue-800 text-center mb-2 tracking-tight">Assign Departments</h2>
+              <p className="text-gray-600 text-center text-sm mb-3">Assign one or more departments to <span className="font-semibold text-blue-700">{selectedUser.firstName} {selectedUser.lastName}</span> for better access control and management.</p>
+            </div>
+            <div className="space-y-2 max-h-48 overflow-y-auto px-6 pb-2">
+              {company?.departments?.length ? (
+                company.departments.map((dept) => (
+                  <label key={dept.id} className="flex items-center gap-3 cursor-pointer px-3 py-2 rounded-xl bg-white/90 hover:bg-blue-50 border border-blue-100 shadow transition-all duration-150">
+                    <input
+                      type="checkbox"
+                      value={dept.name}
+                      checked={selectedDepartmentsByUser[selectedUser?.id]?.includes(dept.name) || false}
+                      onChange={(e) => handleDepartmentChange(selectedUser!.id, dept.name, e.target.checked)}
+                      className="accent-blue-600 h-5 w-5 rounded border-gray-300 focus:ring-2 focus:ring-blue-400 transition"
+                    />
+                    <span className="text-gray-800 text-base font-medium select-none">{dept.name}</span>
+                  </label>
+                ))
+              ) : (
+                <div className="text-center text-gray-400 py-6">No departments available.</div>
+              )}
+            </div>
+            <div className="flex justify-center gap-4 mt-6 px-6 pb-6">
+              <button
+                onClick={() => setShowDepartmentModal(false)}
+                className="px-5 py-2 rounded-lg bg-white hover:bg-gray-100 text-gray-700 font-semibold border border-gray-200 shadow-sm transition focus:outline-none focus:ring-2 focus:ring-blue-200 text-sm"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={handleAssignDepartment}
+                className="px-5 py-2 rounded-lg bg-gradient-to-r from-blue-600 to-blue-800 text-white font-semibold shadow-md border border-blue-200 hover:from-blue-700 hover:to-blue-900 transition focus:outline-none focus:ring-2 focus:ring-blue-300 text-sm"
+              >
+                Confirm
+              </button>
+            </div>
+          </motion.div>
         </div>
-        <div className="bg-blue-50 rounded-lg px-4 py-2 flex items-center gap-2">
-          <span className="font-semibold text-blue-600 text-lg">{selectedUser.firstName} {selectedUser.lastName}</span>
-        </div>
-      </div>
-      <div className="space-y-3 max-h-56 overflow-y-auto pr-2 mb-6">
-        {company?.departments?.map((dept) => (
-          <label key={dept.id} className="flex items-center gap-3 cursor-pointer px-2 py-1 rounded-lg hover:bg-blue-50 transition">
-            <input
-              type="checkbox"
-              value={dept.name}
-              checked={selectedDepartmentsByUser[selectedUser?.id]?.includes(dept.name) || false}
-              onChange={(e) => handleDepartmentChange(selectedUser!.id, dept.name, e.target.checked)}
-              className="accent-blue-600 h-5 w-5 rounded border-gray-300 focus:ring-2 focus:ring-blue-400 transition"
-            />
-            <span className="text-gray-800 text-base font-medium select-none">{dept.name}</span>
-          </label>
-        ))}
-      </div>
-      <div className="flex justify-end gap-3 mt-4">
-        <button
-          onClick={() => setShowDepartmentModal(false)}
-          className="px-5 py-2 rounded-lg bg-gray-200 hover:bg-gray-300 text-gray-700 font-semibold transition"
-        >
-          Cancel
-        </button>
-        <button
-          onClick={handleAssignDepartment}
-          className="px-5 py-2 rounded-lg bg-blue-600 text-white hover:bg-blue-700 font-semibold shadow transition"
-        >
-          Confirm
-        </button>
-      </div>
-    </motion.div>
-  </div>
-)}
+      )}
 
 <ToastContainer
         position="top-right"

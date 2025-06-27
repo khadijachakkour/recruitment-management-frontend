@@ -736,7 +736,7 @@ export default function UpdateCompanyProfile() {
   };
 
   return (
-    <div className="min-h-screen bg-white flex w-full">
+    <div className="min-h-screen bg-white flex w-full" style={{ zoom: 0.9 }}>
       <SidebarAdmin isSidebarOpen={isSidebarOpen} onToggle={setIsSidebarOpen} />
       <div
         className="flex-1 min-h-screen w-full bg-white"
@@ -747,8 +747,7 @@ export default function UpdateCompanyProfile() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5 }}
-          className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8"
-        >
+          className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
           <div className="bg-white rounded-xl shadow-lg overflow-hidden">
             <div className="px-6 py-3 bg-gradient-to-r from-sky-100 to-sky-200 rounded-t-sm">
               <h2 className="text-sky-900 mt-1 text-base opacity-90">

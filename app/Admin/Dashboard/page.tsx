@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import axios from "axios"; 
 import { ResponsiveContainer, PieChart, Pie, Cell, BarChart, Bar, XAxis, YAxis, Tooltip} from "recharts";
 import { motion, AnimatePresence } from "framer-motion";
-import { Bell, Users, FileText, Search, PlusCircle, Eye, Trash2 } from "lucide-react";
+import { Bell, Users, FileText, Search, PlusCircle, Eye, Trash2, BriefcaseBusiness, Lock } from "lucide-react";
 import AdminLayout from "@/AdminLayout"; 
 import Swal from 'sweetalert2';
 import Image from "next/image";
@@ -48,6 +48,10 @@ export default function AdminDashboard() {
   const [recruitmentDistribution, setRecruitmentDistribution] = useState(dataPie);
   const [loadingDistribution, setLoadingDistribution] = useState(true);
   const [errorDistribution, setErrorDistribution] = useState<string | null>(null);
+  const [offersCount, setOffersCount] = useState<number | null>(null);
+  const [offers, setOffers] = useState<any[]>([]);
+  const [loadingOffers, setLoadingOffers] = useState(true);
+  const [errorOffers, setErrorOffers] = useState<string | null>(null);
 
   useEffect(() => {
     const fetchAdminData = async () => {
@@ -80,6 +84,19 @@ export default function AdminDashboard() {
         });
         setUsers(usersRes.data);
         setFilteredUsers(usersRes.data);
+
+        const offersCountRes = await axios.get(`${API_BASE_URL}/api/admin/dashboard/offers-count`, {
+          headers: {
+            Authorization: `Bearer ${sessionStorage.getItem("access_token")}`,
+          },
+        });
+        setOffersCount(offersCountRes.data.offerCount || 0);
+        const offersRes = await axios.get(`${API_BASE_URL}/api/admin/dashboard/offers`, {
+          headers: {
+            Authorization: `Bearer ${sessionStorage.getItem("access_token")}`,
+          },
+        });
+        setOffers(offersRes.data);
       } catch (error) {
         console.error("Error fetching admin or company data:", error);
       } finally {
@@ -242,7 +259,7 @@ useEffect(() => {
     className="bg-white p-4 rounded-2xl shadow-xl mb-9 flex flex-col sm:flex-row items-center justify-between gap-6 border border-gray-100">
     <div className="flex items-center gap-6">
       <Image
-        src={company.companyLogo || "/images/default-companylogo.png"}
+        src={company.logo || "/images/default-companylogo.png"}
         alt="Company Logo"
         width={80}
         height={80}
@@ -291,6 +308,38 @@ useEffect(() => {
               </p>
             </motion.div>
           ))}
+        </div>
+
+        {/* Quick Actions (déplacé ici) */}
+        <div className="bg-white p-8 rounded-2xl shadow-xl border border-gray-100 mb-6">
+          <h3 className="text-lg font-bold mb-4 text-gray-800">Quick Actions</h3>
+          <div className="flex flex-wrap gap-6">
+            <motion.button
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.98 }}
+              className="bg-yellow-500 text-white px-6 py-3 rounded-lg flex items-center gap-3 hover:bg-yellow-600 transition-all font-semibold shadow">
+              <Users size={20} /> View Recruitments
+            </motion.button>
+            <motion.button
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.98 }}
+              className="bg-purple-500 text-white px-6 py-3 rounded-lg flex items-center gap-3 hover:bg-purple-600 transition-all font-semibold shadow">
+              <Users size={20} /> Manage Users
+            </motion.button>
+            <motion.button
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.98 }}
+              className="bg-gray-700 text-white px-6 py-3 rounded-lg flex items-center gap-3 hover:bg-gray-800 transition-all font-semibold shadow">
+              <FileText size={20} /> View Reports
+            </motion.button>
+            <motion.button
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.98 }}
+              className="bg-blue-500 text-white px-6 py-3 rounded-lg flex items-center gap-3 hover:bg-blue-600 transition-all font-semibold shadow"
+              onClick={() => window.location.href = "/Admin/Profile"}>
+              <Users size={20} /> My Profile
+            </motion.button>
+          </div>
         </div>
 
         {/* Charts and Statistics */}
@@ -360,8 +409,7 @@ useEffect(() => {
                       animate={{ opacity: 1, y: 0 }}
                       exit={{ opacity: 0, y: -10 }}
                       transition={{ duration: 0.25 }}
-                      className="flex items-center gap-3 p-3 bg-gray-50 hover:bg-blue-50 rounded-xl transition shadow-sm border border-gray-100"
-                    >
+                      className="flex items-center gap-3 p-3 bg-gray-50 hover:bg-blue-50 rounded-xl transition shadow-sm border border-gray-100">
                       <div className="w-14 h-14 bg-blue-500 text-white rounded-full flex items-center justify-center font-bold text-lg uppercase shadow">
                         {getInitials(user)}
                       </div>
@@ -394,8 +442,7 @@ useEffect(() => {
                           whileTap={{ scale: 0.95 }}
                           className="text-gray-400 hover:text-blue-600 transition"
                           onClick={() => window.location.href = `/Admin/User/${user.id}`}
-                          title="View profile"
-                        >
+                          title="View profile">
                           <Eye size={20} />
                         </motion.button>
                         <motion.button
@@ -403,8 +450,7 @@ useEffect(() => {
                           whileTap={{ scale: 0.95 }}
                           className="text-gray-400 hover:text-red-600 transition"
                           onClick={() => handleDeleteUser(user.id)}
-                          title="Delete"
-                        >
+                          title="Delete">
                           <Trash2 size={20} />
                         </motion.button>
                       </div>
@@ -414,8 +460,7 @@ useEffect(() => {
               </AnimatePresence>
             )}
           </div>
-
-          <div className="bg-white via-white to-blue-50 p-10 rounded-3xl shadow-2xl border border-blue-200 relative overflow-hidden transition-all duration-300 hover:shadow-blue-200 group col-span-2">
+  <div className="bg-white via-white to-blue-50 p-10 rounded-3xl shadow-2xl border border-blue-200 relative overflow-hidden transition-all duration-300 hover:shadow-blue-200 group col-span-2">
   <div className="flex items-center gap-3 mb-4">
     <div className="bg-blue-500/10 rounded-full p-2 shadow-inner">
       <PieChart width={28} height={28}>
@@ -440,8 +485,7 @@ useEffect(() => {
           innerRadius={40}
           label={({ name, percent }) => `${name} (${(percent * 100).toFixed(0)}%)`}
           labelLine={false}
-          paddingAngle={3}
-        >
+          paddingAngle={3}>
           {(loadingDistribution ? dataPie : recruitmentDistribution).map((entry, index) => (
             <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
           ))}
@@ -460,7 +504,7 @@ useEffect(() => {
     {errorDistribution && <div className="text-center text-red-500 text-sm mt-2">{errorDistribution}</div>}
   </div>
 </div>
-        </div>
+</div>
 
         {/* Graphique en barres : Candidatures par mois */}
         <div className="bg-white p-8 rounded-2xl shadow-xl border border-gray-100 mb-8">
@@ -481,31 +525,157 @@ useEffect(() => {
           </ResponsiveContainer>
         </div>
 
-        {/* Actions */}
-        <div className="bg-white p-8 rounded-2xl shadow-xl border border-gray-100">
-          <h3 className="text-lg font-bold mb-4 text-gray-800">Quick Actions</h3>
-          <div className="flex flex-wrap gap-6">
-            <motion.button
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.98 }}
-              className="bg-yellow-500 text-white px-6 py-3 rounded-lg flex items-center gap-3 hover:bg-yellow-600 transition-all font-semibold shadow">
-              <Users size={20} /> View Recruitments
-            </motion.button>
-            <motion.button
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.98 }}
-              className="bg-purple-500 text-white px-6 py-3 rounded-lg flex items-center gap-3 hover:bg-purple-600 transition-all font-semibold shadow">
-              <Users size={20} /> Manage Users
-            </motion.button>
-            <motion.button
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.98 }}
-              className="bg-gray-700 text-white px-6 py-3 rounded-lg flex items-center gap-3 hover:bg-gray-800 transition-all font-semibold shadow">
-              <FileText size={20} /> View Reports
-            </motion.button>
+        {/* Statistiques Offres d'emploi */}
+        <section className="bg-gradient-to-br from-blue-50 to-white p-0 rounded-2xl shadow-2xl border border-blue-100 mb-10 overflow-hidden">
+          <div className="flex flex-col md:flex-row items-stretch">
+            <div className="flex flex-col justify-center items-center bg-gradient-to-b from-blue-600 to-blue-400 md:w-1/3 w-full py-10 px-5 gap-3 text-center">
+              <div className="text-4xl font-extrabold text-white drop-shadow mb-1">{offersCount ?? 0}</div>
+              <div className="text-lg font-semibold text-blue-100 mb-2">Total Job Offers</div>
+              <div className="text-sm text-blue-200">All job offers posted by your company</div>
+            </div>
+            <div className="flex-1 bg-white py-8 px-4 md:px-10 flex flex-col justify-center">
+              <h3 className="text-xl font-bold text-blue-700 mb-6 flex items-center gap-2">
+               Company Job Offers
+              </h3>
+              {offers.length === 0 ? (
+                <div className="text-gray-400 text-center py-8 text-lg">No job offers found for your company.</div>
+              ) : (
+                <ScrollableOffersTable offers={offers} />
+              )}
+            </div>
           </div>
-        </div>
+        </section>
+
+        {/* Motivation & Features Section (remains last) */}
+        <section className="mb-10 grid grid-cols-1 md:grid-cols-2 gap-6 mt-10">
+          {/* Motivation Section */}
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, type: 'spring', bounce: 0.2 }}
+            viewport={{ once: true }}
+            className="relative bg-gradient-to-tr from-blue-100 via-white to-orange-100 border border-blue-200 rounded-2xl shadow-xl p-6 flex flex-col justify-between min-h-[220px] overflow-hidden group transition-all duration-300 hover:shadow-blue-200"
+          >
+            <div className="flex-1 min-w-0">
+              <h2 className="text-2xl font-extrabold text-blue-900 mb-2 flex items-center gap-2 tracking-tight drop-shadow-sm">
+                <BriefcaseBusiness className="text-orange-400 drop-shadow" size={28} />
+                Welcome, Admin!
+              </h2>
+              <p className="text-gray-700 mb-3 text-base leading-relaxed font-medium">
+                Unlock the full power of your dashboard! As an administrator, you can manage users, job offers, and access advanced analytics to drive your company's success.
+              </p>
+            </div>
+            <div className="flex flex-col items-center mt-2">
+              <span className="inline-block px-4 py-1.5 bg-blue-200/70 text-blue-800 rounded-full font-semibold text-base mb-1 shadow-sm tracking-wide animate-pulse">Did you know?</span>
+              <p className="text-gray-600 text-sm max-w-xs mx-auto font-semibold">Admins who actively use all features see a <span className="text-orange-500 font-bold">+30% boost</span> in recruitment efficiency!</p>
+            </div>
+            <div className="absolute right-0 bottom-0 opacity-20 pointer-events-none select-none hidden md:block group-hover:opacity-30 transition-all duration-300">
+              <BriefcaseBusiness size={90} className="text-blue-200" />
+            </div>
+            <div className="absolute left-0 top-0 w-16 h-16 bg-gradient-to-br from-blue-200/40 to-orange-200/30 rounded-full blur-2xl opacity-60 -z-10" />
+          </motion.div>
+          {/* Features Section */}
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, delay: 0.1, type: 'spring', bounce: 0.2 }}
+            viewport={{ once: true }}
+            className="relative bg-white border border-blue-200 rounded-2xl shadow-xl p-6 flex flex-col justify-between min-h-[220px] overflow-hidden group transition-all duration-300 hover:shadow-blue-200"
+          >
+            <h3 className="text-2xl font-bold text-blue-800 mb-3 flex items-center gap-2 tracking-tight drop-shadow-sm">
+              <Users className="text-blue-400" size={22} /> Key Features
+            </h3>
+            <ul className="list-none pl-0 space-y-3 text-gray-700 text-base mb-4">
+              <li className="flex items-center gap-2"><Users className="text-blue-400" size={16} /><span className="font-semibold text-blue-700">User Management:</span> <span className="text-gray-600">Add, edit, and remove users.</span></li>
+              <li className="flex items-center gap-2"><BriefcaseBusiness className="text-orange-400" size={16} /><span className="font-semibold text-blue-700">Job Offers:</span> <span className="text-gray-600">Browse the complete list of company job offers.</span></li>
+              <li className="flex items-center gap-2"><FileText className="text-blue-400" size={16} /><span className="font-semibold text-blue-700">Statistics:</span> <span className="text-gray-600">Visualize key metrics.</span></li>
+              <li className="flex items-center gap-2"><Bell className="text-orange-400" size={16} /><span className="font-semibold text-blue-700">Notifications:</span> <span className="text-gray-600">Stay updated in real-time.</span></li>
+              <li className="flex items-center gap-2"><Lock className="text-blue-400" size={16} /><span className="font-semibold text-blue-700">Security:</span> <span className="text-gray-600">Manage access and data protection.</span></li>
+            </ul>
+            <motion.button
+              whileHover={{ scale: 1.07 }}
+              whileTap={{ scale: 0.97 }}
+              className="mt-1 px-6 py-2 bg-gradient-to-r from-blue-600 to-orange-400 text-white rounded-lg font-bold shadow-md hover:from-blue-700 hover:to-orange-500 transition-all text-base self-start tracking-wide"
+              onClick={() => window.location.href = '/Admin/Manage-users'}
+            >
+              Discover All Features
+            </motion.button>
+            <div className="absolute right-0 top-0 w-16 h-16 bg-gradient-to-br from-blue-200/40 to-orange-200/30 rounded-full blur-2xl opacity-60 -z-10" />
+          </motion.div>
+        </section>
       </main>
     </AdminLayout>
+  );
+}
+
+// Table avec scroll pour les offres
+function ScrollableOffersTable({ offers }: { offers: any[] }) {
+  // Table columns
+  const columns = [
+    { key: 'title', label: 'Title' },
+    { key: 'location', label: 'Location' },
+    { key: 'created', label: 'Created' },
+    { key: 'status', label: 'Status' },
+  ];
+  // Estimate row height (e.g., 56px per row)
+  const rowHeight = 56; // px
+  const maxVisibleRows = 2;
+  const maxHeight = rowHeight * maxVisibleRows;
+
+  if (offers.length > 2) {
+    return (
+      <div className="overflow-x-auto">
+        {/* Header table */}
+        <table className="min-w-full text-sm text-left border border-blue-100 rounded-t-xl overflow-hidden shadow-lg table-fixed">
+          <thead className="bg-blue-50">
+            <tr>
+              <th className="px-6 py-3 font-semibold text-blue-700 text-base w-1/4">Title</th>
+              <th className="px-6 py-3 font-semibold text-blue-700 text-base w-1/4">Location</th>
+              <th className="px-6 py-3 font-semibold text-blue-700 text-base w-1/4">Created</th>
+            </tr>
+          </thead>
+        </table>
+        {/* Scrollable body table */}
+        <div className="overflow-y-auto scrollbar-thin scrollbar-thumb-blue-200 scrollbar-track-blue-50 border-x border-b border-blue-100 rounded-b-xl" style={{ maxHeight: `${maxHeight}px` }}>
+          <table className="min-w-full text-sm text-left table-fixed">
+            <tbody>
+              {offers.map((offer) => (
+                <tr key={offer.id} className="border-t border-blue-100 hover:bg-blue-50 transition group">
+                  <td className="px-6 py-3 font-semibold text-gray-900 group-hover:text-blue-700 transition-all w-1/4">{offer.title}</td>
+                  <td className="px-6 py-3 text-gray-700 w-1/4">{offer.location}</td>
+                  <td className="px-6 py-3 text-gray-500 w-1/4">{new Date(offer.createdAt).toLocaleDateString()}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    );
+  }
+  return (
+    <table className="min-w-full text-sm text-left border border-blue-100 rounded-xl overflow-hidden shadow-lg">
+      <thead className="bg-blue-50">
+        <tr>
+          <th className="px-6 py-3 font-semibold text-blue-700 text-base">Title</th>
+          <th className="px-6 py-3 font-semibold text-blue-700 text-base">Location</th>
+          <th className="px-6 py-3 font-semibold text-blue-700 text-base">Created</th>
+          <th className="px-6 py-3 font-semibold text-blue-700 text-base">Status</th>
+        </tr>
+      </thead>
+      <tbody>
+        {offers.map((offer) => (
+          <tr key={offer.id} className="border-t border-blue-100 hover:bg-blue-50 transition group">
+            <td className="px-6 py-3 font-semibold text-gray-900 group-hover:text-blue-700 transition-all">{offer.title}</td>
+            <td className="px-6 py-3 text-gray-700">{offer.location}</td>
+            <td className="px-6 py-3 text-gray-500">{new Date(offer.createdAt).toLocaleDateString()}</td>
+            <td className="px-6 py-3">
+              <span className={`px-3 py-1 rounded-full text-xs font-bold shadow-sm border transition-all duration-200 ${offer.status === 'Active' ? 'bg-green-100 text-green-700 border-green-200' : 'bg-gray-200 text-gray-500 border-gray-300'}`}>
+                {offer.status}
+              </span>
+            </td>
+          </tr>
+        ))}
+      </tbody>
+    </table>
   );
 }

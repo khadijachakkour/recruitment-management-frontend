@@ -7,7 +7,7 @@ export type Department = {
 export type Company = {
   id: number;
   companyName: string;
-  companyLogo?: string;
+  logo?: string;
   industry: string;
   otherIndustry?: string;
   companyDescription: string;

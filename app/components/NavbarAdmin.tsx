@@ -35,11 +35,11 @@ export default function NavbarAdmin({ isSidebarOpen = false }: NavbarAdminProps)
         <div className="navbar__button-container">
           {isAdmin && (
             <ul className="navbar__nav">
-              <li><Link href="/Admin/Dashboard" className="navbar__nav-item text-sm">Dashboard</Link></li>
               <li><Link href="/Admin/Manage-users" className="navbar__nav-item text-sm">User Management</Link></li>
-              <li><Link href="/Admin/Recruitment-management" className="navbar__nav-item text-sm">Recruitment Management</Link></li>
+              <li><Link href="#" className="navbar__nav-item text-sm">Recruitment Management</Link></li>
+              <li><Link href="#" className="navbar__nav-item text-sm">Company Management</Link></li>
               <li><Link href="#" className="navbar__nav-item text-sm">Notifications</Link></li>
-              <li><Link href="/Admin/ManageProfile" className="navbar__nav-item text-sm">Manage Profile</Link></li>
+
               <li>
                 <button onClick={logoutAdmin} className="navbar__logout-btn">
                   <i className="fas fa-sign-out-alt navbar__logout-icon"></i> Logout

@@ -92,7 +92,7 @@ export default function CompanyProfile() {
   <div className="flex items-center gap-2">
     <div className="p-1 rounded-lg">
       <Image
-        src={company.companyLogo || "/images/default-companylogo.png"}
+        src={company.logo || "/images/default-companylogo.png"}
         alt="Company Logo"
         width={60}
         height={60}

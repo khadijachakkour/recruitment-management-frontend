@@ -7,6 +7,7 @@ import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { Loader2, Lock } from "lucide-react";
 import NavbarAdmin from "@/app/components/NavbarAdmin";
+import SidebarAdmin from "@/app/components/SidebarAdmin";
 import { useRouter } from "next/navigation";
 
 // Configuration de l'API Gateway
@@ -24,17 +25,20 @@ export default function ManageProfile() {
   const [passwordError, setPasswordError] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-   const router = useRouter();
+  const [isSidebarOpen, setIsSidebarOpen] = useState(true);
+  const router = useRouter();
 
-   useEffect(() => {
-    
+  useEffect(() => {
     const fetchProfile = async () => {
       try {
-        const response = await axios.get(`${API_BASE_URL}/api/users/UserProfile`, {
-          headers: {
-            Authorization: `Bearer ${sessionStorage.getItem("access_token")}`,
-          },
-        });
+        const response = await axios.get(
+          `${API_BASE_URL}/api/users/UserProfile`,
+          {
+            headers: {
+              Authorization: `Bearer ${sessionStorage.getItem("access_token")}`,
+            },
+          }
+        );
         setUserData({
           firstname: response.data.firstName || "",
           lastname: response.data.lastName || "",
@@ -51,7 +55,8 @@ export default function ManageProfile() {
     };
 
     fetchProfile();
-  }, [isLoggedIn, userRoles]);
+    // Correction : on ne recharge le profil qu'au montage du composant
+  }, []);
 
   // Handle form input change
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -88,15 +93,15 @@ export default function ManageProfile() {
     try {
       // Only include password in the payload if it's non-empty
       const payload = {
-        firstName: userData.firstname,
-        lastName: userData.lastname,
+        firstname: userData.firstname,
+        lastname: userData.lastname,
         email: userData.email,
         username: userData.username,
         ...(userData.password && { password: userData.password }),
       };
 
       await axios.put(
-        `${API_BASE_URL}/api/admin/updateprofile`,
+        `${API_BASE_URL}/api/admin/updateProfileCurrentUser`,
         payload,
         {
           headers: {
@@ -108,9 +113,8 @@ export default function ManageProfile() {
         position: "top-right",
         autoClose: 3000,
         theme: "colored",
-      }
-    );
-    router.push("/Admin/Dashboard");
+      });
+      router.push("/Admin/Profile");
       // Clear password field after successful update
       setUserData((prev) => ({ ...prev, password: "" }));
     } catch (error) {
@@ -142,114 +146,151 @@ export default function ManageProfile() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-100 to-gray-200 flex items-center justify-center p-6">
-            <NavbarAdmin />
-    
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.5, ease: "easeOut" }}
-        className="bg-white/90 backdrop-blur-lg p-8 rounded-2xl shadow-2xl w-full max-w-lg border border-gray-100/50"
-      >
-        <h2 className="text-3xl font-bold text-gray-900 mb-8">Manage Profile</h2>
-        <form onSubmit={handleSubmit} className="space-y-6">
-          <div>
-            <label htmlFor="firstname" className="block text-sm font-medium text-gray-700">
-              First Name
-            </label>
-            <input
-              type="text"
-              id="firstname"
-              name="firstname"
-              value={userData.firstname}
-              onChange={handleInputChange}
-              required
-              className="mt-1 w-full px-4 py-3 bg-gray-50/50 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-300 text-sm placeholder-gray-400"
-              placeholder="Enter your first name"
-            />
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-blue-100 flex">
+      <SidebarAdmin
+        isSidebarOpen={isSidebarOpen}
+        onToggle={() => setIsSidebarOpen((open) => !open)}
+      />
+      <div className="flex-1 flex flex-col items-center p-0">
+        <NavbarAdmin />
+        <div className="flex-1 flex items-center justify-center p-6 w-full">
+          <div className="w-full max-w-xl">
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, ease: "easeOut" }}
+              className="bg-white/90 backdrop-blur-lg p-0 rounded-3xl shadow-2xl w-full border border-blue-100/60 flex flex-col items-center overflow-hidden"
+              style={{ zoom: 0.85 }}>
+              <div className="w-full flex flex-col items-center mb-6 pt-8">
+                <h2 className="text-2xl font-extrabold text-blue-700 tracking-tight mb-1">
+                  Edit Profile
+                </h2>
+                <span className="text-blue-400 text-xs font-medium">
+                  Administrator
+                </span>
+              </div>
+              <form onSubmit={handleSubmit} className="w-full px-10 mb-8">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <div>
+                    <label
+                      htmlFor="firstname"
+                      className="block text-xs font-semibold text-gray-500 mb-1"
+                    >
+                      First Name
+                    </label>
+                    <input
+                      type="text"
+                      id="firstname"
+                      name="firstname"
+                      value={userData.firstname}
+                      onChange={handleInputChange}
+                      required
+                      className="w-full px-4 py-3 bg-gray-50/50 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-300 text-sm placeholder-gray-400"
+                      placeholder="Enter your first name"
+                    />
+                  </div>
+                  <div>
+                    <label
+                      htmlFor="lastname"
+                      className="block text-xs font-semibold text-gray-500 mb-1"
+                    >
+                      Last Name
+                    </label>
+                    <input
+                      type="text"
+                      id="lastname"
+                      name="lastname"
+                      value={userData.lastname}
+                      onChange={handleInputChange}
+                      required
+                      className="w-full px-4 py-3 bg-gray-50/50 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-300 text-sm placeholder-gray-400"
+                      placeholder="Enter your last name"
+                    />
+                  </div>
+                  <div>
+                    <label
+                      htmlFor="email"
+                      className="block text-xs font-semibold text-gray-500 mb-1"
+                    >
+                      Email
+                    </label>
+                    <input
+                      type="email"
+                      id="email"
+                      name="email"
+                      value={userData.email}
+                      onChange={handleInputChange}
+                      required
+                      className="w-full px-4 py-3 bg-gray-50/50 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-300 text-sm placeholder-gray-400"
+                      placeholder="Enter your email"
+                    />
+                  </div>
+                  <div>
+                    <label
+                      htmlFor="username"
+                      className="block text-xs font-semibold text-gray-500 mb-1"
+                    >
+                      Username
+                    </label>
+                    <input
+                      type="text"
+                      id="username"
+                      name="username"
+                      value={userData.username}
+                      onChange={handleInputChange}
+                      required
+                      className="w-full px-4 py-3 bg-gray-50/50 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-300 text-sm placeholder-gray-400"
+                      placeholder="Enter your username"
+                    />
+                  </div>
+                  <div className="md:col-span-2">
+                    <label
+                      htmlFor="password"
+                      className="block text-xs font-semibold text-gray-500 mb-1"
+                    >
+                      Password
+                    </label>
+                    <div className="relative">
+                      <input
+                        type="password"
+                        id="password"
+                        name="password"
+                        value={userData.password}
+                        onChange={handleInputChange}
+                        className={`w-full px-4 py-3 bg-gray-50/50 border ${
+                          passwordError ? "border-red-500" : "border-gray-200"
+                        } rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-300 text-sm placeholder-gray-400`}
+                        placeholder="Enter new password (optional)"
+                      />
+                      <Lock
+                        size={18}
+                        className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400"
+                      />
+                    </div>
+                    {passwordError && (
+                      <p className="mt-1 text-xs text-red-600">{passwordError}</p>
+                    )}
+                  </div>
+                </div>
+                <motion.button
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                  type="submit"
+                  disabled={passwordError !== null}
+                  className={`w-full px-4 py-3 rounded-lg text-sm font-medium shadow-sm transition-all duration-300 mt-8 ${
+                    passwordError
+                      ? "bg-gray-400 cursor-not-allowed text-gray-700"
+                      : "bg-blue-600 text-white hover:bg-blue-700"
+                  }`}
+                >
+                  Update Profile
+                </motion.button>
+              </form>
+              <ToastContainer />
+            </motion.div>
           </div>
-          <div>
-            <label htmlFor="lastname" className="block text-sm font-medium text-gray-700">
-              Last Name
-            </label>
-            <input
-              type="text"
-              id="lastname"
-              name="lastname"
-              value={userData.lastname}
-              onChange={handleInputChange}
-              required
-              className="mt-1 w-full px-4 py-3 bg-gray-50/50 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-300 text-sm placeholder-gray-400"
-              placeholder="Enter your last name"
-            />
-          </div>
-          <div>
-            <label htmlFor="email" className="block text-sm font-medium text-gray-700">
-              Email
-            </label>
-            <input
-              type="email"
-              id="email"
-              name="email"
-              value={userData.email}
-              onChange={handleInputChange}
-              required
-              className="mt-1 w-full px-4 py-3 bg-gray-50/50 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-300 text-sm placeholder-gray-400"
-              placeholder="Enter your email"
-            />
-          </div>
-          <div>
-            <label htmlFor="username" className="block text-sm font-medium text-gray-700">
-              Username
-            </label>
-            <input
-              type="text"
-              id="username"
-              name="username"
-              value={userData.username}
-              onChange={handleInputChange}
-              required
-              className="mt-1 w-full px-4 py-3 bg-gray-50/50 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-300 text-sm placeholder-gray-400"
-              placeholder="Enter your username"
-            />
-          </div>
-          <div>
-            <label htmlFor="password" className="block text-sm font-medium text-gray-700">
-              Password
-            </label>
-            <div className="relative">
-              <input
-                type="password"
-                id="password"
-                name="password"
-                value={userData.password}
-                onChange={handleInputChange}
-                className={`mt-1 w-full px-4 py-3 bg-gray-50/50 border ${
-                  passwordError ? "border-red-500" : "border-gray-200"
-                } rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-300 text-sm placeholder-gray-400`}
-                placeholder="Enter new password (optional)"
-              />
-              <Lock size={18} className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
-            </div>
-            {passwordError && (
-              <p className="mt-1 text-xs text-red-600">{passwordError}</p>
-            )}
-          </div>
-          <motion.button
-            whileHover={{ scale: 1.05, boxShadow: "0 6px 16px rgba(59, 130, 246, 0.4)" }}
-            whileTap={{ scale: 0.95 }}
-            type="submit"
-            disabled={passwordError !== null}
-            className={`w-full px-4 py-3 rounded-lg text-sm font-medium shadow-sm transition-all duration-300 ${
-              passwordError
-                ? "bg-gray-400 cursor-not-allowed text-gray-700"
-                : "bg-blue-600 text-white hover:bg-blue-700"
-            }`} >
-            Update Profile
-          </motion.button>
-        </form>
-        <ToastContainer />
-      </motion.div>
+        </div>
+      </div>
     </div>
   );
 }
