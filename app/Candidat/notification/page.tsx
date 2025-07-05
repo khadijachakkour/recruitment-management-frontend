@@ -3,8 +3,11 @@
 import { useEffect, useState } from "react";
 import { useAuth } from "@/src/context/authContext";
 import { fetchNotifications, markAllNotificationsAsRead } from "../../lib/notificationApi";
-import { IoMdNotificationsOutline, IoMdArrowBack } from "react-icons/io";
+import { IoMdNotificationsOutline, IoMdArrowBack, IoMdMailUnread } from "react-icons/io";
 import { HiOutlineDotsHorizontal } from "react-icons/hi";
+import { FcGoogle } from "react-icons/fc";
+import { MdMarkEmailRead } from "react-icons/md";
+import { MdVideoCall } from "react-icons/md";
 import NavbarCandidat from "@/app/components/NavbarCandidat";
 
 export default function NotificationsPage() {
@@ -65,29 +68,21 @@ export default function NotificationsPage() {
                 key={notif.id}
                 className={`group flex items-start gap-4 px-8 py-6 transition-colors duration-200 relative hover:bg-blue-50/60 ${!notif.read ? "bg-blue-50/60" : "bg-white"}`}
               >
-                <span className="mt-1 flex-shrink-0">
-                  {notif.read ? (
-                    <svg width="24" height="24" fill="none" viewBox="0 0 24 24"><path fill="#60a5fa" d="M12 2a7 7 0 0 0-7 7v3.586l-.707.707A1 1 0 0 0 5 16h14a1 1 0 0 0 .707-1.707L19 12.586V9a7 7 0 0 0-7-7Zm0 20a3 3 0 0 1-2.995-2.824L9 19h6a3 3 0 0 1-2.824 2.995L12 22Z"/></svg>
-                  ) : (
-                    <span className="inline-block w-3 h-3 bg-blue-500 rounded-full border-2 border-white shadow"></span>
-                  )}
-                </span>
-
-<div className="flex-1 min-w-0">
-                  <div className={`text-base leading-snug ${!notif.read ? "font-semibold text-blue-900" : "text-gray-700"}`}>
+                <div className="flex-1 min-w-0">
+                  <div className={`text-base leading-snug ${!notif.read ? "font-semibold text-blue-900" : "text-bleu-700"}`}>
                     {notif.message}
                     {notif.url && (
-                      <div className="mt-2">
+                      <div className="mt-3">
                         <a
                           href={`/Candidat/notification/visio?jitsiUrl=${encodeURIComponent(notif.url)}`}
-                          className="text-blue-600 underline hover:text-blue-800 font-medium"
+                          className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-bleu-500 hover:bg-bleu-300 text-bleu-500 font-semibold shadow-sm border border-bleu-200 transition-colors duration-150 focus:outline-none focus:ring-2 focus:ring-bleu-500"
                         >
-                          Rejoindre l&apos;entretien en visioconférence
+                          <MdVideoCall size={22} className="-ml-1" />
+                          Join Interview
                         </a>
                       </div>
                     )}
                   </div>
-
                   <div className="text-xs text-gray-400 mt-2 flex items-center gap-2">
                     {timeAgo(notif.createdAt)}
                   </div>

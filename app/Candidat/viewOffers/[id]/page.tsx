@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react';
 import { useParams } from 'next/navigation';
 import axios from 'axios';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faMapMarkerAlt, faCalendarAlt, faMoneyBillWave, faListCheck, faFileAlt, faPaperPlane, faGraduationCap, faUser, faBriefcase, faGlobe } from '@fortawesome/free-solid-svg-icons';
+import { faMapMarkerAlt, faCalendarAlt, faMoneyBillWave, faListCheck, faFileAlt, faPaperPlane, faGraduationCap, faUser, faBriefcase, faGlobe, faClock, faArrowLeft } from '@fortawesome/free-solid-svg-icons';
 import { motion } from 'framer-motion';
 import { useRouter } from 'next/navigation';
 import NavbarCandidat from '@/app/components/NavbarCandidat';
@@ -51,141 +51,207 @@ const ViewJobPage = () => {
     }
   };
 
+  const handleBackClick = () => {
+    router.back();
+  };
+
   if (!job) {
     return (
-      <div className="fixed inset-0 flex items-center justify-center bg-white/60 z-50">
-        <span className="relative flex h-20 w-20">
-          <span className="animate-spin absolute inline-flex h-full w-full rounded-full bg-gradient-to-tr from-blue-400 via-blue-600 to-blue-400 opacity-20"></span>
-          <span className="relative flex h-20 w-20 items-center justify-center">
-            <svg className="h-12 w-12 text-blue-600 animate-spin" viewBox="0 0 50 50">
-              <circle className="opacity-25" cx="25" cy="25" r="20" stroke="currentColor" strokeWidth="6" fill="none" />
-              <circle className="opacity-100" cx="25" cy="25" r="20" stroke="currentColor" strokeWidth="6" fill="none" strokeDasharray="90 150" strokeLinecap="round" />
-            </svg>
-          </span>
-        </span>
+      <div className="fixed inset-0 flex items-center justify-center bg-gray-50 z-50">
+        <div className="relative">
+          <div className="w-16 h-16 border-4 border-blue-200 rounded-full animate-spin border-t-blue-600"></div>
+          <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2">
+            <div className="w-2 h-2 bg-blue-600 rounded-full"></div>
+          </div>
+        </div>
       </div>
     );
   }
 
+  const containerVariants = {
+    hidden: { opacity: 0, y: 20 },
+    visible: {
+      opacity: 1,
+      y: 0,
+      transition: {
+        duration: 0.6,
+        staggerChildren: 0.1
+      }
+    }
+  };
+
+  const itemVariants = {
+    hidden: { opacity: 0, y: 20 },
+    visible: { opacity: 1, y: 0 }
+  };
+
   return (
-    <div className="flex min-h-screen bg-gradient-to-br from-blue-50 via-white to-blue-100">
+    <div className="min-h-screen bg-white" style={{ zoom: 0.9 }}>
       <NavbarCandidat />
-      <main className="flex-1 p-2 lg:p-4">
+      <div className="max-w-4xl mx-auto px-4 py-8">
+        {/* Header with back button */}
         <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6 }}
-          className="max-w-5xl mx-auto px-2 sm:px-4 lg:px-6 py-6">
-          <div className="bg-white/90 shadow-2xl rounded-2xl p-6 space-y-8 border border-blue-100 backdrop-blur-md">
-            {/* Header Section */}
-            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
-              <div className="flex items-center gap-3">
-                <span className="bg-blue-100 p-3 rounded-full shadow-md">
-                  <FontAwesomeIcon icon={faBriefcase} className="text-blue-600 text-xl" />
-                </span>
+          initial={{ opacity: 0, x: -20 }}
+          animate={{ opacity: 1, x: 0 }}
+          className="mb-6"
+        >
+          <button
+            onClick={handleBackClick}
+            className="flex items-center gap-2 text-gray-600 hover:text-gray-900 transition-colors mb-4"
+          >
+            <FontAwesomeIcon icon={faArrowLeft} className="text-sm" />
+            <span className="text-sm font-medium">Back to offers</span>
+          </button>
+        </motion.div>
+
+        <motion.div
+          variants={containerVariants}
+          initial="hidden"
+          animate="visible"
+          className="space-y-8"
+        >
+          {/* Offer header */}
+          <motion.div variants={itemVariants} className="bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden">
+            <div className="bg-gradient-to-r from-blue-600 to-blue-700 px-8 py-6 text-white">
+              <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
                 <div>
-                  <h1 className="text-2xl font-extrabold text-gray-900 md:text-3xl tracking-tight">{job.title}</h1>
-                  <p className="mt-1 text-gray-500 text-xs flex items-center gap-2">
-                    <FontAwesomeIcon icon={faMapMarkerAlt} className="text-blue-400" /> {job.location}
+                  <h1 className="text-3xl font-bold mb-2">{job.title}</h1>
+                  <div className="flex items-center gap-4 text-blue-100">
+                    <div className="flex items-center gap-2">
+                      <FontAwesomeIcon icon={faMapMarkerAlt} className="text-sm" />
+                      <span className="text-sm">{job.location}</span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <FontAwesomeIcon icon={faGlobe} className="text-sm" />
+                      <span className="text-sm">{job.workMode}</span>
+                    </div>
+                  </div>
+                </div>
+                <div className="flex flex-col items-end gap-2">
+                  <span className="bg-white/20 backdrop-blur-sm px-4 py-2 rounded-full text-sm font-medium">
+                    {job.contractType}
+                  </span>
+                  {job.salary && (
+                    <span className="text-2xl font-bold">
+                      {job.salary.toLocaleString()} MAD
+                    </span>
+                  )}
+                </div>
+              </div>
+            </div>
+          </motion.div>
+
+          {/* Main information */}
+          <motion.div variants={itemVariants} className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            <div className="lg:col-span-2 space-y-6">
+              {/* Description */}
+              <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+                <h2 className="text-xl font-semibold text-gray-900 mb-4 flex items-center gap-3">
+                  <div className="w-8 h-8 bg-blue-100 rounded-lg flex items-center justify-center">
+                    <FontAwesomeIcon icon={faFileAlt} className="text-blue-600 text-sm" />
+                  </div>
+                  Job Description
+                </h2>
+                <div className="prose prose-gray max-w-none">
+                  <p className="text-gray-700 leading-relaxed whitespace-pre-line">
+                    {job.description}
                   </p>
                 </div>
               </div>
-              <span className="inline-block bg-blue-50 text-blue-600 px-4 py-1.5 rounded-full text-sm font-semibold shadow-sm border border-blue-100">
-                {job.contractType}
-              </span>
-            </div>
 
-            {/* Details and Skills Grid */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div className="space-y-4">
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                  { [
-                    { icon: <FontAwesomeIcon icon={faMapMarkerAlt} className="text-blue-500 text-lg" />, label: 'Location', value: job.location },
-                    { icon: <FontAwesomeIcon icon={faBriefcase} className="text-blue-500 text-lg" />, label: 'Required Experience', value: job.experienceRequired },
-                    { icon: <FontAwesomeIcon icon={faUser} className="text-blue-500 text-lg" />, label: 'Required Languages', value: job.languagesRequired },
-                    { icon: <FontAwesomeIcon icon={faCalendarAlt} className="text-blue-500 text-lg" />, label: 'Application Deadline', value: new Date(job.applicationDeadline).toLocaleDateString() },
-                    { icon: <FontAwesomeIcon icon={faGlobe} className="text-blue-500 text-lg" />, label: 'Work Mode', value: job.workMode },
-                    { icon: <FontAwesomeIcon icon={faMoneyBillWave} className="text-green-500 text-lg" />, label: 'Salary', value: job.salary ? `${job.salary} MAD` : 'Not specified' },
-                  ].map((item, idx) => (
-                    <DetailCard key={idx} icon={item.icon} label={item.label} value={item.value} />
+              {/* Required Skills */}
+              <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+                <h2 className="text-xl font-semibold text-gray-900 mb-4 flex items-center gap-3">
+                  <div className="w-8 h-8 bg-orange-100 rounded-lg flex items-center justify-center">
+                    <FontAwesomeIcon icon={faListCheck} className="text-orange-600 text-sm" />
+                  </div>
+                  Required Skills
+                </h2>
+                <div className="flex flex-wrap gap-2">
+                  {job.skillsRequired.split(',').map((skill, index) => (
+                    <span
+                      key={index}
+                      className="bg-gray-100 text-gray-700 px-3 py-2 rounded-lg text-sm font-medium hover:bg-gray-200 transition-colors"
+                    >
+                      {skill.trim()}
+                    </span>
                   ))}
                 </div>
               </div>
-              <div className="space-y-6">
-                <DetailCard
-                  icon={<FontAwesomeIcon icon={faListCheck} className="text-orange-500 text-lg" />}
-                  label="Skills Required">
-                  <div className="flex flex-wrap gap-4">
-                    {job.skillsRequired.split(',').map((skill, index) => (
-                      <span
-                        key={index}
-                        className="bg-blue-50 text-blue-600 px-3 py-1 rounded-full text-sm font-medium border border-blue-100 shadow-sm">
-                        {skill.trim()}
-                      </span>
-                    ))}
-                  </div>
-                </DetailCard>
+            </div>
+
+            {/* Sidebar with details */}
+            <div className="space-y-6">
+              {/* Offer details */}
+              <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+                <h3 className="text-lg font-semibold text-gray-900 mb-4">Offer Details</h3>
+                <div className="space-y-4">
+                  <InfoItem
+                    icon={<FontAwesomeIcon icon={faCalendarAlt} className="text-red-500" />}
+                    label="Deadline"
+                    value={new Date(job.applicationDeadline).toLocaleDateString('en-US', {
+                      day: 'numeric',
+                      month: 'long',
+                      year: 'numeric'
+                    })}
+                  />
+                  <InfoItem
+                    icon={<FontAwesomeIcon icon={faBriefcase} className="text-blue-500" />}
+                    label="Experience"
+                    value={job.experienceRequired}
+                  />
+                  <InfoItem
+                    icon={<FontAwesomeIcon icon={faGraduationCap} className="text-purple-500" />}
+                    label="Education Level"
+                    value={job.educationLevel}
+                  />
+                  <InfoItem
+                    icon={<FontAwesomeIcon icon={faUser} className="text-green-500" />}
+                    label="Languages"
+                    value={job.languagesRequired}
+                  />
+                </div>
               </div>
-            </div>
 
-            <div className="w-fit min-w-[150px] max-w-sm flex flex-row items-center gap-2 bg-blue-50 border border-blue-100 rounded-xl px-2 py-4 mb-4">
-              <FontAwesomeIcon icon={faGraduationCap} className="text-indigo-500 text-lg" />
-              <span className="text-base font-semibold text-gray-700">Education Level:</span>
-              <span className="text-base text-gray-800 font-medium">{job.educationLevel}</span>
-            </div>
-
-            {/* Description Section */}
-            <div className="space-y-4">
-              <h2 className="text-lg font-bold text-gray-900 flex items-center gap-2">
-                <FontAwesomeIcon icon={faFileAlt} className="text-blue-500 text-base" />
-                Job Description
-              </h2>
-              <p className="text-gray-700 text-sm leading-relaxed whitespace-pre-line">
-                {job.description}
-              </p>
-            </div>
-
-            {/* Call to Action */}
-            <motion.div
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.6, duration: 0.5 }}
-              className="text-center">
-              <button
-                onClick={handlePostulerClick}
-                className="inline-flex items-center gap-2 bg-gradient-to-r from-blue-600 to-blue-400 hover:from-blue-700 hover:to-blue-500 text-white px-6 py-2 rounded-lg text-base font-semibold shadow-lg hover:shadow-xl transition-all duration-200"
+              {/* Apply button */}
+              <motion.div
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.98 }}
+                className="bg-white rounded-xl shadow-sm border border-gray-200 p-3"
               >
-                Postuler <FontAwesomeIcon icon={faPaperPlane} className="ml-1" />
-              </button>
-            </motion.div>
-          </div>
+                <button
+                  onClick={handlePostulerClick}
+                  className="w-full bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white font-semibold py-3 px-3 rounded-xl shadow-lg hover:shadow-xl transition-all duration-200 flex items-center justify-center gap-2"
+                >
+                  <FontAwesomeIcon icon={faPaperPlane} />
+                  Apply Now
+                </button>
+              </motion.div>
+            </div>
+          </motion.div>
         </motion.div>
-      </main>
+      </div>
     </div>
   );
 };
 
-// DetailCard Component
-const DetailCard = ({
+// InfoItem component
+const InfoItem = ({
   icon,
   label,
   value,
-  children,
 }: {
   icon: React.ReactNode;
   label: string;
-  value?: string;
-  children?: React.ReactNode;
+  value: string;
 }) => (
-  <div className="bg-white/80 rounded-xl p-5 flex items-start gap-4 shadow-md hover:bg-blue-50 transition-colors duration-200 border border-blue-100">
-    <div className="mt-1">{icon}</div>
-    <div>
-      <p className="text-sm text-gray-500 font-semibold">{label}</p>
-      {children ? (
-        children
-      ) : (
-        <p className="text-base font-medium text-gray-800">{value}</p>
-      )}
+  <div className="flex items-start gap-3">
+    <div className="w-8 h-8 bg-gray-100 rounded-lg flex items-center justify-center flex-shrink-0 mt-0.5">
+      {icon}
+    </div>
+    <div className="flex-1 min-w-0">
+      <p className="text-sm font-medium text-gray-900">{label}</p>
+      <p className="text-sm text-gray-600 mt-1">{value}</p>
     </div>
   </div>
 );

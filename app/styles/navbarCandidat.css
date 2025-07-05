@@ -1,82 +1,99 @@
 /* navbarCandidat.css */
 
 .navbar {
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-  padding: 8px 16px;
+  box-shadow: 0 4px 24px rgba(0, 42, 120, 0.08), 0 1.5px 4px rgba(0,0,0,0.04);
+  padding: 10px 32px;
   position: fixed;
   top: 0;
   left: 0;
   width: 100%;
   z-index: 1000;
-  background-color: white;
+  background: rgba(255,255,255,0.85);
+  backdrop-filter: blur(12px) saturate(1.2);
+  border-bottom: 1.5px solid #e3e8f0;
+  transition: background 0.3s, box-shadow 0.3s;
 }
 
 .navbar__logo {
-  font-size: 1.5rem;
-  font-weight: 500;
-  color: #007bff;
+  font-size: 2rem;
+  font-weight: 700;
+  color: #2563eb;
+  letter-spacing: 1px;
   cursor: pointer;
-  transition: transform 0.3s;
+  transition: transform 0.3s, color 0.3s;
+  text-shadow: 0 2px 8px rgba(37,99,235,0.08);
 }
 
 .navbar__logo:hover {
-  transform: scale(1.1);
+  transform: scale(1.08) rotate(-2deg);
+  color: #1d4ed8;
 }
 
 .navbar__nav {
   display: flex;
-  gap: 24px;
+  gap: 32px;
   font-weight: 500;
-  color: #4a4a4a;
+  color: #334155;
   list-style: none;
+  font-size: 1.08rem;
 }
 
 .navbar__nav-item {
   text-decoration: none;
   color: inherit;
-  transition: color 0.3s ease;
+  transition: color 0.2s, border-bottom 0.2s;
+  border-bottom: 2px solid transparent;
+  padding-bottom: 2px;
 }
 
 .navbar__nav-item:hover {
-  color: #007bff;
+  color: #2563eb;
+  border-bottom: 2px solid #2563eb;
 }
 
 .navbar__button-container {
   display: flex;
   align-items: center;
-  gap: 16px;
+  gap: 18px;
 }
 
 .navbar__connexion {
-  background-color: #0056b3;
+  background: linear-gradient(90deg, #2563eb 0%, #1e40af 100%);
   color: white;
-  padding: 8px 24px;
+  padding: 8px 28px;
   font-weight: 600;
   border: none;
-  border-radius: 4px;
+  border-radius: 999px;
   cursor: pointer;
-  transition: background-color 0.3s, color 0.3s;
+  transition: background 0.3s, color 0.3s, box-shadow 0.2s;
   text-decoration: none;
+  box-shadow: 0 2px 8px rgba(37,99,235,0.08);
+  font-size: 1rem;
 }
 
 .navbar__connexion:hover {
-  background-color: #003d7a;
+  background: linear-gradient(90deg, #1e40af 0%, #2563eb 100%);
+  color: #e0e7ef;
+  box-shadow: 0 4px 16px rgba(37,99,235,0.13);
 }
 
 .navbar__entreprises {
-  color: #0056b3;
+  color: #2563eb;
   padding: 8px 24px;
   font-weight: 600;
-  border: none;
-  background-color: transparent;
+  border: 1.5px solid #2563eb;
+  background: transparent;
+  border-radius: 999px;
   cursor: pointer;
-  transition: border-bottom 0.3s, color 0.3s;
+  transition: border 0.3s, color 0.3s, background 0.3s;
   text-decoration: none;
+  font-size: 1rem;
 }
 
 .navbar__entreprises:hover {
-  color: #003d7a;
-  border-bottom: 2px solid #0056b3;
+  color: #fff;
+  background: #2563eb;
+  border: 1.5px solid #1e40af;
 }
 
 .navbar__icon-link {
@@ -84,27 +101,35 @@
   align-items: center;
   justify-content: center;
   padding: 8px;
+  border-radius: 50%;
+  background: #f1f5f9;
+  transition: background 0.2s, box-shadow 0.2s;
+  box-shadow: 0 1px 4px rgba(37,99,235,0.06);
+}
+
+.navbar__icon-link:hover {
+  background: #e0e7ef;
 }
 
 .navbar__profile-icon {
-  color: #333;
+  color: #334155;
   cursor: pointer;
-  transition: color 0.3s ease;
+  transition: color 0.3s;
 }
 
 .navbar__profile-icon:hover {
-  color: #007bff;
+  color: #2563eb;
 }
 
 .navbar__notification-icon {
-  color: #333;
+  color: #334155;
   cursor: pointer;
-  transition: color 0.3s ease;
+  transition: color 0.3s;
   position: relative;
 }
 
 .navbar__notification-icon:hover {
-  color: #ff9800;
+  color: #f59e42;
 }
 
 /* Badge for notification */
@@ -112,7 +137,7 @@
   position: absolute;
   top: -6px;
   right: -6px;
-  background: #ff3b3b;
+  background: #ef4444;
   color: #fff;
   border-radius: 50%;
   width: 20px;
@@ -159,11 +184,21 @@
 }
 
 /* Responsive Design */
+@media (max-width: 900px) {
+  .navbar {
+    padding: 8px 8px;
+  }
+  .navbar__logo {
+    font-size: 1.3rem;
+  }
+  .navbar__button-container {
+    gap: 8px;
+  }
+}
 @media (max-width: 768px) {
   .navbar__nav {
     display: none;
   }
-
   .navbar__button-container {
     display: none;
   }

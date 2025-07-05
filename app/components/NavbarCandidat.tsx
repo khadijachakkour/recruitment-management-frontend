@@ -3,7 +3,7 @@
 import Link from "next/link";
 import "../styles/navbarCandidat.css";
 import { useAuth } from "@/src/context/authContext";
-import { FaUserCircle } from "react-icons/fa";
+import { FaUserCircle, FaBriefcase, FaBuilding } from "react-icons/fa";
 import { IoMdNotificationsOutline } from "react-icons/io";
 import { useEffect, useState } from "react";
 import { fetchNotifications, fetchUnreadNotificationCount, markAllNotificationsAsRead } from "../lib/notificationApi";
@@ -50,7 +50,7 @@ useEffect(() => {
   };
 
   return (
-    <nav className="navbar">
+    <nav className="navbar mb-4">
       <div className="container mx-auto flex justify-between items-center p-1.5">
         <Link href="/Candidat/dashboard" className="navbar__logo text-lg">SmartHire</Link>
 
@@ -67,13 +67,15 @@ useEffect(() => {
           {isLoggedIn && userRoles.includes("Candidat") ? (
             <>
               <div className="hidden md:flex space-x-4 mr-4">
-                <Link href="/Candidat/dashboard" className="navbar__nav-item text-sm">Dashboard</Link>
-                <Link href="/Candidat/Listoffres" className="navbar__nav-item text-sm">Jobs</Link>
-                <Link href="/applications" className="navbar__nav-item text-sm">Apply</Link>
-                <Link href="/evaluations" className="navbar__nav-item text-sm">Evaluation</Link>
-                <Link href="/candidature-status" className="navbar__nav-item text-sm">Tracking</Link>
-                <Link href="/companies" className="navbar__nav-item text-sm">Companies</Link>
-                <Link href="/messages" className="navbar__nav-item text-sm">Messaging</Link>
+                <Link href="/Candidat/Listoffres" className="navbar__nav-item text-sm flex items-center gap-2 px-3 py-1.5 rounded-full bg-blue-50 hover:bg-blue-100 text-blue-700 font-semibold shadow-sm transition">
+                   Jobs
+                </Link>
+                <Link href="/Candidat/companies" className="navbar__nav-item text-sm flex items-center gap-2 px-3 py-1.5 rounded-full bg-blue-50 hover:bg-blue-100 text-blue-700 font-semibold shadow-sm transition">
+                  Companies
+                </Link>
+                <Link href="/Candidat/Applications" className="navbar__nav-item text-sm flex items-center gap-2 px-3 py-1.5 rounded-full bg-blue-50 hover:bg-blue-100 text-blue-700 font-semibold shadow-sm transition">
+                  My Applications
+                </Link>
               </div>
               {/* Notification Icon */}
               <div className="relative flex items-center mr-2">

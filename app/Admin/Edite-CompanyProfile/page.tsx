@@ -9,6 +9,7 @@ import { Upload, Loader2, X, ChevronLeft, ChevronRight } from "lucide-react";
 import { FaSave } from "react-icons/fa";
 import Image from "next/image";
 import type { Department } from "@/app/types/company";
+import AdminHeader from "@/app/components/AdminHeader";
 
 // Configuration de l'API Gateway
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
@@ -81,217 +82,12 @@ const steps = [
   { id: 4, name: "Contact Information" },
 ];
 
-function ProgressBar({
-  currentStep,
-  setStep,
-  isSubmitting,
-}: {
-  currentStep: number;
-  setStep: (step: number) => void;
-  isSubmitting: boolean;
-}) {
-  const progress = ((currentStep - 1) / (steps.length - 1)) * 100;
-
-  return (
-    <div className="mb-6">
-      <div className="flex justify-between mb-2">
-        {steps.map((step) => (
-          <div
-            key={step.id}
-            className={`flex flex-col items-center ${
-              isSubmitting ? "cursor-not-allowed opacity-50" : "cursor-pointer"
-            }`}
-            onClick={() => !isSubmitting && setStep(step.id)}
-          >
-            <div
-              className={`w-7 h-7 rounded-full flex items-center justify-center text-sm font-medium transition-all ${
-                step.id <= currentStep
-                  ? "bg-sky-500 text-white"
-                  : "bg-gray-200 text-gray-600 hover:bg-sky-400 hover:text-white"
-              }`}
-            >
-              {step.id}
-            </div>
-            <span className="text-sm mt-1 text-gray-600">{step.name}</span>
-          </div>
-        ))}
-      </div>
-      <div className="w-full bg-gray-200 rounded-full h-1.5">
-        <div
-          className="bg-sky-500 h-1.5 rounded-full transition-all duration-300"
-          style={{ width: `${progress}%` }}
-        ></div>
-      </div>
-    </div>
-  );
-}
-
-function SelectField({
-  label,
-  name,
-  value,
-  onChange,
-  options,
-  required = false,
-}: {
-  label: string;
-  name: string;
-  value: string;
-  onChange: (e: React.ChangeEvent<HTMLSelectElement>) => void;
-  options: string[];
-  required?: boolean;
-}) {
-  return (
-    <div className="space-y-2">
-      <label className="block text-base font-medium text-gray-700">{label}</label>
-      <select
-        name={name}
-        value={value}
-        onChange={onChange}
-        required={required}
-        className="w-full px-3 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-sky-400 focus:border-sky-400 transition-all bg-white text-base text-gray-900 shadow-sm"
-      >
-        <option value="" disabled>
-          Select {label.toLowerCase()}
-        </option>
-        {options.map((option) => (
-          <option key={option} value={option}>
-            {option}
-          </option>
-        ))}
-      </select>
-    </div>
-  );
-}
-
-function InputField({
-  label,
-  name,
-  value,
-  onChange,
-  onKeyDown,
-  type = "text",
-  required = false,
-}: {
-  label: string;
-  name: string;
-  value: string;
-  onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
-  onKeyDown?: (e: React.KeyboardEvent<HTMLInputElement>) => void;
-  type?: string;
-  required?: boolean;
-}) {
-  return (
-    <div className="space-y-2">
-      <label className="block text-base font-medium text-gray-700">{label}</label>
-      <input
-        type={type}
-        name={name}
-        value={value}
-        onChange={onChange}
-        onKeyDown={onKeyDown}
-        required={required}
-        className="w-full px-3 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-sky-400 focus:border-sky-400 transition-all text-base shadow-sm"
-      />
-    </div>
-  );
-}
-
-function TextAreaField({
-  label,
-  name,
-  value,
-  onChange,
-  onKeyDown,
-  required = false,
-}: {
-  label: string;
-  name: string;
-  value: string;
-  onChange: (e: React.ChangeEvent<HTMLTextAreaElement>) => void;
-  onKeyDown?: (e: React.KeyboardEvent<HTMLTextAreaElement>) => void;
-  required?: boolean;
-}) {
-  return (
-    <div className="space-y-2">
-      <label className="block text-base font-medium text-gray-700">{label}</label>
-      <textarea
-        name={name}
-        value={value}
-        onChange={onChange}
-        onKeyDown={onKeyDown}
-        required={required}
-        rows={4}
-        className="w-full px-3 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-sky-400 focus:border-sky-400 transition-all text-base shadow-sm resize-y"
-        placeholder={`Enter ${label.toLowerCase()}`}
-      />
-    </div>
-  );
-}
-
-function FileUploadField({
-  label,
-  name,
-  preview,
-  onChange,
-  onRemove,
-}: {
-  label: string;
-  name: string;
-  preview: string | null;
-  onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
-  onRemove: () => void;
-}) {
-  return (
-    <div className="space-y-2">
-      <label className="block text-base font-medium text-gray-700">{label}</label>
-      <div className="flex items-start gap-3">
-        {preview ? (
-          <div className="relative w-16 h-16 rounded-lg overflow-hidden shadow-sm">
-            <Image src={preview} alt={label} width={64} height={64} className="w-full h-full object-cover" />
-            <button
-              type="button"
-              onClick={onRemove}
-              className="absolute top-1 right-1 bg-red-500 text-white rounded-full w-4 h-4 flex items-center justify-center hover:bg-red-600 transition-colors"
-            >
-              <X className="w-2 h-2" />
-            </button>
-          </div>
-        ) : (
-          <div className="w-16 h-16 border-2 border-dashed border-gray-200 rounded-lg flex items-center justify-center bg-gray-50">
-            <span className="text-gray-400 text-xs">No image</span>
-          </div>
-        )}
-        <div>
-          <input
-            type="file"
-            name={name}
-            onChange={onChange}
-            accept="image/*"
-            className="hidden"
-            id={name}
-          />
-          <label
-            htmlFor={name}
-            className="cursor-pointer inline-flex items-center px-3 py-1.5 bg-white border rounded-lg hover:bg-gray-50 transition-colors text-base font-medium text-gray-700 shadow-sm"
-          >
-            <Upload className="w-3 h-3 mr-1.5" />
-            Upload
-          </label>
-          <p className="text-gray-500 text-xs mt-1">Recommended: 400x400 px, Max: 2MB</p>
-        </div>
-      </div>
-    </div>
-  );
-}
-
 export default function UpdateCompanyProfile() {
   const router = useRouter();
   const [currentStep, setCurrentStep] = useState(1);
   const [companyLogoPreview, setCompanyLogoPreview] = useState<string | null>(null);
   const [ceoImagePreview, setCeoImagePreview] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
   const [formData, setFormData] = useState<FormData>({
     companyName: "",
@@ -325,6 +121,7 @@ export default function UpdateCompanyProfile() {
     workCulture: "",
     careerGrowth: "",
   });
+  const [sidebarOpen, setSidebarOpen] = useState(false);
 
   useEffect(() => {
     const fetchCompany = async () => {
@@ -736,13 +533,10 @@ export default function UpdateCompanyProfile() {
   };
 
   return (
-    <div className="min-h-screen bg-white flex w-full" style={{ zoom: 0.9 }}>
-      <SidebarAdmin isSidebarOpen={isSidebarOpen} onToggle={setIsSidebarOpen} />
-      <div
-        className="flex-1 min-h-screen w-full bg-white"
-        style={{ marginLeft: isSidebarOpen ? "16rem" : "4rem" }}
-      >
-        <NavbarAdmin isSidebarOpen={isSidebarOpen} />
+    <div className="min-h-screen bg-white flex w-full">
+      <SidebarAdmin isSidebarOpen={sidebarOpen} onToggle={setSidebarOpen} />
+        <div className={`flex-1 min-h-screen transition-all duration-300 ${sidebarOpen ? 'ml-64' : 'ml-16'}`} style={{ minWidth: 0, zoom: 0.90 }}> 
+        <AdminHeader sidebarOpen={sidebarOpen}/>
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -814,6 +608,210 @@ export default function UpdateCompanyProfile() {
             </div>
           </div>
         </motion.div>
+      </div>
+    </div>
+  );
+}
+
+function ProgressBar({
+  currentStep,
+  setStep,
+  isSubmitting,
+}: {
+  currentStep: number;
+  setStep: (step: number) => void;
+  isSubmitting: boolean;
+}) {
+  const progress = ((currentStep - 1) / (steps.length - 1)) * 100;
+
+  return (
+    <div className="mb-6">
+      <div className="flex justify-between mb-2">
+        {steps.map((step) => (
+          <div
+            key={step.id}
+            className={`flex flex-col items-center ${
+              isSubmitting ? "cursor-not-allowed opacity-50" : "cursor-pointer"
+            }`}
+            onClick={() => !isSubmitting && setStep(step.id)}
+          >
+            <div
+              className={`w-7 h-7 rounded-full flex items-center justify-center text-sm font-medium transition-all ${
+                step.id <= currentStep
+                  ? "bg-sky-500 text-white"
+                  : "bg-gray-200 text-gray-600 hover:bg-sky-400 hover:text-white"
+              }`}
+            >
+              {step.id}
+            </div>
+            <span className="text-sm mt-1 text-gray-600">{step.name}</span>
+          </div>
+        ))}
+      </div>
+      <div className="w-full bg-gray-200 rounded-full h-1.5">
+        <div
+          className="bg-sky-500 h-1.5 rounded-full transition-all duration-300"
+          style={{ width: `${progress}%` }}
+        ></div>
+      </div>
+    </div>
+  );
+}
+
+function SelectField({
+  label,
+  name,
+  value,
+  onChange,
+  options,
+  required = false,
+}: {
+  label: string;
+  name: string;
+  value: string;
+  onChange: (e: React.ChangeEvent<HTMLSelectElement>) => void;
+  options: string[];
+  required?: boolean;
+}) {
+  return (
+    <div className="space-y-2">
+      <label className="block text-base font-medium text-gray-700">{label}</label>
+      <select
+        name={name}
+        value={value}
+        onChange={onChange}
+        required={required}
+        className="w-full px-3 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-sky-400 focus:border-sky-400 transition-all bg-white text-base text-gray-900 shadow-sm"
+      >
+        <option value="" disabled>
+          Select {label.toLowerCase()}
+        </option>
+        {options.map((option) => (
+          <option key={option} value={option}>
+            {option}
+          </option>
+        ))}
+      </select>
+    </div>
+  );
+}
+
+function InputField({
+  label,
+  name,
+  value,
+  onChange,
+  onKeyDown,
+  type = "text",
+  required = false,
+}: {
+  label: string;
+  name: string;
+  value: string;
+  onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  onKeyDown?: (e: React.KeyboardEvent<HTMLInputElement>) => void;
+  type?: string;
+  required?: boolean;
+}) {
+  return (
+    <div className="space-y-2">
+      <label className="block text-base font-medium text-gray-700">{label}</label>
+      <input
+        type={type}
+        name={name}
+        value={value}
+        onChange={onChange}
+        onKeyDown={onKeyDown}
+        required={required}
+        className="w-full px-3 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-sky-400 focus:border-sky-400 transition-all text-base shadow-sm"
+      />
+    </div>
+  );
+}
+
+function TextAreaField({
+  label,
+  name,
+  value,
+  onChange,
+  onKeyDown,
+  required = false,
+}: {
+  label: string;
+  name: string;
+  value: string;
+  onChange: (e: React.ChangeEvent<HTMLTextAreaElement>) => void;
+  onKeyDown?: (e: React.KeyboardEvent<HTMLTextAreaElement>) => void;
+  required?: boolean;
+}) {
+  return (
+    <div className="space-y-2">
+      <label className="block text-base font-medium text-gray-700">{label}</label>
+      <textarea
+        name={name}
+        value={value}
+        onChange={onChange}
+        onKeyDown={onKeyDown}
+        required={required}
+        rows={4}
+        className="w-full px-3 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-sky-400 focus:border-sky-400 transition-all text-base shadow-sm resize-y"
+        placeholder={`Enter ${label.toLowerCase()}`}
+      />
+    </div>
+  );
+}
+
+function FileUploadField({
+  label,
+  name,
+  preview,
+  onChange,
+  onRemove,
+}: {
+  label: string;
+  name: string;
+  preview: string | null;
+  onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  onRemove: () => void;
+}) {
+  return (
+    <div className="space-y-2">
+      <label className="block text-base font-medium text-gray-700">{label}</label>
+      <div className="flex items-start gap-3">
+        {preview ? (
+          <div className="relative w-16 h-16 rounded-lg overflow-hidden shadow-sm">
+            <Image src={preview} alt={label} width={64} height={64} className="w-full h-full object-cover" />
+            <button
+              type="button"
+              onClick={onRemove}
+              className="absolute top-1 right-1 bg-red-500 text-white rounded-full w-4 h-4 flex items-center justify-center hover:bg-red-600 transition-colors"
+            >
+              <X className="w-2 h-2" />
+            </button>
+          </div>
+        ) : (
+          <div className="w-16 h-16 border-2 border-dashed border-gray-200 rounded-lg flex items-center justify-center bg-gray-50">
+            <span className="text-gray-400 text-xs">No image</span>
+          </div>
+        )}
+        <div>
+          <input
+            type="file"
+            name={name}
+            onChange={onChange}
+            accept="image/*"
+            className="hidden"
+            id={name}
+          />
+          <label
+            htmlFor={name}
+            className="cursor-pointer inline-flex items-center px-3 py-1.5 bg-white border rounded-lg hover:bg-gray-50 transition-colors text-base font-medium text-gray-700 shadow-sm"
+          >
+            <Upload className="w-3 h-3 mr-1.5" />
+            Upload
+          </label>
+          <p className="text-gray-500 text-xs mt-1">Recommended: 400x400 px, Max: 2MB</p>
+        </div>
       </div>
     </div>
   );

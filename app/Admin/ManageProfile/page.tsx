@@ -6,8 +6,8 @@ import { motion } from "framer-motion";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { Loader2, Lock } from "lucide-react";
-import NavbarAdmin from "@/app/components/NavbarAdmin";
 import SidebarAdmin from "@/app/components/SidebarAdmin";
+import AdminHeader from "@/app/components/AdminHeader";
 import { useRouter } from "next/navigation";
 
 // Configuration de l'API Gateway
@@ -25,7 +25,7 @@ export default function ManageProfile() {
   const [passwordError, setPasswordError] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [isSidebarOpen, setIsSidebarOpen] = useState(true);
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const router = useRouter();
 
   useEffect(() => {
@@ -146,13 +146,17 @@ export default function ManageProfile() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-blue-100 flex">
-      <SidebarAdmin
-        isSidebarOpen={isSidebarOpen}
-        onToggle={() => setIsSidebarOpen((open) => !open)}
-      />
-      <div className="flex-1 flex flex-col items-center p-0">
-        <NavbarAdmin />
+    <div className="flex w-full min-h-screen bg-gradient-to-br from-slate-50 via-blue-50/30 to-indigo-50">
+      <SidebarAdmin isSidebarOpen={isSidebarOpen} onToggle={setIsSidebarOpen} />
+      <div
+        className={`flex-1 min-h-screen transition-all duration-300 ${
+          isSidebarOpen ? "ml-64" : "ml-16"
+        }`}
+        style={{ minWidth: 0 }}
+      >
+        <AdminHeader sidebarOpen={isSidebarOpen} />
+        {/* Ajout d'un espace entre le header et le contenu */}
+        <div style={{ height: '32px' }} />
         <div className="flex-1 flex items-center justify-center p-6 w-full">
           <div className="w-full max-w-xl">
             <motion.div
@@ -160,7 +164,8 @@ export default function ManageProfile() {
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5, ease: "easeOut" }}
               className="bg-white/90 backdrop-blur-lg p-0 rounded-3xl shadow-2xl w-full border border-blue-100/60 flex flex-col items-center overflow-hidden"
-              style={{ zoom: 0.85 }}>
+              style={{ zoom: 0.85 }}
+            >
               <div className="w-full flex flex-col items-center mb-6 pt-8">
                 <h2 className="text-2xl font-extrabold text-blue-700 tracking-tight mb-1">
                   Edit Profile

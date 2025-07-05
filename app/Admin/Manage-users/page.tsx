@@ -6,7 +6,9 @@ import { motion, AnimatePresence } from "framer-motion";
 import { ToastContainer, toast } from "react-toastify";
 import { Zoom } from "react-toastify";
 import AdminLayout from "@/AdminLayout";
+import AdminHeader from "@/app/components/AdminHeader";
 import { Company } from "@/app/types/company";
+import SidebarAdmin from "@/app/components/SidebarAdmin";
 
 // Configuration de l'API Gateway
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
@@ -70,8 +72,7 @@ export default function ManageUsersPage() {
   const [showForm, setShowForm] = useState(false);
   const [filterBy, setFilterBy] = useState<string>("name"); 
   const [company, setCompany] = useState<Company | null>(null);
-  
-  
+  const [sidebarOpen, setSidebarOpen] = useState(false);
 
   const fetchUsers = async () => {
     try {
@@ -211,9 +212,13 @@ export default function ManageUsersPage() {
   };
   return (
     <>
-     <AdminLayout>
-      {/* Filter Options - move outside and above <main> for absolute top position */}
-      <div className="w-full flex flex-col md:flex-row gap-3 mb-2 items-stretch md:items-center px-4 pt-4 max-w-6xl mx-auto">
+  <SidebarAdmin isSidebarOpen={sidebarOpen} onToggle={setSidebarOpen} />
+  <div className={`flex-1 min-h-screen transition-all duration-300 ${sidebarOpen ? 'ml-64' : 'ml-16'}`} style={{ minWidth: 0 }}> 
+    <AdminHeader sidebarOpen={sidebarOpen}/>
+    {/* Ajout d'un espace entre le header et le contenu */}
+    <div style={{ height: '32px' }} />
+    {/* Filter Options - move outside and above <main> for absolute top position */}
+    <div className="w-full flex flex-col md:flex-row gap-3 mb-2 items-stretch md:items-center px-4 pt-4 max-w-6xl mx-auto">
         <div className="flex items-center bg-white shadow-md rounded-xl px-3 py-2 border border-gray-200 focus-within:ring-2 focus-within:ring-blue-400 transition w-full md:w-1/3">
           <span className="text-blue-500 mr-2 font-semibold">Filter by:</span>
           <select
@@ -442,7 +447,7 @@ export default function ManageUsersPage() {
         )}
       </div>
       </main>
-      </AdminLayout>
+      </div>
       {showDepartmentModal && selectedUser && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm">
           <motion.div

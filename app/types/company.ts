@@ -7,7 +7,7 @@ export type Department = {
 export type Company = {
   id: number;
   companyName: string;
-  logo?: string;
+  companyLogo?: string;
   industry: string;
   otherIndustry?: string;
   companyDescription: string;
@@ -27,5 +27,6 @@ export type Company = {
   ceo?: string;
   ceoImage?: string;
   revenue?: number;
+  verified?: boolean;
   departments?: Department[];
 };

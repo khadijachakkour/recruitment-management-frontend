@@ -32,16 +32,15 @@ export default function ChooseJobTypePage() {
             </button>
 
             {/* AI creation */}
-            <button
-              onClick={() => router.push('/Recruteur/Jobs/Create?ai=1')}
-              className="group bg-white border border-green-200 hover:border-green-400 rounded-xl shadow-md hover:shadow-xl transition-all p-4 flex flex-col items-center text-center hover:bg-green-50"
-            >
-              <div className="bg-green-100 text-green-600 rounded-full p-2 mb-3 transition-transform group-hover:scale-110">
-                <Bot size={36} />
-              </div>
-              <span className="text-xl font-semibold text-gray-800 mb-1">Write offer with AI</span>
-              <span className="text-gray-500 text-base">Let AI draft a job post in seconds</span>
-            </button>
+           <button
+  onClick={() => router.push('/Recruteur/Jobs/GenerateWithAI')}
+  className="group bg-white border border-green-200 hover:border-green-400 rounded-xl shadow-md hover:shadow-xl transition-all p-4 flex flex-col items-center text-center hover:bg-green-50">
+  <div className="bg-green-100 text-green-600 rounded-full p-2 mb-3 transition-transform group-hover:scale-110">
+    <Bot size={36} />
+  </div>
+  <span className="text-xl font-semibold text-gray-800 mb-1">Write offer with AI</span>
+  <span className="text-gray-500 text-base">Let AI draft a job post in seconds</span>
+</button>
           </div>
 
           <div className="mt-10 max-w-xl bg-white/80 border border-gray-200 rounded-lg p-3 text-center text-sm text-gray-600 shadow">

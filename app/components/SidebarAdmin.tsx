@@ -1,4 +1,4 @@
-import { Home, Users, Settings, Building, Menu, X, UserCircle, Briefcase } from "lucide-react";
+import { Home, Users, Settings, Building, Menu, X, UserCircle, Briefcase, LogOut } from "lucide-react";
 import Link from "next/link";
 
 interface SidebarProps {
@@ -14,14 +14,17 @@ export default function Sidebar({ isSidebarOpen, onToggle }: SidebarProps) {
   return (
     <aside
       className={`fixed z-[1100] top-0 left-0 h-full bg-white border-r shadow-md transition-all duration-300 ease-in-out ${
-        isSidebarOpen ? "w-64" : "w-16"
+        isSidebarOpen ? "w-48" : "w-16"
       }`}
     >
       {/* Header avec hamburger */}
       <div className="flex items-center justify-between p-4 border-b">
-        <div className="flex items-center gap-2">
-          {isSidebarOpen && <Home size={24} className="text-blue-600" />}
-          {isSidebarOpen && <h1 className="text-xl font-bold text-blue-700">Admin</h1>}
+        <div className="flex-1 flex items-center justify-center gap-2 select-none">
+          {isSidebarOpen && (
+            <h1 className="text-2xl font-extrabold tracking-tight text-transparent bg-clip-text bg-gradient-to-r from-blue-600 via-indigo-500 to-purple-500 drop-shadow-lg animate-fade-in">
+              Smart<span className="font-black">Hire</span>
+            </h1>
+          )}
         </div>
         {/* Hamburger/X button always visible */}
         <button
@@ -60,18 +63,37 @@ export default function Sidebar({ isSidebarOpen, onToggle }: SidebarProps) {
           <UserCircle size={18} /> {isSidebarOpen && <span>My Profile</span>}
         </Link>
         <Link
-          href="#"
-          className="flex items-center gap-3 px-3 py-2 rounded-lg text-gray-700 hover:bg-blue-100 hover:text-blue-700 transition-colors"
-        >
-          <Settings size={18} /> {isSidebarOpen && <span>Settings</span>}
-        </Link>
-        <Link
           href="/Admin/CompanyOffers"
           className="flex items-center gap-3 px-3 py-2 rounded-lg text-gray-700 hover:bg-blue-100 hover:text-blue-700 transition-colors"
         >
           <Briefcase size={18} /> {isSidebarOpen && <span>Company Offers</span>}
         </Link>
+        <Link
+          href="#"
+          className="flex items-center gap-3 px-3 py-2 rounded-lg text-gray-700 hover:bg-blue-100 hover:text-blue-700 transition-colors"
+        >
+          <Settings size={18} /> {isSidebarOpen && <span>Settings</span>}
+        </Link>
       </nav>
+      {/* Logout button */}
+      <div className="absolute bottom-0 left-0 w-full p-4 border-t bg-white">
+        <button
+          onClick={() => {
+            sessionStorage.removeItem("access_token");
+            window.location.href = "/login";
+          }}
+          className="w-full flex items-center gap-2 px-2 py-2 rounded-xl bg-transparent shadow-none hover:bg-blue-50/40 active:scale-95 transition-all duration-200 font-semibold text-xl focus:outline-none group"
+        >
+          <span className="inline-flex items-center justify-center">
+            <LogOut size={22} className="bg-clip-text text-transparent bg-gradient-to-r from-sky-400 to-blue-600 group-hover:scale-110 transition-transform duration-200" />
+          </span>
+          {isSidebarOpen && (
+            <span className="bg-clip-text text-transparent bg-gradient-to-r from-sky-400 to-blue-600 group-hover:underline group-hover:tracking-wider transition-all duration-200 text-xl font-bold">
+              Logout
+            </span>
+          )}
+        </button>
+      </div>
     </aside>
   );
 }

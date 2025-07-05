@@ -26,14 +26,12 @@ export default function DashboardCandidat() {
   return (
     <>
       <style>{customStyle}</style>
-      <div className="flex min-h-screen bg-white">
-        <main className="flex-1 transition-all duration-300 p-6">
-          <NavbarCandidat />
-          <main className="space-y-22">
-            <Hero />
-            <Categories />
-            <JobList />
-          </main>
+      <div className="min-h-screen bg-white flex flex-col w-full">
+        <NavbarCandidat />
+        <main className="flex-1 w-full">
+          <Hero />
+          <Categories />
+          <JobList />
         </main>
       </div>
     </>
