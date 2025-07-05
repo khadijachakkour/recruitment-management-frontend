@@ -17,6 +17,7 @@ import { useRouter } from 'next/navigation';
 import { BarChart, Bar, Cell } from 'recharts';
 import Select from 'react-select';
 import { ApplicationModesIcons } from "../../components/ApplicationModesIcons";
+import MessagesSection from '@/app/components/MessagesSection';
 
 interface  Department {
   id: number;
@@ -67,7 +68,43 @@ const RecruteurPage = () => {
   ];
 
 
-  const messages: { sender: string; text: string }[] = [];
+const messages = [
+  {
+    id: 1,
+    name: "Emily Johnson",
+    role: "Frontend Developer",
+    message: "Hi, I just submitted my application. Can you please confirm if it was received?",
+    time: "2 hours ago",
+  },
+  {
+    id: 2,
+    name: "Liam Smith",
+    role: "DevOps Engineer",
+    message: "I'm interested in the position. Could you clarify if remote work is allowed?",
+    time: "4 hours ago",
+  },
+  {
+    id: 3,
+    name: "Sophia Lee",
+    role: "Data Analyst",
+    message: "I had an interview last week and wanted to ask if there is any update regarding the next steps?",
+    time: "1 day ago",
+  },
+  {
+    id: 4,
+    name: "Noah Brown",
+    role: "Backend Developer",
+    message: "Hello, I noticed that the job listing was updated. Is the salary range still the same?",
+    time: "2 days ago",
+  },
+  {
+    id: 5,
+    name: "Olivia Davis",
+    role: "Project Manager",
+    message: "Just letting you know I will be unavailable for a call tomorrow. Can we reschedule?",
+    time: "3 days ago",
+  },
+];
 
   const [offersCount, setOffersCount] = useState<number>(0);
 
@@ -675,25 +712,7 @@ const RecruteurPage = () => {
             transition={{ duration: 0.5 }}
             className="bg-white p-8 rounded-2xl shadow-lg border border-[#caf0f8] w-full flex flex-col"
           >
-            <h3 className="text-lg font-bold text-[#023e8a] mb-6 flex items-center gap-2">
-              <span className="inline-block w-2 h-6 rounded bg-gradient-to-b from-[#00b4d8] to-[#007bff] mr-2"></span>
-              Messages <span className="ml-2 text-sm text-gray-400">({messages.length})</span>
-            </h3>
-            {messages.length === 0 ? (
-              <div className="flex flex-col items-center justify-center h-full min-h-[120px] text-gray-400">
-                <svg width="48" height="48" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24" className="mb-2"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z" /></svg>
-                <span>No messages!</span>
-              </div>
-            ) : (
-              <ul className="space-y-4">
-                {messages.slice(0, 5).map((msg, idx) => (
-                  <li key={idx} className="bg-[#f8fbff] border border-[#eaf6ff] rounded-lg px-4 py-3 flex flex-col">
-                    <span className="font-semibold text-[#007bff] mb-1">{msg.sender}</span>
-                    <span className="text-[#023e8a] text-sm">{msg.text}</span>
-                  </li>
-                ))}
-              </ul>
-            )}
+           <MessagesSection />
           </motion.div>
         </div>
 

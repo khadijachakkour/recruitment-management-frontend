@@ -59,7 +59,7 @@ export default function Sidebar({ isSidebarOpen, onToggle }: SidebarRecruteurPro
             <ul className="ml-6 space-y-1">
               <li>
                 <Link
-                  href="/Recruteur/Jobs/Create"
+                  href="/Recruteur/Jobs/ChooseType"
                   className="block px-3 py-2 rounded-lg text-gray-700 hover:bg-blue-100 hover:text-blue-700 transition-colors">
                   Create Offer
                 </Link>

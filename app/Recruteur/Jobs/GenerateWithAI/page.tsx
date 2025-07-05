@@ -1,17 +1,9 @@
 "use client";
+
 import { useState } from "react";
-import {
-  Sparkles,
-  Briefcase,
-  MapPin,
-  Users,
-  Clock,
-  Award,
-  Zap,
-  Copy,
-  Download,
-} from "lucide-react";
-import RecruteurLayout from "@/RecruteurLayout";
+import Sidebar from "@/app/components/SidebarRecruteur";
+import { Sparkles, Briefcase, MapPin, Award, Copy, Download, Loader2 } from "lucide-react";
+import { motion } from "framer-motion";
 
 export default function GenerateWithAIPage() {
   const [form, setForm] = useState({
@@ -22,19 +14,17 @@ export default function GenerateWithAIPage() {
     competences: "",
     experience: "",
   });
-
   const [autreExperience, setAutreExperience] = useState("");
   const [autreContrat, setAutreContrat] = useState("");
   const [autreSecteur, setAutreSecteur] = useState("");
-
   const [loading, setLoading] = useState(false);
   const [description, setDescription] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [copied, setCopied] = useState(false);
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const [isPublished, setIsPublished] = useState(false);
 
-  const handleChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
-  ) => {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
 
@@ -43,8 +33,7 @@ export default function GenerateWithAIPage() {
     setForm({ ...form, [name]: value });
   };
 
-  const isOther = (key: string) =>
-    form[key as keyof typeof form] === "Other";
+  const isOther = (key: string) => form[key as keyof typeof form] === "Other";
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -84,249 +73,216 @@ export default function GenerateWithAIPage() {
   };
 
   return (
-    <RecruteurLayout>
-      <div className="min-h-screen py-8 px-4">
-        <div className="max-w-6xl mx-auto">
-          <div className="grid lg:grid-cols-2 gap-8">
-            {/* Form */}
-            <div className="bg-white rounded-2xl shadow-xl border border-gray-100 p-8">
-              <form onSubmit={handleSubmit} className="space-y-6">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  {/* Job Title */}
-                  <div className="relative group">
-                    <div className="absolute left-3 top-1/2 transform -translate-y-1/2 z-10">
-                      <Briefcase className="w-5 h-5 text-gray-400" />
-                    </div>
-                    <input
-                      name="titre"
-                      placeholder="Job Title"
-                      value={form.titre}
-                      onChange={handleChange}
-                      required
-                      className="w-full pl-12 pr-4 py-3 border border-gray-200 rounded-lg bg-gray-50 focus:bg-white hover:bg-white"
-                    />
-                  </div>
+    <div className="flex min-h-screen bg-white">
+      <Sidebar isSidebarOpen={isSidebarOpen} onToggle={setIsSidebarOpen} />
 
-                  {/* Sector */}
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">
-                      Sector
-                    </label>
-                    <select
-                      name="secteur"
-                      value={form.secteur}
-                      onChange={handleSelectChange}
-                      required
-                      className="w-full px-4 py-3 border border-gray-200 rounded-lg bg-gray-50 focus:bg-white hover:bg-white"
-                    >
-                      <option value="">-- Select --</option>
-                      <option value="Technologie">Technology</option>
-                      <option value="santé">Healthcare</option>
-                      <option value="Finance">Finance</option>
-                      <option value="Other">Other</option>
-                    </select>
-                    {isOther("secteur") && (
-                      <input
-                        type="text"
-                        placeholder="Specify sector"
-                        value={autreSecteur}
-                        onChange={(e) => setAutreSecteur(e.target.value)}
-                        className="mt-2 w-full px-4 py-3 border border-gray-200 rounded-lg"
-                      />
-                    )}
-                  </div>
+      <main className={`transition-all flex-1 px-6 py-10 ${isSidebarOpen ? "ml-64" : "ml-20"}`}>
+        <div className="max-w-5xl mx-auto space-y-10">
+          <motion.h1
+            initial={{ opacity: 0, y: -10 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="text-3xl font-bold text-gray-800 flex items-center gap-2"
+          >
+            <Sparkles className="text-blue-600 w-6 h-6" />
+            AI-Powered Job Offer Generator
+          </motion.h1>
 
-                  {/* Location */}
-                  <div className="relative group">
-                    <div className="absolute left-3 top-1/2 transform -translate-y-1/2 z-10">
-                      <MapPin className="w-5 h-5 text-gray-400" />
-                    </div>
-                    <input
-                      name="lieu"
-                      placeholder="Location"
-                      value={form.lieu}
-                      onChange={handleChange}
-                      required
-                      className="w-full pl-12 pr-4 py-3 border border-gray-200 rounded-lg bg-gray-50 focus:bg-white hover:bg-white"
-                    />
-                  </div>
-
-                  {/* Contract Type */}
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">
-                      Contract Type
-                    </label>
-                    <select
-                      name="contrat"
-                      value={form.contrat}
-                      onChange={handleSelectChange}
-                      required
-                      className="w-full px-4 py-3 border border-gray-200 rounded-lg bg-gray-50 focus:bg-white hover:bg-white"
-                    >
-                      <option value="">-- Select --</option>
-                      <option value="CDI">CDI</option>
-                      <option value="CDD">CDD</option>
-                      <option value="Other">Other</option>
-                    </select>
-                    {isOther("contrat") && (
-                      <input
-                        type="text"
-                        placeholder="Specify contract type"
-                        value={autreContrat}
-                        onChange={(e) => setAutreContrat(e.target.value)}
-                        className="mt-2 w-full px-4 py-3 border border-gray-200 rounded-lg"
-                      />
-                    )}
-                  </div>
-
-                  {/* Skills */}
-                  <div className="relative group md:col-span-2">
-                    <div className="absolute left-3 top-1/2 transform -translate-y-1/2 z-10">
-                      <Award className="w-5 h-5 text-gray-400" />
-                    </div>
-                    <input
-                      name="competences"
-                      placeholder="Required Skills"
-                      value={form.competences}
-                      onChange={handleChange}
-                      required
-                      className="w-full pl-12 pr-4 py-3 border border-gray-200 rounded-lg bg-gray-50 focus:bg-white hover:bg-white"
-                    />
-                  </div>
-
-                  {/* Experience */}
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">
-                      Experience Required
-                    </label>
-                    <select
-                      name="experience"
-                      value={form.experience}
-                      onChange={handleSelectChange}
-                      required
-                      className="w-full px-4 py-3 border border-gray-200 rounded-lg bg-gray-50 focus:bg-white hover:bg-white"
-                    >
-                      <option value="">-- Select --</option>
-                      <option value="Junior">Junior</option>
-                      <option value="Senior">Senior</option>
-                      <option value="Other">Other</option>
-                    </select>
-                    {isOther("experience") && (
-                      <input
-                        type="text"
-                        placeholder="Specify experience level"
-                        value={autreExperience}
-                        onChange={(e) => setAutreExperience(e.target.value)}
-                        className="mt-2 w-full px-4 py-3 border border-gray-200 rounded-lg"
-                      />
-                    )}
-                  </div>
+          <div className="bg-white p-6 rounded-2xl shadow-xl border border-gray-200">
+            <form onSubmit={handleSubmit} className="space-y-6">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="relative">
+                  <Briefcase className="absolute left-3 top-3 text-gray-400 w-5 h-5" />
+                  <input
+                    name="titre"
+                    placeholder="Job Title"
+                    value={form.titre}
+                    onChange={handleChange}
+                    required
+                    className="w-full pl-10 pr-4 py-3 border rounded-xl bg-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  />
                 </div>
 
-                <button
-                  type="submit"
-                  disabled={loading}
-                  className="w-full py-4 px-6 bg-gradient-to-r from-blue-600 to-purple-600 text-white font-semibold rounded-lg shadow-lg hover:shadow-xl transform hover:scale-[1.02] transition-all duration-300 disabled:opacity-50"
-                >
-                  {loading ? (
-                    <div className="flex items-center justify-center gap-2">
-                      <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
-                      Generating...
-                    </div>
-                  ) : (
-                    <div className="flex items-center justify-center gap-2">
-                      <Sparkles className="w-5 h-5" />
-                      Generate Description
-                    </div>
+                <div>
+                  <select
+                    name="secteur"
+                    value={form.secteur}
+                    onChange={handleSelectChange}
+                    required
+                    className="w-full p-3 border rounded-xl bg-gray-100"
+                  >
+                    <option value="">-- Sector --</option>
+                    <option value="Technology">Technology</option>
+                    <option value="Healthcare">Healthcare</option>
+                    <option value="Finance">Finance</option>
+                    <option value="Other">Other</option>
+                  </select>
+                  {isOther("secteur") && (
+                    <input
+                      type="text"
+                      placeholder="Specify sector"
+                      value={autreSecteur}
+                      onChange={(e) => setAutreSecteur(e.target.value)}
+                      className="mt-2 w-full p-3 border rounded-xl bg-gray-100"
+                    />
                   )}
-                </button>
-
-                {error && (
-                  <div className="p-4 bg-red-50 border border-red-200 rounded-lg text-red-700 text-center animate-pulse">
-                    {error}
-                  </div>
-                )}
-              </form>
-            </div>
-
-            {/* Result */}
-            <div className="bg-white rounded-2xl shadow-xl border border-gray-100 p-8">
-              {!description && !loading && (
-                <div className="flex flex-col items-center justify-center h-full text-center py-16">
-                  <div className="w-24 h-24 bg-gradient-to-br from-blue-100 to-purple-100 rounded-full flex items-center justify-center mb-6">
-                    <Sparkles className="w-12 h-12 text-blue-600" />
-                  </div>
-                  <h3 className="text-xl font-semibold text-gray-800 mb-2">
-                    Ready to create your job post?
-                  </h3>
-                  <p className="text-gray-600">
-                    Fill out the form and let AI generate a professional job description for you.
-                  </p>
                 </div>
-              )}
 
-              {loading && (
-                <div className="flex flex-col items-center justify-center h-full py-16">
-                  <div className="w-16 h-16 bg-gradient-to-r from-blue-600 to-purple-600 rounded-full animate-pulse mb-4"></div>
-                  <div className="text-center">
-                    <h3 className="text-xl font-semibold text-gray-800 mb-2">
-                      Generating...
-                    </h3>
-                    <p className="text-gray-600">
-                      The AI is analyzing your criteria and drafting your job description.
-                    </p>
-                  </div>
+                <div className="relative">
+                  <MapPin className="absolute left-3 top-3 text-gray-400 w-5 h-5" />
+                  <input
+                    name="lieu"
+                    placeholder="Location"
+                    value={form.lieu}
+                    onChange={handleChange}
+                    required
+                    className="w-full pl-10 pr-4 py-3 border rounded-xl bg-gray-100"
+                  />
                 </div>
-              )}
 
-              {description && (
-                <div className="animate-fade-in">
-                  <div className="flex items-center justify-between mb-6">
-                    <h3 className="text-xl font-semibold text-gray-800 flex items-center gap-2">
-                      <Sparkles className="w-5 h-5 text-blue-600" />
-                      Generated Description
-                    </h3>
-                    <div className="flex gap-2">
-                      <button
-                        onClick={handleCopy}
-                        className="flex items-center gap-2 px-3 py-2 bg-gray-100 hover:bg-gray-200 rounded-lg transition-colors"
-                      >
-                        <Copy className="w-4 h-4" />
-                        {copied ? "Copied!" : "Copy"}
-                      </button>
-                      <button className="flex items-center gap-2 px-3 py-2 bg-blue-100 hover:bg-blue-200 text-blue-700 rounded-lg transition-colors">
-                        <Download className="w-4 h-4" />
-                        Download
-                      </button>
-                    </div>
-                  </div>
-                  <div className="bg-gradient-to-br from-gray-50 to-blue-50 rounded-lg p-6 border border-gray-200">
-                    <pre className="whitespace-pre-wrap text-sm text-gray-800 font-mono leading-relaxed">
-                      {description}
-                    </pre>
-                  </div>
+                <div>
+                  <select
+                    name="contrat"
+                    value={form.contrat}
+                    onChange={handleSelectChange}
+                    required
+                    className="w-full p-3 border rounded-xl bg-gray-100"
+                  >
+                    <option value="">-- Contract Type --</option>
+                    <option value="CDI">CDI</option>
+                    <option value="CDD">CDD</option>
+                    <option value="Other">Other</option>
+                  </select>
+                  {isOther("contrat") && (
+                    <input
+                      type="text"
+                      placeholder="Specify contract"
+                      value={autreContrat}
+                      onChange={(e) => setAutreContrat(e.target.value)}
+                      className="mt-2 w-full p-3 border rounded-xl bg-gray-100"
+                    />
+                  )}
                 </div>
-              )}
-            </div>
+
+                <div className="md:col-span-2 relative">
+                  <Award className="absolute left-3 top-3 text-gray-400 w-5 h-5" />
+                  <input
+                    name="competences"
+                    placeholder="Required Skills"
+                    value={form.competences}
+                    onChange={handleChange}
+                    required
+                    className="w-full pl-10 pr-4 py-3 border rounded-xl bg-gray-100"
+                  />
+                </div>
+
+                <div>
+                  <select
+                    name="experience"
+                    value={form.experience}
+                    onChange={handleSelectChange}
+                    required
+                    className="w-full p-3 border rounded-xl bg-gray-100"
+                  >
+                    <option value="">-- Experience Level --</option>
+                    <option value="Junior">Junior</option>
+                    <option value="Senior">Senior</option>
+                    <option value="Other">Other</option>
+                  </select>
+                  {isOther("experience") && (
+                    <input
+                      type="text"
+                      placeholder="Specify experience"
+                      value={autreExperience}
+                      onChange={(e) => setAutreExperience(e.target.value)}
+                      className="mt-2 w-full p-3 border rounded-xl bg-gray-100"
+                    />
+                  )}
+                </div>
+              </div>
+
+              <motion.button
+                whileTap={{ scale: 0.95 }}
+                type="submit"
+                disabled={loading}
+                className="w-full py-4 bg-blue-600 text-white font-bold rounded-xl shadow hover:bg-blue-700 transition disabled:opacity-50 flex items-center justify-center gap-2"
+              >
+                {loading && <Loader2 className="w-5 h-5 animate-spin" />}
+                {loading ? "Generating..." : "Generate Description"}
+              </motion.button>
+            </form>
           </div>
-        </div>
-      </div>
 
-      <style jsx>{`
-        @keyframes fade-in {
-          from {
-            opacity: 0;
-            transform: translateY(20px);
-          }
-          to {
-            opacity: 1;
-            transform: translateY(0);
-          }
-        }
-        .animate-fade-in {
-          animation: fade-in 0.5s ease-out;
-        }
-      `}</style>
-    </RecruteurLayout>
+          {/* Result */}
+          {description && (
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="bg-white p-6 rounded-2xl shadow-xl border border-gray-200 space-y-4"
+            >
+              <div className="flex justify-between items-center">
+                <h2 className="text-xl font-semibold flex items-center gap-2 text-blue-600">
+                  <Sparkles className="w-5 h-5" />
+                  Generated Description
+                </h2>
+                <div className="flex gap-2">
+                  <button
+                    onClick={handleCopy}
+                    className="px-3 py-2 bg-gray-100 hover:bg-gray-200 rounded-lg flex items-center gap-2 text-sm"
+                  >
+                    <Copy className="w-4 h-4" />
+                    {copied ? "Copied!" : "Copy"}
+                  </button>
+                  <button
+                    className="px-3 py-2 bg-blue-100 hover:bg-blue-200 text-blue-800 rounded-lg flex items-center gap-2 text-sm"
+                    onClick={() => {
+                      const blob = new Blob([description], { type: "text/plain;charset=utf-8" });
+                      const url = URL.createObjectURL(blob);
+                      const link = document.createElement("a");
+                      link.href = url;
+                      link.download = "job-description.txt";
+                      link.click();
+                      URL.revokeObjectURL(url);
+                    }}
+                  >
+                    <Download className="w-4 h-4" />
+                    Download
+                  </button>
+                </div>
+              </div>
+              <pre className="whitespace-pre-wrap font-mono text-gray-800 text-sm">{description}</pre>
+              <div className="flex justify-end">
+  <motion.button
+    whileTap={{ scale: 0.95 }}
+    onClick={() => {
+      setIsPublished(true);
+      setTimeout(() => setIsPublished(false), 3000);
+    }}
+    className="px-5 py-3 bg-green-600 hover:bg-green-700 text-white text-sm font-semibold rounded-xl shadow transition"
+  >
+    Publish Offer
+  </motion.button>
+</div>
+{isPublished && (
+  <motion.div
+    initial={{ opacity: 0, y: -10 }}
+    animate={{ opacity: 1, y: 0 }}
+    exit={{ opacity: 0 }}
+    className="mt-4 px-4 py-3 text-sm text-green-800 bg-green-100 border border-green-300 rounded-xl text-center"
+  >
+    The job offer has been successfully published!
+  </motion.div>
+)}
+
+            </motion.div>
+          )}
+
+          {error && (
+            <div className="p-4 bg-red-100 text-red-700 border border-red-300 rounded-xl text-center">
+              {error}
+            </div>
+          )}
+        </div>
+      </main>
+    </div>
   );
 }
