@@ -90,10 +90,10 @@ export default function CompanyProfile() {
       <SidebarAdmin isSidebarOpen={sidebarOpen} onToggle={setSidebarOpen} />
       <div
         className={`flex-1 min-h-screen transition-all duration-300 ${sidebarOpen ? 'ml-64' : 'ml-16'}`}
-        style={{ minWidth: 0, zoom: 0.85, background: 'linear-gradient(135deg, #f0f4ff 0%, #e0e7ff 100%)' }}
+        style={{ minWidth: 0, zoom: 0.85, background: 'white' }}
       >
         <AdminHeader sidebarOpen={sidebarOpen}/>
-        <div className="h-6" /> {/* Add vertical space between header and content */}
+        <div className="h-6" /> 
         <div className="min-h-screen">
           <div className="max-w-screen-xl mx-auto px-4 py-6">
             {/* Header */}
